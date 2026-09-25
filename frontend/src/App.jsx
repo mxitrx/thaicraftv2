@@ -1055,7 +1055,6 @@ export default function App() {
                        type="text" 
                        value={scanQuery}
                        onChange={e => setScanQuery(e.target.value)}
-                       autoFocus
                        placeholder="CLICK TO SCAN..." 
                        className="w-full p-4 md:p-5 bg-black border-2 border-dashed border-zinc-700 focus:border-red-500 focus:bg-[#0f0f11] text-center font-mono text-xs md:text-sm text-white outline-none rounded-2xl transition-all uppercase tracking-widest shadow-inner"
                      />
