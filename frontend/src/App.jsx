@@ -29,9 +29,13 @@ const defaultConfig = {
   videoDesc: "ชมภาพบรรยากาศและความประทับใจจากงานสัมมนาปีที่ผ่านมา ที่รวบรวมนักออกแบบและสถาปนิกชั้นนำของเมืองไทย",
 
   speakers: [
-    { id: 1, name: "รศ.ดร. ภูมิปัญญา สถาปัตย์", role: "ผู้เชี่ยวชาญด้านสถาปัตยกรรมไทย", tag: "KEYNOTE", color: "#C5A059", img: "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png", desc: "คณบดีและผู้เชี่ยวชาญด้านประวัติศาสตร์สถาปัตยกรรม จะมาบรรยายหัวข้อ 'รากเหง้าสถาปัตยกรรมไทยในกระแสโลกาภิวัตน์'" },
-    { id: 2, name: "คุณศิลป์ สร้างสรรค์", role: "Design Director, ThaiCraft Studio", tag: "DESIGN", color: "#F97316", img: "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png", desc: "นักออกแบบรางวัลระดับโลก ผู้ผสานงานหัตถศิลป์พื้นบ้านเข้ากับงานเฟอร์นิเจอร์และสถาปัตยกรรมภายในแบบร่วมสมัย" },
-    { id: 3, name: "คุณไม้ ดินน้ำ", role: "Material Innovator", tag: "INNOVATION", color: "#10B981", img: "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png", desc: "นักวิจัยด้านวัสดุธรรมชาติ จะมาเผยเทคนิคการนำ ดินเผา ไม้ไผ่ และพืชท้องถิ่น มาใช้ในงานโครงสร้างยุคใหม่เพื่อความยั่งยืน" }
+    { id: 1, name: "ณภัทร จุฑาทิพรัตน์", role: "ผู้เชี่ยวชาญด้านสถาปัตยกรรมไทย", tag: "SCIENCE", color: "#C5A059", img: "https://github.com/mxitrx/thaicraftv2/blob/main/frontend/pic/1.jpg?raw=true", desc: "คณบดีและผู้เชี่ยวชาญด้านประวัติศาสตร์สถาปัตยกรรม จะมาบรรยายหัวข้อ 'รากเหง้าสถาปัตยกรรมไทยในกระแสโลกาภิวัตน์'" },
+    { id: 2, name: "กิรณา กังวาฬวงษ์", role: "Design Director, ThaiCraft Studio", tag: "ART AND DESIGN", color: "#F97316", img: "https://github.com/mxitrx/thaicraftv2/blob/main/frontend/pic/2.jpg?raw=true", desc: "นักออกแบบรางวัลระดับโลก ผู้ผสานงานหัตถศิลป์พื้นบ้านเข้ากับงานเฟอร์นิเจอร์และสถาปัตยกรรมภายในแบบร่วมสมัย" },
+    { id: 3, name: "ธัญญวรรณ แช่มชื่น", role: "Material Innovator", tag: "ART AND DESIGN", color: "#10B981", img: "https://github.com/mxitrx/thaicraftv2/blob/main/frontend/pic/3.jpg?raw=true", desc: "นักวิจัยด้านวัสดุธรรมชาติ จะมาเผยเทคนิคการนำ ดินเผา ไม้ไผ่ และพืชท้องถิ่น มาใช้ในงานโครงสร้างยุคใหม่เพื่อความยั่งยืน" },
+    { id: 4, name: "วารินทร์ทิพย์ แก้วอินต๊ะ", role: "Material Innovator", tag: "ART AND DESIGN", color: "#10B981", img: "https://github.com/mxitrx/thaicraftv2/blob/main/frontend/pic/4.jpg?raw=true", desc: "นักวิจัยด้านวัสดุธรรมชาติ จะมาเผยเทคนิคการนำ ดินเผา ไม้ไผ่ และพืชท้องถิ่น มาใช้ในงานโครงสร้างยุคใหม่เพื่อความยั่งยืน" },
+    { id: 5, name: "ศุภาวิตา พิรักษา", role: "Material Innovator", tag: "ART AND DESIGN", color: "#10B981", img: "https://github.com/mxitrx/thaicraftv2/blob/main/frontend/pic/5.jpg?raw=true", desc: "นักวิจัยด้านวัสดุธรรมชาติ จะมาเผยเทคนิคการนำ ดินเผา ไม้ไผ่ และพืชท้องถิ่น มาใช้ในงานโครงสร้างยุคใหม่เพื่อความยั่งยืน" },
+    { id: 6, name: "อิทธิฤทธิ์ กุนศิริ", role: "Material Innovator", tag: "AGRICULTURE", color: "#C5A059", img: "https://github.com/mxitrx/thaicraftv2/blob/main/frontend/pic/6.jpg?raw=true", desc: "นักวิจัยด้านวัสดุธรรมชาติ จะมาเผยเทคนิคการนำ ดินเผา ไม้ไผ่ และพืชท้องถิ่น มาใช้ในงานโครงสร้างยุคใหม่เพื่อความยั่งยืน" }
+
   ],
   
   sponsors: [
