@@ -1,91 +1,91 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 
 // ==========================================
-// 1. CONFIG & BACKEND SETUP (ARCHITECTURE THEME)
+// 1. CONFIG & BACKEND SETUP (EXPANDED & DETAILED EVENT)
 // ==========================================
-// ⚠️ ใส่ลิงก์ Google Apps Script ของคุณที่นี่
-const GAS_URL = "https://script.google.com/macros/s/AKfycbzyM22RFFgUmHRRf_7Q4chOjr4S4LaIm_WyicFkRTIIgB2f40nqbypHS1pj2bxYplw-/exec";
+// อัปเดต URL ใหม่ตามที่กำหนด
+const GAS_URL = "https://script.google.com/macros/s/AKfycbwYYNpRI6ygCVgN30nDRuJ00vWc8zNgTPyjRJ2zmpVeFQkMOvfyLfta_T_eLbItocpm/exec";
 
+// ข้อมูลเริ่มต้นแบบจัดเต็ม เพื่อให้หน้าเว็บดูมีรายละเอียดและเป็นประโยชน์กับผู้อ่าน
 const defaultConfig = {
-  title: "VISIONARY SPACES",
-  subtitle: "Architecture & Design Summit 2026",
-  date: "12 - 14 ธันวาคม 2026",
-  targetDate: "2026-12-12T09:00:00", 
-  location: "QSNCC - Plenary Hall (ศูนย์การประชุมแห่งชาติสิริกิติ์)",
-  aboutText: "ร่วมเปิดมุมมองใหม่แห่งวงการสถาปัตยกรรมและการออกแบบ ในงานสัมมนาที่รวบรวมสถาปนิกและนักออกแบบระดับโลก พบกับนวัตกรรมวัสดุก่อสร้าง เทรนด์การออกแบบยั่งยืน (Sustainable Design) และเทคโนโลยี AI ในงานสถาปัตยกรรม",
-  contactEmail: "info@visionaryspaces.com",
-  contactPhone: "02-ARCH-2026",
+  title: "FUTURE TECH",
+  subtitle: "Navigating the Next Digital Frontier",
+  date: "25 พฤศจิกายน 2026",
+  targetDate: "2026-11-25T08:30:00", 
+  location: "True Icon Hall, ICONSIAM",
+  aboutText: "งานสัมมนาเทคโนโลยีและธุรกิจที่ยิ่งใหญ่ที่สุดแห่งปี รวบรวมผู้นำทางความคิด ผู้เชี่ยวชาญระดับแนวหน้า และนักประดิษฐ์จากทั่วโลก มาร่วมเจาะลึกเทรนด์อนาคต ไม่ว่าจะเป็น AI, Web3, Sustainability และ Data-Driven Business พร้อมเวิร์กชอปปฏิบัติจริงที่จะช่วยยกระดับทักษะของคุณให้ก้าวทันโลกดิจิทัลที่เปลี่ยนแปลงอย่างรวดเร็ว โอกาสสำคัญในการอัปสกิลและขยายเครือข่ายที่คุณไม่ควรพลาด!",
+  contactEmail: "contact@futuretechsummit.co",
+  contactPhone: "02-123-4567",
   
-  primaryColor: "#D4AF37", // Architectural Brass/Gold
-  secondaryColor: "#E5E5E5", // Concrete White
+  primaryColor: "#F97316", // Brand Orange
+  secondaryColor: "#3B82F6", // Brand Blue
   
-  heroBg: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2000&auto=format&fit=crop", 
-  marqueeBg: "https://images.unsplash.com/photo-1497366216548-37526070297c?q=80&w=2000&auto=format&fit=crop", 
-  sponsorBg: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2000&auto=format&fit=crop", 
+  heroBg: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=2000&auto=format&fit=crop", 
+  marqueeBg: "", 
+  sponsorBg: "", 
 
-  showVideo: true,
-  videoTitle: "THE FUTURE OF HABITAT",
-  videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ", 
-  videoDesc: "รับชมสารคดีสั้นเกี่ยวกับวิวัฒนาการของการออกแบบพื้นที่อยู่อาศัยในศตวรรษที่ 21 ที่ผสานความงามเข้ากับธรรมชาติอย่างยั่งยืน",
+  showVideo: false,
+  videoTitle: "EVENT HIGHLIGHTS 2025",
+  videoUrl: "", 
+  videoDesc: "ชมภาพบรรยากาศและความประทับใจจากงานสัมมนาปีที่ผ่านมา ที่รวบรวมผู้เข้าร่วมงานกว่า 2,000 คนจากหลากหลายอุตสาหกรรม",
 
   speakers: [
-    { id: 1, name: "ศ.ดร. อนันต์ สถาปัตย์", role: "Principal Architect", tag: "KEYNOTE", color: "#D4AF37", img: "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=400&auto=format&fit=crop", desc: "สถาปนิกรางวัลระดับนานาชาติ ผู้บุกเบิกการออกแบบสถาปัตยกรรมที่คำนึงถึงบริบทแวดล้อม (Contextual Architecture)" },
-    { id: 2, name: "Elena Rostova", role: "Lead Interior Designer", tag: "INTERIOR", color: "#E5E5E5", img: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=400&auto=format&fit=crop", desc: "ผู้เชี่ยวชาญด้าน Space Planning และจิตวิทยาของสีในงานตกแต่งภายในระดับ Luxury Commercial" },
-    { id: 3, name: "Kenzo Tanaka", role: "Landscape Architect", tag: "LANDSCAPE", color: "#10B981", img: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=400&auto=format&fit=crop", desc: "การผสานพื้นที่สีเขียวเข้ากับตึกระฟ้า (Vertical Forest) เพื่อแก้ปัญหา Urban Heat Island ในเมืองใหญ่" },
-    { id: 4, name: "นภัสสร ดีไซน์", role: "Sustainable Materials Expert", tag: "MATERIAL", color: "#3B82F6", img: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=400&auto=format&fit=crop", desc: "เปิดนวัตกรรมวัสดุก่อสร้างทางเลือกใหม่ที่ลดการปล่อยคาร์บอน (Net Zero) โดยไม่ลดทอนความสวยงาม" }
+    { id: 1, name: "ดร. วิทยา อนาคตไกล", role: "ผู้อำนวยการศูนย์วิจัย AI & Machine Learning", tag: "AI & DATA", color: "#3B82F6", img: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=400&auto=format&fit=crop", desc: "ผู้เชี่ยวชาญด้านปัญญาประดิษฐ์ที่มีประสบการณ์กว่า 15 ปีใน Silicon Valley จะมาบรรยายหัวข้อ 'Generative AI: The Next Business Revolution' เจาะลึกการนำ AI มาใช้ลดต้นทุนและเพิ่มประสิทธิภาพในองค์กร" },
+    { id: 2, name: "คุณสมาร์ท ดิจิทัลพลัส", role: "CEO & Founder, TechFlow Solutions", tag: "BUSINESS", color: "#F97316", img: "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=400&auto=format&fit=crop", desc: "ผู้บริหารรุ่นใหม่ที่ประสบความสำเร็จในการ Transform ธุรกิจแบบดั้งเดิมสู่ดิจิทัล จะมาร่วมแชร์ Case Study จริงในการปรับโครงสร้างองค์กรให้อยู่รอดในยุค Disruption" },
+    { id: 3, name: "Dr. Sarah Jenkins", role: "Global Web3 Strategist, MetaWorld", tag: "WEB 3.0", color: "#8B5CF6", img: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=400&auto=format&fit=crop", desc: "นักยุทธศาสตร์ระดับโลกด้าน Decentralized Finance และ Blockchain จะมาเผยวิสัยทัศน์เกี่ยวกับเศรษฐกิจดิจิทัลยุคใหม่ และโอกาสทางธุรกิจในโลก Web 3.0" },
+    { id: 4, name: "คุณนวัตกรรม สรรสร้าง", role: "Head of UX/UI, Creative Cloud Inc.", tag: "DESIGN", color: "#EC4899", img: "https://images.unsplash.com/photo-1550989460-0adf9ea622e2?q=80&w=400&auto=format&fit=crop", desc: "เจาะลึกพฤติกรรมผู้บริโภคยุคใหม่ผ่านศาสตร์ Human-Computer Interaction (HCI) และการออกแบบประสบการณ์ผู้ใช้ (UX) ที่กระตุ้นยอดขายได้จริง 300%" },
+    { id: 5, name: "คุณยั่งยืน รักษ์โลก", role: "Chief Sustainability Officer, GreenTech", tag: "SUSTAINABILITY", color: "#10B981", img: "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?q=80&w=400&auto=format&fit=crop", desc: "ผู้บุกเบิกเทคโนโลยีเพื่อสิ่งแวดล้อม (Green Tech) กับบรรยายพิเศษเรื่อง 'ESG as a Growth Engine' เปลี่ยนข้อบังคับด้านสิ่งแวดล้อมให้เป็นโอกาสทำกำไรขององค์กร" },
+    { id: 6, name: "Mr. Alex Chen", role: "Lead Cybersecurity Architect", tag: "SECURITY", color: "#EF4444", img: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=400&auto=format&fit=crop", desc: "ผู้เชี่ยวชาญด้านความปลอดภัยทางไซเบอร์ จะมาอัปเดตภัยคุกคามทางดิจิทัลในปี 2026 และวิธีวางกรอบการป้องกันข้อมูลระดับองค์กร (Zero Trust Architecture)" }
   ],
   
   sponsors: [
-    { id: 1, name: "SCG BUILDING MAT" }, { id: 2, name: "TOA" },
-    { id: 3, name: "COTTO" }, { id: 4, name: "LIXIL" }, { id: 5, name: "AUTODESK" },
-    { id: 6, name: "HERMAN MILLER" }, { id: 7, name: "STEELCASE" }
+    { id: 1, name: "TECH SAUCE" }, { id: 2, name: "GOOGLE CLOUD" },
+    { id: 3, name: "MICROSOFT" }, { id: 4, name: "AWS THAILAND" }, { id: 5, name: "EVENTFORU" }
   ],
 
   tickets: [
-    { id: 1, name: "Exhibition Pass", price: 500, type: "early", badge: "🏛️ BASIC", features: "สิทธิ์เข้าชมโซนจัดแสดงนวัตกรรมวัสดุ\nสิทธิ์ฟังบรรยายบนเวทีรอง (Mini Stage)\nรับสูจิบัตรดิจิทัล" },
-    { id: 2, name: "Conference Pass", price: 2900, type: "regular", badge: "📐 STANDARD", features: "สิทธิพิเศษทั้งหมดของ Exhibition\nสิทธิ์เข้าฟัง Keynote บน Main Stage\nสิทธิ์เข้าร่วม 1 Masterclass Session\nคูปองอาหารกลางวันและ Coffee Break" },
-    { id: 3, name: "Architect VIP Club", price: 9500, type: "vip", badge: "🏢 VIP ACCESS", features: "สิทธิพิเศษทั้งหมดของ Conference\nเข้าใช้ VIP Architect Lounge ติดแอร์\nสิทธิ์ร่วมงาน Networking Dinner กับวิทยากร\nชุดหนังสือรวมผลงานการออกแบบระดับโลก" }
+    { id: 1, name: "Early Bird Pass", price: 1500, type: "early", badge: "🔥 BEST VALUE", features: "เข้าฟังสัมมนาได้ทุกเวที (Main & Second Stage)\nเข้าร่วม 1 Masterclass Workshop (เลือกได้)\nอาหารกลางวัน บุฟเฟต์นานาชาติ และ Coffee Break 2 มื้อ\nรับสิทธิ์ดูวิดีโอย้อนหลัง 30 วัน" },
+    { id: 2, name: "Regular Pass", price: 2500, type: "regular", badge: "STANDARD PASS", features: "เข้าฟังสัมมนาได้ทุกเวที (Main & Second Stage)\nเข้าร่วม 1 Masterclass Workshop (เลือกได้)\nอาหารกลางวัน บุฟเฟต์นานาชาติ และ Coffee Break 2 มื้อ\nรับสิทธิ์ดูวิดีโอย้อนหลัง 30 วัน" },
+    { id: 3, name: "VIP Executive", price: 4500, type: "vip", badge: "👑 VIP EXPERIENCE", features: "สิทธิพิเศษทุกประการของ Regular Pass\nที่นั่ง Reserved Seat แถวหน้าสุด พร้อมโต๊ะทำงาน\nเข้าร่วม Exclusive Networking Dinner กับวิทยากร\nช่องทางลงทะเบียนพิเศษ Fast-Track (ไม่ต้องต่อแถว)\nรับสิทธิ์ดูวิดีโอย้อนหลัง 1 ปีเต็ม พร้อมเอกสารสไลด์" }
   ],
 
   schedule: [
-    { id: 1, time: "09:00", title: "Registration & Exhibition Opens", desc: "ลงทะเบียนรับป้ายชื่อ และเปิดโซนจัดแสดงนวัตกรรมวัสดุก่อสร้างจากแบรนด์ชั้นนำ", tag: "OPENING", color: "#D4AF37" },
-    { id: 2, time: "10:30", title: "Keynote: The Future of Urban Living", desc: "วิสัยทัศน์การออกแบบเมืองและที่อยู่อาศัยในอีก 10 ปีข้างหน้า โดย ศ.ดร. อนันต์ สถาปัตย์", tag: "MAIN STAGE", color: "#E5E5E5" },
-    { id: 3, time: "13:30", title: "Masterclass: AI in 3D Modeling", desc: "เวิร์กชอปเจาะลึกการใช้ AI ช่วย Generate แบบร่างสถาปัตยกรรมและโมเดล 3 มิติ", tag: "WORKSHOP", color: "#3B82F6" },
-    { id: 4, time: "18:00", title: "Design Awards & Networking", desc: "พิธีมอบรางวัลงานออกแบบยอดเยี่ยมแห่งปี และงานเลี้ยงพบปะสังสรรค์ในแวดวงนักออกแบบ", tag: "NETWORKING", color: "#10B981" }
+    { id: 1, time: "08:30", title: "Registration & Morning Coffee", desc: "เปิดจุดลงทะเบียนผู้เข้าร่วมงาน รับป้ายชื่อ (Badge) พร้อมรับประทานของว่างและชา/กาแฟยามเช้า", tag: "NETWORKING", color: "#9CA3AF" },
+    { id: 2, time: "09:30", title: "Opening Keynote: The AI Era", desc: "กล่าวเปิดงานและวิสัยทัศน์สู่อนาคต โดย ดร. วิทยา อนาคตไกล เจาะลึกความเปลี่ยนแปลงที่ AI กำลังสร้างขึ้นในอุตสาหกรรมทั่วโลก", tag: "MAIN STAGE", color: "#F97316" },
+    { id: 3, time: "11:00", title: "Panel Discussion: Survival Guide 2026", desc: "เสวนาโต๊ะกลมโดย 3 ผู้บริหารระดับสูง ถกประเด็นกลยุทธ์การปรับตัวของธุรกิจ SME และองค์กรขนาดใหญ่ ในภาวะเศรษฐกิจผันผวน", tag: "PANEL", color: "#3B82F6" },
+    { id: 4, time: "12:30", title: "Networking Lunch", desc: "พักรับประทานอาหารกลางวัน (International Buffet) และโอกาสในการแลกเปลี่ยนนามบัตรและทำความรู้จักพาร์ทเนอร์ใหม่ๆ", tag: "BREAK", color: "#10B981" },
+    { id: 5, time: "14:00", title: "Deep-Dive Masterclasses", desc: "แยกย้ายเข้าห้องสัมมนาย่อย (Track 1: AI Prompt Engineering, Track 2: Green Tech Implementation, Track 3: UX/UI for Conversion)", tag: "WORKSHOP", color: "#8B5CF6" },
+    { id: 6, time: "16:30", title: "Closing Remarks & Lucky Draw", desc: "สรุปใจความสำคัญของงานสัมมนา แจกรางวัลพิเศษจากผู้สนับสนุน และกิจกรรม After Party สำหรับผู้ถือบัตร VIP", tag: "MAIN STAGE", color: "#F97316" }
   ],
   
   faqs: [
-    { id: 1, q: "งานสัมมนานี้เหมาะกับใครบ้าง?", a: "งานนี้เหมาะสำหรับสถาปนิก, มัณฑนากร, นักพัฒนาอสังหาริมทรัพย์, นักศึกษาคณะสถาปัตยกรรมศาสตร์ และผู้ที่สนใจเทรนด์การออกแบบและวัสดุก่อสร้างใหม่ๆ" },
-    { id: 2, q: "สามารถออกใบกำกับภาษีในนามบริษัทได้หรือไม่?", a: "ได้ครับ หลังจากชำระเงินเสร็จสิ้น ระบบจะมีฟอร์มให้กรอกข้อมูลสำหรับออกใบกำกับภาษีเต็มรูปแบบในนามนิติบุคคล" },
-    { id: 3, q: "ต้องเตรียมอุปกรณ์อะไรมาสำหรับ Masterclass หรือไม่?", a: "สำหรับ Masterclass ที่เกี่ยวกับการใช้โปรแกรม กรุณานำ Laptop หรือ iPad ส่วนตัวมาด้วย ทางงานจะมีจุดชาร์จไฟและ Wi-Fi เตรียมไว้ให้" }
+    { id: 1, q: "งานสัมมนานี้เหมาะกับใครบ้าง?", a: "งานนี้ออกแบบมาสำหรับผู้ประกอบการ (Entrepreneurs), ผู้บริหาร (C-Levels), นักพัฒนาซอฟต์แวร์, นักการตลาดดิจิทัล และผู้ที่สนใจอัปเดตเทรนด์เทคโนโลยีเพื่อนำไปประยุกต์ใช้ในธุรกิจและการทำงานจริง" },
+    { id: 2, q: "สามารถออกใบกำกับภาษีเต็มรูปแบบได้หรือไม่?", a: "ได้แน่นอนครับ ระบบจะส่งลิงก์สำหรับกรอกข้อมูลการออกใบกำกับภาษี (e-Tax Invoice) ไปยังอีเมลของท่านโดยอัตโนมัติ หลังจากการชำระเงินเสร็จสิ้น" },
+    { id: 3, q: "มีล่ามแปลภาษาสำหรับ Session ของวิทยากรต่างชาติหรือไม่?", a: "ทางผู้จัดงานมีบริการหูฟังแปลภาษา (Simultaneous Translation) ไทย-อังกฤษ และ อังกฤษ-ไทย เตรียมไว้ให้ผู้เข้าร่วมงานทุกคนโดยไม่มีค่าใช้จ่ายเพิ่มเติม" },
+    { id: 4, q: "หากซื้อบัตรแล้วไม่สามารถมาร่วมงานได้ สามารถโอนสิทธิ์ได้ไหม?", a: "สามารถโอนสิทธิ์ให้ผู้อื่นได้ โดยต้องแจ้งเปลี่ยนชื่อและอีเมลผู้เข้าร่วมงานมาที่ contact@futuretechsummit.co ล่วงหน้าอย่างน้อย 3 วันก่อนวันจัดงาน" },
+    { id: 5, q: "ข้อกำหนดเรื่องการแต่งกาย (Dress Code) คืออะไร?", a: "แนะนำให้แต่งกายแบบ Smart Casual หรือ Business Casual เพื่อความสุภาพและสะดวกสบายในการร่วมกิจกรรม Workshop และ Networking ตลอดวัน" }
   ]
-};
-
-const getValidVideoUrl = (url) => {
-  if (!url) return '';
-  if (url.includes('watch?v=')) return url.replace('watch?v=', 'embed/').split('&')[0];
-  if (url.includes('youtu.be/')) return url.replace('youtu.be/', 'www.youtube.com/embed/').split('?')[0];
-  return url;
 };
 
 export default function App() {
   const [currentView, setCurrentView] = useState('customer');
   const [adminTab, setAdminTab] = useState('dashboard');
+  const [darkMode, setDarkMode] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
-  // 🔥 Storage Keys สำหรับธีมสถาปัตยกรรม
+  // เปลี่ยน Key V2 เพื่อบังคับให้ดึงข้อมูลชุดใหม่ (Detailed Config)
   const [config, setConfig] = useState(() => {
-    try { const saved = localStorage.getItem('archDesignConfigV1'); return saved ? JSON.parse(saved) : defaultConfig; } 
-    catch { return defaultConfig; }
+    try { 
+      const saved = localStorage.getItem('eventPlatformConfigV2'); 
+      return saved ? { ...defaultConfig, ...JSON.parse(saved) } : defaultConfig; 
+    } catch { return defaultConfig; }
   });
 
   const [registrations, setRegistrations] = useState(() => {
-    try { const saved = localStorage.getItem('archDesignRegisV1'); return saved ? JSON.parse(saved) : []; } 
+    try { const saved = localStorage.getItem('eventPlatformRegisV2'); return saved ? JSON.parse(saved) : []; } 
     catch { return []; }
   });
-
-  const pageViews = useMemo(() => registrations.length > 0 ? registrations.length * 15 + 5600 : 5600, [registrations.length]);
 
   const [selectedSpeaker, setSelectedSpeaker] = useState(null);
   const [ticketModal, setTicketModal] = useState({ isOpen: false, name: '', tier: '', qrUrl: '' });
@@ -95,7 +95,7 @@ export default function App() {
   const [activeFaq, setActiveFaq] = useState(null);
 
   const [formData, setFormData] = useState({
-    name: '', email: '', phone: '', company: '', role: '', ticketId: config?.tickets?.[0]?.id || ''
+    name: '', email: '', phone: '', company: '', role: '', roleOther: '', companyOther: '', workshop: 'ไม่ได้เลือก', ticketId: config?.tickets?.[0]?.id || ''
   });
 
   const [editingUserId, setEditingUserId] = useState(null);
@@ -107,9 +107,6 @@ export default function App() {
   const scannerInputRef = useRef(null);
   const html5QrCodeRef = useRef(null);
 
-  useEffect(() => { localStorage.setItem('archDesignConfigV1', JSON.stringify(config)); }, [config]);
-  useEffect(() => { localStorage.setItem('archDesignRegisV1', JSON.stringify(registrations)); }, [registrations]);
-
   useEffect(() => {
     if (!window.Html5Qrcode) {
       const script = document.createElement('script');
@@ -117,7 +114,25 @@ export default function App() {
       script.async = true;
       document.body.appendChild(script);
     }
+
+    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      setDarkMode(true);
+      document.documentElement.classList.add('dark');
+    } else {
+      setDarkMode(false);
+      document.documentElement.classList.remove('dark');
+    }
   }, []);
+
+  const toggleTheme = () => {
+    const isDark = !darkMode;
+    setDarkMode(isDark);
+    if (isDark) { document.documentElement.classList.add('dark'); localStorage.theme = 'dark'; } 
+    else { document.documentElement.classList.remove('dark'); localStorage.theme = 'light'; }
+  };
+
+  useEffect(() => { localStorage.setItem('eventPlatformConfigV2', JSON.stringify(config)); }, [config]);
+  useEffect(() => { localStorage.setItem('eventPlatformRegisV2', JSON.stringify(registrations)); }, [registrations]);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
@@ -132,11 +147,11 @@ export default function App() {
     }, { threshold: 0.1 });
     document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
     return () => observer.disconnect();
-  }, [currentView, config]);
+  }, [currentView, config, darkMode]);
 
   useEffect(() => {
     const timer = setInterval(() => {
-      if(!config.targetDate) return;
+      if(!config?.targetDate) return;
       const difference = +new Date(config.targetDate) - +new Date();
       if (difference > 0) {
         setTimeLeft({
@@ -148,7 +163,7 @@ export default function App() {
       }
     }, 1000);
     return () => clearInterval(timer);
-  }, [config.targetDate]);
+  }, [config?.targetDate]);
 
   useEffect(() => {
     syncWithGoogleSheet(true);
@@ -194,11 +209,20 @@ export default function App() {
 
   const handleRegisterSubmit = async (e) => {
     e.preventDefault();
+
+    const finalRole = formData.role === 'other' ? formData.roleOther : formData.role;
+    const finalCompany = formData.company === 'other' ? formData.companyOther : formData.company;
+
+    if (formData.role === 'other' && !finalRole) return alert('กรุณาระบุตำแหน่ง/อาชีพของคุณ');
+    if (formData.company === 'other' && !finalCompany) return alert('กรุณาระบุองค์กร/สตูดิโอของคุณ');
+
     setIsSubmitting(true);
     
     const regId = Date.now();
     const newRegis = {
-      id: regId, ...formData, ticketName: selectedTicket.name, ticketId: selectedTicket.id,
+      id: regId, name: formData.name, email: formData.email, phone: formData.phone, 
+      company: `${finalCompany || 'GUEST'} ${finalRole ? `(${finalRole})` : ''}`, 
+      ticketName: selectedTicket.name, ticketId: selectedTicket.id,
       totalPaid: total, timestamp: new Date().toLocaleString('th-TH'), status: 'Pending'
     };
 
@@ -211,12 +235,12 @@ export default function App() {
     } catch (error) { console.error("Sheet API Error:", error); }
 
     setRegistrations(prev => [newRegis, ...prev]);
-    const qrData = encodeURIComponent(`ARCH|${formData.name}|${selectedTicket.name}|${regId}`);
-    const qrUrl = `https://quickchart.io/qr?text=${qrData}&size=300&margin=1&dark=${(config.primaryColor || '#D4AF37').replace('#','')}`;
+    const qrData = encodeURIComponent(`EVENT|${formData.name}|${selectedTicket.name}|${regId}`);
+    const qrUrl = `https://quickchart.io/qr?text=${qrData}&size=300&margin=1&dark=${(config.primaryColor || '#F97316').replace('#','')}`;
     
     setTicketModal({ isOpen: true, name: formData.name, tier: selectedTicket.name, qrUrl });
     setIsSubmitting(false);
-    setFormData({ name: '', email: '', phone: '', company: '', role: '', ticketId: config?.tickets?.[0]?.id || '' });
+    setFormData({ name: '', email: '', phone: '', company: '', role: '', roleOther: '', companyOther: '', workshop: 'ไม่ได้เลือก', ticketId: config?.tickets?.[0]?.id || '' });
   };
 
   const syncWithGoogleSheet = async (isAuto = false) => {
@@ -240,7 +264,7 @@ export default function App() {
 
       const resConfig = await fetch(GAS_URL + "?action=getConfig&timestamp=" + new Date().getTime(), { cache: 'no-store' });
       const configData = await resConfig.json();
-      if (configData && configData.title) setConfig(configData);
+      if (configData && configData.title) setConfig({ ...defaultConfig, ...configData });
     } catch (error) { console.error("Sync Error:", error); }
     if(!isAuto) setIsSyncing(false);
   };
@@ -250,24 +274,24 @@ export default function App() {
     const parts = rawText.split('|');
     let foundUser = null;
 
-    if(parts.length >= 4 && (parts[0] === 'ARCH' || parts[0] === 'EVENT' || parts[0] === 'MOTO' || parts[0] === 'RACE')) {
+    if(parts.length >= 4 && (parts[0] === 'CRAFT' || parts[0] === 'EVENT' || parts[0] === 'MOTO' || parts[0] === 'RACE')) {
        foundUser = registrations.find(r => String(r.id) === String(parts[3]) || (r.name === parts[1] && r.ticketName === parts[2]));
     } else {
        foundUser = registrations.find(r => r.phone === rawText || r.name.toLowerCase().includes(rawText.toLowerCase()) || String(r.id) === rawText);
     }
 
     if(!foundUser) {
-       setScanResult({ type: 'error', message: '❌ INVALID TICKET (ไม่พบในระบบ)' });
+       setScanResult({ type: 'error', message: '❌ ไม่พบข้อมูล (Invalid Ticket)' });
        return;
     }
     if(foundUser.status === 'Checked In') {
-       setScanResult({ type: 'duplicate', user: foundUser, message: '⚠️ ALREADY CHECKED IN (สแกนซ้ำ)' });
+       setScanResult({ type: 'duplicate', user: foundUser, message: '⚠️ สแกนซ้ำ (Already Checked In)' });
        return;
     }
 
     const updatedUser = { ...foundUser, status: 'Checked In' };
     setRegistrations(prev => prev.map(r => r.id === updatedUser.id ? updatedUser : r));
-    setScanResult({ type: 'success', user: updatedUser, message: '✅ ENTRY GRANTED (ตรวจสอบสำเร็จ)' });
+    setScanResult({ type: 'success', user: updatedUser, message: '✅ ยืนยันสิทธิ์สำเร็จ (Entry Granted)' });
 
     try {
       fetch(GAS_URL, {
@@ -278,36 +302,35 @@ export default function App() {
     } catch (err) { console.error(err); }
   };
 
-  // 🔥 ป้ายชื่อสไตล์งานสัมมนาสถาปัตยกรรม (เรียบหรูทางการ)
   const printBadge = (user) => {
     const printWindow = window.open('', '_blank', 'width=800,height=600');
     const html = `
       <html>
         <head>
           <title>Print Badge - ${user.name}</title>
-          <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Kanit:wght@300;400;600;800&display=swap" rel="stylesheet">
+          <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Kanit:wght@400;600;800&display=swap" rel="stylesheet">
           <style>
-            body { font-family: 'Inter', 'Kanit', sans-serif; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; background: #e5e5e5; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .badge { width: 100mm; height: 140mm; background: #ffffff; overflow: hidden; position: relative; display: flex; flex-direction: column; color: #171717; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: 1px solid #d4d4d8; }
-            .header { background: #171717; color: #fff; padding: 25px 15px; text-align: center; text-transform: uppercase; display: flex; flex-direction: column; align-items: center; justify-content: center; border-bottom: 4px solid ${config.primaryColor || '#D4AF37'}; }
-            .header h2 { margin: 0; font-size: 20px; font-weight: 800; letter-spacing: 2px; }
-            .header p { margin: 8px 0 0; font-size: 10px; font-weight: 400; letter-spacing: 3px; color: ${config.primaryColor || '#D4AF37'}; }
-            .content { padding: 40px 20px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-            .name { font-size: 32px; font-weight: 800; color: #171717; text-transform: uppercase; margin-bottom: 12px; text-align: center; line-height: 1.2; word-break: break-word; letter-spacing: -0.5px;}
+            body { font-family: 'Kanit', sans-serif; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; background: #e5e5e5; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .badge { width: 100mm; height: 140mm; background: #ffffff; overflow: hidden; position: relative; display: flex; flex-direction: column; color: #171717; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: 1px solid #d4d4d8; border-radius: 20px; }
+            .header { background: #0A0D14; color: #fff; padding: 25px 15px; text-align: center; text-transform: uppercase; display: flex; flex-direction: column; align-items: center; justify-content: center; border-bottom: 5px solid ${config?.primaryColor || '#F97316'}; }
+            .header h2 { margin: 0; font-size: 22px; font-weight: 700; font-family: 'Playfair Display', serif; }
+            .header p { margin: 5px 0 0; font-size: 10px; font-weight: 400; letter-spacing: 3px; color: ${config?.primaryColor || '#F97316'}; }
+            .content { padding: 40px 20px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; background-image: radial-gradient(rgba(0,0,0,0.03) 1px, transparent 1px); background-size: 15px 15px; }
+            .name { font-size: 38px; font-weight: 800; color: #171717; text-transform: uppercase; margin-bottom: 12px; text-align: center; line-height: 1.1; word-break: break-word; letter-spacing: -0.5px;}
             .company { font-size: 16px; font-weight: 500; color: #737373; text-transform: uppercase; text-align: center; letter-spacing: 1px; }
-            .footer { background: #f5f5f5; padding: 25px 20px; text-align: center; border-top: 1px solid #e5e5e5; }
-            .ticket { font-size: 18px; font-weight: 800; color: #171717; text-transform: uppercase; letter-spacing: 2px; display: inline-block; padding: 10px 25px; border: 2px solid #171717; background: transparent; }
+            .footer { background: #fdfbf7; padding: 25px 20px; text-align: center; border-top: 1px solid #e5e5e5; }
+            .ticket { font-size: 20px; font-weight: 800; color: ${config?.primaryColor || '#F97316'}; text-transform: uppercase; letter-spacing: 2px; display: inline-block; padding: 10px 30px; border-radius: 50px; border: 2px solid ${config?.primaryColor || '#F97316'}; background: rgba(249, 115, 22, 0.05); }
             @media print {
               body { background: #fff; padding: 0; }
-              .badge { box-shadow: none; border: 1px solid #ccc; width: 100vw; height: 100vh; }
+              .badge { box-shadow: none; border: 1px solid #ccc; width: 100vw; height: 100vh; border-radius: 0; }
             }
           </style>
         </head>
         <body>
           <div class="badge">
             <div class="header">
-              <h2>${config.title}</h2>
-              <p>DELEGATE PASS</p>
+              <h2>${config?.title || 'EVENT'}</h2>
+              <p>SYMPOSIUM PASS</p>
             </div>
             <div class="content">
               <div class="name">${user.name}</div>
@@ -317,9 +340,7 @@ export default function App() {
               <div class="ticket">${user.ticketName || 'ACCESS PASS'}</div>
             </div>
           </div>
-          <script>
-            window.onload = () => { setTimeout(() => { window.print(); window.close(); }, 800); }
-          </script>
+          <script>window.onload = () => { setTimeout(() => { window.print(); window.close(); }, 800); }</script>
         </body>
       </html>
     `;
@@ -329,17 +350,18 @@ export default function App() {
 
   const scrollTo = (id) => { const el = document.getElementById(id); if(el) el.scrollIntoView({ behavior: 'smooth' }); setIsMobileMenuOpen(false); };
   const handleArrayChange = (arr, id, field, value) => setConfig(prev => ({ ...prev, [arr]: (prev[arr]||[]).map(i => i.id === id ? { ...i, [field]: value } : i) }));
+  
   const handleSaveConfig = async () => {
     alert('⏳ กำลังบันทึกการตั้งค่าขึ้น Google Sheet...');
     try {
       await fetch(GAS_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "saveConfig", data: config }) });
-      localStorage.setItem('archDesignConfigV1', JSON.stringify(config));
+      localStorage.setItem('eventPlatformConfigV2', JSON.stringify(config));
       alert('✅ บันทึกการตั้งค่าลงระบบ Google Sheet เรียบร้อยแล้ว!');
     } catch (error) { alert('❌ เกิดข้อผิดพลาดในการบันทึกข้อมูล'); }
   };
 
-  const addSpeaker = () => setConfig(prev => ({ ...prev, speakers: [...(prev.speakers || []), { id: Date.now(), name: "ชื่อวิทยากร", role: "ตำแหน่ง", tag: "TAG", color: "#D4AF37", img: "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=400&auto=format&fit=crop", desc: "รายละเอียด" }] }));
-  const addSchedule = () => setConfig(prev => ({ ...prev, schedule: [...(prev.schedule || []), { id: Date.now(), time: "00:00", title: "กิจกรรม", desc: "รายละเอียด", tag: "INFO", color: "#E5E5E5" }] }));
+  const addSpeaker = () => setConfig(prev => ({ ...prev, speakers: [...(prev.speakers || []), { id: Date.now(), name: "ชื่อวิทยากร", role: "ตำแหน่ง", tag: "TAG", color: "#3B82F6", img: "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=400&auto=format&fit=crop", desc: "รายละเอียด" }] }));
+  const addSchedule = () => setConfig(prev => ({ ...prev, schedule: [...(prev.schedule || []), { id: Date.now(), time: "00:00", title: "กิจกรรม", desc: "รายละเอียด", tag: "INFO", color: "#10B981" }] }));
   const addSponsor = () => setConfig(prev => ({ ...prev, sponsors: [...(prev.sponsors || []), { id: Date.now(), name: "แบรนด์" }] }));
   const addFaq = () => setConfig(prev => ({ ...prev, faqs: [...(prev.faqs || []), { id: Date.now(), q: "คำถาม?", a: "คำตอบ" }] }));
   const addTicket = () => setConfig(prev => ({ ...prev, tickets: [...(prev.tickets || []), { id: Date.now(), name: "ชื่อบัตร", price: 1000, type: "regular", badge: "NEW", features: "Benefit 1" }] }));
@@ -370,530 +392,607 @@ export default function App() {
     }
   };
 
-  const totalRevenueNum = registrations.reduce((sum, r) => sum + (Number(r.totalPaid) || 0), 0);
-  const totalAttendeesNum = registrations.length;
+  const safeRegistrations = Array.isArray(registrations) ? registrations : [];
+  const totalRevenueNum = safeRegistrations.reduce((sum, r) => sum + (Number(r.totalPaid) || 0), 0);
+  const totalAttendeesNum = safeRegistrations.length;
   const avgOrderValue = totalAttendeesNum > 0 ? Math.round(totalRevenueNum / totalAttendeesNum) : 0;
   const ticketStats = (config?.tickets || []).map(t => {
-    const count = registrations.filter(r => String(r.ticketId) === String(t.id) || (r.ticketName && r.ticketName.toLowerCase().includes(t.name.toLowerCase()))).length;
+    const count = safeRegistrations.filter(r => String(r.ticketId) === String(t.id) || (r.ticketName && r.ticketName.toLowerCase().includes(t.name.toLowerCase()))).length;
     const percent = totalAttendeesNum ? Math.round((count / totalAttendeesNum) * 100) : 0;
     return { ...t, count, percent };
   });
   const topTicket = [...ticketStats].sort((a,b) => b.count - a.count)[0];
 
   // ==========================================
-  // CSS: MODERN ARCHITECTURE THEME
+  // VIEW RENDER: CUSTOMER
   // ==========================================
-  const customerCss = `
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Kanit:wght@300;400;500;600;700;800;900&display=swap');
-    
-    :root { 
-      --primary: ${config.primaryColor || '#D4AF37'}; 
-      --primary-glow: ${config.primaryColor ? config.primaryColor + '40' : 'rgba(212, 175, 55, 0.25)'}; 
-      --secondary: ${config.secondaryColor || '#E5E5E5'}; 
-      --bg-dark: #121212; 
-      --bg-card: #18181b; 
-      --text-light: #fafafa; 
-      --text-muted: #a1a1aa; 
-      --border: rgba(255, 255, 255, 0.1); 
-    }
-    
-    html { scroll-behavior: smooth; }
-    body { font-family: 'Inter', 'Kanit', sans-serif; background-color: var(--bg-dark); color: var(--text-light); overflow-x: hidden; margin: 0; }
-    
-    .bg-pattern { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -1; opacity: 0.05; pointer-events: none; background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px); background-size: 50px 50px; }
-
-    .reveal { opacity: 0; transform: translateY(30px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
-    .reveal.is-visible { opacity: 1; transform: translateY(0); }
-    .delay-1 { transition-delay: 0.1s; } .delay-2 { transition-delay: 0.2s; }
-    
-    @keyframes shine { to { background-position: 200% center; } }
-    .text-gradient { background: linear-gradient(90deg, #fff 0%, var(--primary) 50%, #fff 100%); background-size: 200% auto; color: transparent; -webkit-background-clip: text; background-clip: text; animation: shine 5s linear infinite; }
-    @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-
-    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
-    .section { padding: 100px 0; position: relative; z-index: 2; border-bottom: 1px solid var(--border); }
-    .section-alt { background: #0f0f11; }
-    
-    .sec-header { text-align: center; margin-bottom: 60px; }
-    .sec-badge { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 700; color: var(--bg-dark); background: var(--primary); padding: 6px 16px; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 15px; }
-    .sec-title { font-size: 40px; font-weight: 800; color: #fff; margin-bottom: 15px; letter-spacing: -1px; text-transform: uppercase; }
-    .sec-line { width: 60px; height: 3px; background: var(--primary); margin: 0 auto; }
-
-    /* Minimalist Buttons - Sharp edges */
-    .btn { display: inline-flex; align-items: center; gap: 10px; justify-content: center; background: transparent; color: #fff; border: 1px solid var(--border); padding: 16px 36px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.3s; text-transform: uppercase; letter-spacing: 2px; }
-    .btn:hover:not(:disabled) { background: #fff; color: var(--bg-dark); }
-    .btn-primary { background: var(--primary); color: var(--bg-dark); border: 1px solid var(--primary); font-weight: 700; }
-    .btn-primary:hover:not(:disabled) { background: transparent; color: var(--primary); }
-
-    .navbar { position: fixed; top: 0; width: 100%; z-index: 1000; padding: 25px 0; transition: all 0.4s ease; border-bottom: 1px solid transparent; }
-    .navbar.scrolled { padding: 15px 0; background: rgba(18, 18, 18, 0.95); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
-    .nav-wrap { display: flex; justify-content: space-between; align-items: center; }
-    .logo { font-size: 20px; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 10px; cursor: pointer; letter-spacing: 2px; text-transform: uppercase; }
-    .logo-mark { width: 32px; height: 32px; background: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 800; color: var(--bg-dark); }
-    .nav-links { display: flex; gap: 35px; }
-    .nav-links a { color: var(--text-muted); font-weight: 500; cursor: pointer; transition: 0.3s; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; position: relative;}
-    .nav-links a:hover { color: #fff; }
-    
-    .hero { min-height: 100vh; display: flex; align-items: center; position: relative; overflow: hidden; padding-top: 60px; }
-    .hero-bg { position: absolute; inset: 0; z-index: -1; background-size: cover; background-position: center; filter: grayscale(40%) brightness(0.6); }
-    .hero::before { content: ''; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(18,18,18,1) 0%, rgba(18,18,18,0.4) 100%); z-index: 0; }
-    .hero-content { position: relative; z-index: 1; max-width: 800px; }
-    .hero h1 { font-size: 64px; line-height: 1.1; margin-bottom: 20px; color: #fff; font-weight: 800; letter-spacing: -1px; text-transform: uppercase; }
-    
-    .countdown-wrap { display: flex; gap: 12px; margin-bottom: 30px; flex-wrap: wrap; }
-    .cd-box { background: rgba(255,255,255,0.02); border: 1px solid var(--border); backdrop-filter: blur(4px); width: 75px; height: 75px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-    .cd-num { font-size: 26px; font-weight: 700; color: #fff; line-height: 1; font-family: monospace; }
-    .cd-label { font-size: 9px; color: var(--primary); text-transform: uppercase; font-weight: 600; margin-top: 4px; letter-spacing: 1px; }
-
-    .grid-4 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; }
-    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
-    
-    /* Concept Cards - Sharp edges */
-    .concept-card { padding: 40px 30px; text-align: center; transition: 0.4s; background: transparent; border: 1px solid var(--border); }
-    .concept-card:hover { border-color: var(--primary); background: rgba(255,255,255,0.02); transform: translateY(-5px); }
-    .concept-icon { width: 60px; height: 60px; background: rgba(255,255,255,0.05); display: flex; justify-content: center; align-items: center; margin: 0 auto 20px; font-size: 24px; border: 1px solid var(--border); color: #fff; transition: 0.4s; }
-    .concept-card:hover .concept-icon { border-color: var(--primary); color: var(--primary); }
-    
-    /* Speaker Cards */
-    .speaker-card { transition: 0.4s; cursor: pointer; background: var(--bg-card); border: 1px solid var(--border); position: relative; overflow: hidden; }
-    .speaker-card:hover { transform: translateY(-5px); border-color: var(--primary); }
-    .speaker-img-wrap { height: 300px; position: relative; }
-    .speaker-img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(80%) contrast(1.1); transition: 0.7s; }
-    .speaker-card:hover .speaker-img { filter: grayscale(0%) contrast(1); }
-    .speaker-tag { position: absolute; top: 15px; left: 15px; font-size: 9px; font-weight: 700; color: var(--bg-dark); background: var(--primary); padding: 4px 12px; letter-spacing: 1px; text-transform: uppercase; }
-    .speaker-info { padding: 25px; text-align: left; border-top: 1px solid var(--border); }
-
-    .timeline-wrap { max-width: 800px; margin: 0 auto; position: relative; padding-left: 40px; }
-    .timeline-wrap::before { content: ''; position: absolute; left: 19px; top: 0; bottom: 0; width: 1px; background: var(--border); }
-    .time-card { padding: 30px; display: flex; gap: 30px; align-items: center; margin-bottom: 20px; position: relative; transition: 0.3s; background: var(--bg-card); border: 1px solid var(--border); }
-    .time-card:hover { border-color: var(--primary); }
-    .time-dot { position: absolute; left: -24px; top: 50%; transform: translateY(-50%); width: 10px; height: 10px; background: var(--bg-dark); border: 2px solid var(--primary); z-index: 2; transition: 0.3s; }
-    .time-card:hover .time-dot { background: var(--primary); }
-    .time-left { width: 90px; flex-shrink: 0; border-right: 1px solid var(--border); padding-right: 20px; text-align: right; }
-    .time-text { font-size: 24px; font-weight: 700; color: #fff; line-height: 1; font-family: monospace; }
-
-    .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border: 1px solid var(--border); background: #000; }
-    .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; filter: grayscale(20%); }
-
-    .ticket-wrapper { height: 100%; display: block; cursor: pointer; }
-    .ticket-card { padding: 40px 30px; position: relative; display: flex; flex-direction: column; transition: 0.4s; height: 100%; background: transparent; border: 1px solid var(--border); }
-    .ticket-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--primary); color: var(--bg-dark); padding: 4px 16px; font-size: 9px; font-weight: 800; letter-spacing: 2px; white-space: nowrap; }
-    .ticket-radio:checked + .ticket-wrapper .ticket-card { border-color: var(--primary); background: rgba(255,255,255,0.02); transform: translateY(-5px); }
-    
-    .faq-item { border-bottom: 1px solid var(--border); padding: 25px 0; cursor: pointer; }
-    .faq-q { font-size: 16px; font-weight: 600; color: #fff; display: flex; justify-content: space-between; align-items: center; letter-spacing: 0.5px; }
-    .faq-a { font-size: 14px; color: var(--text-muted); margin-top: 15px; line-height: 1.7; display: none; padding-right: 20px; font-weight: 300; }
-    .faq-item.active .faq-a { display: block; animation: fadeDown 0.3s ease; }
-    .faq-item.active .faq-q { color: var(--primary); }
-    @keyframes fadeDown { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
-
-    .form-box-wrapper { max-width: 850px; margin: 0 auto; }
-    .form-box { padding: 50px 40px; background: var(--bg-card); border: 1px solid var(--border); border-top: 4px solid var(--primary); }
-    .form-group { margin-bottom: 20px; text-align: left; }
-    .form-group label { display: block; font-size: 11px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
-    .form-input { width: 100%; padding: 15px 20px; background: var(--bg-dark); border: 1px solid var(--border); color: #fff; font-size: 14px; transition: 0.3s; font-family: monospace; }
-    .form-input:focus { border-color: var(--primary); outline: none; background: rgba(255,255,255,0.02); }
-
-    /* ==========================================
-       MOBILE RESPONSIVE
-       ========================================== */
-    @media (max-width: 768px) {
-      .hero h1 { font-size: 40px; letter-spacing: 0; }
-      .sec-title { font-size: 28px; }
-      .section { padding: 60px 0; }
-      .grid-4, .grid-3 { grid-template-columns: 1fr; gap: 20px; }
-      .grid-2 { grid-template-columns: 1fr !important; gap: 15px !important; }
-      .form-box { padding: 30px 20px; }
-      .time-card { flex-direction: column; align-items: flex-start; gap: 15px; padding: 25px 20px; }
-      .time-left { border-right: none; border-bottom: 1px solid var(--border); padding-bottom: 15px; text-align: left; width: 100%; }
-      .timeline-wrap::before { left: 19px; }
-      .time-dot { left: -6px; top: 40px; }
-      .timeline-wrap { padding-left: 40px; }
-      .nav-wrap .btn { display: none; }
-      .form-box > form > div:last-child { flex-direction: column; align-items: stretch; text-align: center; gap: 20px; padding: 20px; }
-      .form-box > form > div:last-child > div { text-align: center !important; justify-content: center; width: 100%; }
-      .form-box > form > div:last-child button { width: 100%; }
-    }
-  `;
-
   if (currentView === 'customer') {
     return (
       <>
-        <style>{customerCss}</style>
-        
-        {/* 🔥 Loader แบบ Minimal Architecture */}
-        {isSubmitting && (
-          <div style={{ position: 'fixed', inset: 0, background: 'rgba(18,18,18,0.95)', zIndex: 9999, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
-            <div style={{ width: '50px', height: '50px', border: '2px solid var(--border)', borderTopColor: 'var(--primary)', animation: 'spin 1s linear infinite', marginBottom: '20px' }}></div>
-            <h2 style={{ fontSize: '16px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '4px', animation: 'pulse 2s infinite' }}>Processing</h2>
-            <p style={{ color: 'var(--text-muted)', fontSize: '11px', marginTop: '10px', textTransform: 'uppercase', letterSpacing: '1px' }}>Securing your attendance</p>
-            <style>
-              {`
-                @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-                @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-              `}
-            </style>
-          </div>
-        )}
+        <div className={`transition-colors duration-500 min-h-screen antialiased ${darkMode ? 'dark bg-[#0A0D14] text-gray-200' : 'bg-[#FDFBF7] text-gray-800'}`}>
+          
+          <style dangerouslySetInnerHTML={{__html: `
+            html { scroll-behavior: smooth; }
+            .font-serif { font-family: 'Playfair Display', serif; }
+            .font-sans { font-family: 'Kanit', sans-serif; }
+            
+            /* Parallax Background */
+            @keyframes panBackground { 0% { background-position: 0% 0%; } 100% { background-position: 100% 100%; } }
+            .thai-pattern-bg {
+              position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none; transition: all 0.5s ease;
+              background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23000' stroke-width='1'%3E%3Cpath d='M30 5L55 30L30 55L5 30Z M30 15L45 30L30 45L15 30Z M30 0V60 M0 30H60'/%3E%3C/g%3E%3C/svg%3E");
+              background-repeat: repeat; background-size: 90px; opacity: 0.03;
+              animation: panBackground 90s linear infinite;
+            }
+            .dark .thai-pattern-bg { opacity: 0.08; filter: invert(65%) sepia(100%) saturate(500%) hue-rotate(350deg) brightness(1.2); mix-blend-mode: screen; }
 
-        <div className="bg-pattern"></div>
+            /* Glow & Float Effects */
+            @keyframes glowPulse { 0% { box-shadow: 0 0 0 2px #F97316, 0 15px 30px -5px rgba(249, 115, 22, 0.2); } 100% { box-shadow: 0 0 0 2px #F97316, 0 20px 45px 10px rgba(249, 115, 22, 0.5); } }
+            .ticket-radio:checked + div { border-color: #F97316 !important; animation: glowPulse 2s infinite alternate ease-in-out !important; transform: translateY(-10px) scale(1.02) !important; z-index: 20; }
+            
+            @keyframes floatBadge { 0%, 100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(-6px); filter: brightness(1.1); } }
+            .badge-float { animation: floatBadge 3s ease-in-out infinite; }
 
-        <nav className={`navbar ${isScrolled ? 'scrolled' : ''}`}>
-          <div className="container nav-wrap">
-            <a onClick={() => scrollTo('home')} className="logo">
-              <div className="logo-mark">V</div> 
-              <div>{config.title?.split(' ')[0]}<span style={{fontWeight:300, color: 'var(--primary)'}}> {config.title?.split(' ')[1] || 'SPACES'}</span></div>
-            </a>
-            <div className="nav-links hidden md:flex">
-              <a onClick={() => scrollTo('concept')}>Exhibition</a>
-              {config.showVideo && <a onClick={() => scrollTo('video')}>Documentary</a>}
-              <a onClick={() => scrollTo('speakers')}>Architects</a>
-              <a onClick={() => scrollTo('schedule')}>Agenda</a>
+            .premium-card { transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease; }
+            .premium-card:hover { transform: translateY(-10px); box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.15); }
+            .dark .premium-card:hover { box-shadow: 0 30px 60px -12px rgba(249, 115, 22, 0.2); border-color: rgba(249, 115, 22, 0.4); }
+
+            .premium-card ul li svg { transition: transform 0.3s ease, color 0.3s ease; }
+            .premium-card:hover ul li svg { transform: translateX(4px) scale(1.15); color: #F97316; }
+
+            /* VIP Shimmer & Reveal Animation */
+            @keyframes shimmerSweep { 0% { transform: translateX(-150%) skewX(-45deg); } 100% { transform: translateX(250%) skewX(-45deg); } }
+            .vip-shimmer { position: absolute; top: 0; left: 0; width: 60%; height: 100%; background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.15) 50%, rgba(255,255,255,0) 100%); animation: shimmerSweep 3.5s infinite cubic-bezier(0.4, 0, 0.2, 1); pointer-events: none; }
+
+            .reveal { opacity: 0; transform: translateY(50px); transition: all 0.9s cubic-bezier(0.25, 1, 0.5, 1); }
+            .reveal.is-visible { opacity: 1; transform: translateY(0); }
+            
+            /* Marquees & Utils */
+            .marquee-container { display: flex; width: 200%; animation: marquee-slide 25s linear infinite; }
+            .sponsor-track { display: flex; width: max-content; animation: sponsor-marquee-slide 35s linear infinite; }
+            @keyframes marquee-slide { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+            @keyframes sponsor-marquee-slide { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+            .faq-answer { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+            .faq-answer > div { overflow: hidden; }
+            .faq-item.active .faq-answer { grid-template-rows: 1fr; margin-top: 1rem; }
+            .faq-item.active .faq-icon { transform: rotate(180deg); color: #F97316; }
+            
+            @keyframes spin-custom { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+            @keyframes pulse-custom { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+            /* Glassmorphism & Admin UI */
+            .admin-glass { background: rgba(17, 24, 39, 0.6); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.05); transition: all 0.3s ease; }
+            .admin-glass:hover { border-color: rgba(249, 115, 22, 0.3); transform: translateY(-3px); box-shadow: 0 15px 30px -5px rgba(0,0,0,0.5), 0 0 20px rgba(249,115,22,0.1); }
+            .admin-table-row { transition: all 0.2s ease; border-left: 2px solid transparent; }
+            .admin-table-row:hover { background: rgba(255,255,255,0.03); border-left: 2px solid #F97316; transform: scale(1.01); }
+            .stagger-enter { animation: fadeInUp 0.5s ease-out forwards; opacity: 0; }
+            @keyframes fadeInUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+            .glow-text { text-shadow: 0 0 10px rgba(249,115,22,0.5); }
+          `}} />
+
+          {isSubmitting && (
+            <div className="fixed inset-0 bg-white/90 dark:bg-[#0A0D14]/90 backdrop-blur-md z-[9999] flex flex-col items-center justify-center">
+              <div className="w-16 h-16 border-4 border-gray-200 dark:border-gray-800 border-t-[#F97316] rounded-full mb-6" style={{animation: 'spin-custom 1s linear infinite'}}></div>
+              <h2 className="text-xl font-bold font-serif text-gray-900 dark:text-white uppercase tracking-widest" style={{animation: 'pulse-custom 2s infinite'}}>Processing Booking...</h2>
+              <p className="text-sm text-gray-500 mt-2 font-sans">โปรดรอสักครู่ ระบบกำลังสำรองที่นั่งให้คุณ</p>
             </div>
-            <button className="btn btn-primary hidden md:inline-flex" style={{padding: '10px 24px', fontSize: '11px'}} onClick={() => scrollTo('register')}>BOOK TICKET</button>
-          </div>
-        </nav>
+          )}
 
-        <section id="home" className="hero">
-          <div className="hero-bg" style={{ backgroundImage: `url(${config.heroBg})` }}></div>
-          <div className="container">
-            <div className="hero-content reveal">
-              <div className="countdown-wrap delay-1">
-                <div className="cd-box"><div className="cd-num">{timeLeft.days}</div><div className="cd-label">Days</div></div>
-                <div className="cd-box"><div className="cd-num">{timeLeft.hours}</div><div className="cd-label">Hrs</div></div>
-                <div className="cd-box"><div className="cd-num">{timeLeft.minutes}</div><div className="cd-label">Mins</div></div>
-                <div className="cd-box"><div className="cd-num">{timeLeft.seconds}</div><div className="cd-label">Secs</div></div>
-              </div>
-              
-              <h1 className="glow-text">{config.title} <br/>
-                <span className="text-gradient block font-extrabold mt-2 uppercase" style={{fontSize: '32px'}}>
-                  {config.subtitle}
-                </span>
-              </h1>
-              
-              <p style={{ color: '#e4e4e7', fontSize: '15px', maxWidth: '650px', marginBottom: '40px', fontWeight: 300, lineHeight: 1.8 }} className="delay-1">{config.aboutText}</p>
-              
-              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 delay-2">
-                <button className="btn btn-primary w-full sm:w-auto" style={{ padding: '16px 36px', fontSize: '13px' }} onClick={() => scrollTo('register')}>RESERVE SEAT</button>
-                <div style={{ display: 'flex', gap: '15px', borderLeft: '1px solid var(--primary)', paddingLeft: '15px' }}>
-                  <div>
-                    <div style={{ color: '#fff', fontSize: '14px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>{config.date}</div>
-                    <div style={{ color: 'var(--text-muted)', fontSize: '12px', fontWeight: 400 }}>{config.location}</div>
-                  </div>
+          <div className="thai-pattern-bg"></div>
+
+          {/* Navbar */}
+          <nav className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-white/90 dark:bg-[#0A0D14]/90 backdrop-blur-xl border-b border-gray-200/50 dark:border-gray-800/50 shadow-sm py-2' : 'bg-transparent py-4'}`}>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex items-center justify-between h-16 md:h-20">
+                <div className="flex items-center gap-3 cursor-pointer group" onClick={() => scrollTo('home')}>
+                  <div className="w-1.5 h-6 bg-[#F97316] rounded-full group-hover:h-8 transition-all duration-300 shadow-[0_0_12px_#F97316]"></div>
+                  <span className="text-heading font-bold text-xl tracking-tight text-gray-900 dark:text-white leading-none flex flex-col">
+                    {config?.title?.split(' ')?.[0] || 'EVENT'} {config?.title?.split(' ')?.[1] || 'NAME'}
+                    <span className="text-[9px] tracking-[0.25em] font-sans text-[#F97316] font-bold uppercase mt-1">Official Platform</span>
+                  </span>
+                </div>
+                
+                <div className="hidden lg:flex space-x-10 text-sm font-medium text-gray-500 dark:text-gray-400 relative z-10">
+                  <a href="#about" onClick={(e)=>{e.preventDefault(); scrollTo('home');}} className="hover:text-[#F97316] transition flex items-center gap-1">หน้าแรก</a>
+                  <a href="#concept" onClick={(e)=>{e.preventDefault(); scrollTo('concept');}} className="hover:text-[#F97316] transition flex items-center gap-1">แนวคิด</a>
+                  <a href="#speakers" onClick={(e)=>{e.preventDefault(); scrollTo('speakers');}} className="hover:text-[#F97316] transition flex items-center gap-1">วิทยากร</a>
+                  <a href="#schedule" onClick={(e)=>{e.preventDefault(); scrollTo('schedule');}} className="hover:text-[#F97316] transition flex items-center gap-1">กำหนดการ</a>
+                </div>
+                
+                <div className="flex items-center gap-3 md:gap-4 relative z-10">
+                  <button onClick={toggleTheme} className="p-2.5 rounded-full bg-gray-100/50 dark:bg-gray-800/50 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-300 backdrop-blur-sm border border-transparent dark:border-gray-700">
+                    {darkMode ? (
+                      <svg className="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                    ) : (
+                      <svg className="w-4 h-4 text-slate-700" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                    )}
+                  </button>
+                  <a href="#register" onClick={(e)=>{e.preventDefault(); scrollTo('register');}} className="bg-[#F97316] text-white px-5 md:px-6 py-2.5 text-[10px] font-bold tracking-widest uppercase transition-all duration-300 rounded-full shadow-[0_8px_20px_-4px_rgba(249,115,22,0.4)] hidden sm:flex items-center gap-2 hover:scale-105">
+                    ลงทะเบียน <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                  </a>
+                  <button className="lg:hidden p-2 text-gray-900 dark:text-white" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                  </button>
                 </div>
               </div>
             </div>
-          </div>
-        </section>
+          </nav>
 
-        <div style={{ background: 'var(--bg-card)', padding: '50px 0', borderBottom: '1px solid var(--border)' }}>
-          <div className="container grid-4" style={{ textAlign: 'center' }}>
-            <div><div style={{ fontSize: '36px', fontWeight: 700, color: '#fff', fontFamily: 'monospace' }}>50<span style={{fontSize:'16px', color:'var(--primary)'}}>+</span></div><div style={{ color: 'var(--text-muted)', fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '2px' }}>Global Speakers</div></div>
-            <div><div style={{ fontSize: '36px', fontWeight: 700, color: '#fff', fontFamily: 'monospace' }}>20<span style={{fontSize:'16px', color:'var(--primary)'}}>+</span></div><div style={{ color: 'var(--text-muted)', fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '2px' }}>Masterclasses</div></div>
-            <div><div style={{ fontSize: '36px', fontWeight: 700, color: '#fff', fontFamily: 'monospace' }}>150<span style={{fontSize:'16px', color:'var(--primary)'}}>+</span></div><div style={{ color: 'var(--text-muted)', fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '2px' }}>Exhibitors</div></div>
-            <div><div style={{ fontSize: '36px', fontWeight: 700, color: '#fff', fontFamily: 'monospace' }}>10K<span style={{fontSize:'16px', color:'var(--primary)'}}>+</span></div><div style={{ color: 'var(--text-muted)', fontSize: '10px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '2px' }}>Attendees</div></div>
-          </div>
-        </div>
+          {/* Mobile Menu */}
+          {isMobileMenuOpen && (
+            <div className="fixed inset-0 z-[100] bg-white/95 dark:bg-[#0A0D14]/95 backdrop-blur-xl flex flex-col justify-center items-center gap-8 text-2xl font-serif font-bold text-gray-900 dark:text-white">
+              <button onClick={() => setIsMobileMenuOpen(false)} className="absolute top-6 right-6 p-2 text-gray-500 hover:text-[#F97316]">
+                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+              </button>
+              <a href="#about" onClick={(e)=>{e.preventDefault(); scrollTo('home'); setIsMobileMenuOpen(false);}}>หน้าแรก</a>
+              <a href="#concept" onClick={(e)=>{e.preventDefault(); scrollTo('concept'); setIsMobileMenuOpen(false);}}>แนวคิด</a>
+              <a href="#speakers" onClick={(e)=>{e.preventDefault(); scrollTo('speakers'); setIsMobileMenuOpen(false);}}>วิทยากร</a>
+              <a href="#schedule" onClick={(e)=>{e.preventDefault(); scrollTo('schedule'); setIsMobileMenuOpen(false);}}>กำหนดการ</a>
+              <a href="#register" onClick={(e)=>{e.preventDefault(); scrollTo('register'); setIsMobileMenuOpen(false);}} className="bg-[#F97316] text-white px-8 py-3 rounded-full text-lg mt-4 font-sans shadow-[0_8px_20px_-4px_rgba(249,115,22,0.4)]">ลงทะเบียนทันที</a>
+            </div>
+          )}
 
-        {config.showVideo && (
-          <section id="video" className="section section-alt">
-            <div className="container" style={{ maxWidth: '1000px' }}>
-              <div className="sec-header reveal">
-                <div className="sec-badge">DOCUMENTARY</div>
-                <h2 className="sec-title">{config.videoTitle}</h2>
-                <p style={{ color: 'var(--text-muted)', marginTop: '10px', fontSize: '14px', fontWeight: 300 }}>{config.videoDesc}</p>
+          {/* Hero Section */}
+          <section id="home" className="pt-32 md:pt-40 pb-20 px-4 max-w-7xl mx-auto relative z-10 overflow-hidden md:overflow-visible">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 items-center">
+              <div className="lg:col-span-7 mt-8 md:mt-0 reveal delay-1">
+                <div className="inline-flex items-center gap-2 bg-orange-50/80 dark:bg-orange-500/10 border border-orange-100 dark:border-orange-500/20 text-[#F97316] text-[9px] md:text-[10px] font-bold tracking-widest uppercase mb-6 md:mb-8 px-4 py-2 rounded-full backdrop-blur-sm">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#F97316] animate-ping absolute"></span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#F97316] relative"></span>
+                  The Premier Event & Symposium
+                </div>
+                
+                <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 dark:text-white leading-[1.15] md:leading-[1.1] mb-6">
+                  {config?.title?.split(' ')?.[0] || 'EVENT'} <br className="hidden md:block"/>{config?.title?.split(' ')?.[1] || 'NAME'}<br/>
+                  <span className="font-sans text-2xl sm:text-3xl md:text-5xl text-[#F97316] font-semibold inline-block mt-2">{config.subtitle}</span><br/>
+                </h1>
+                
+                <p className="text-gray-500 dark:text-gray-400 mb-8 md:mb-10 max-w-xl leading-relaxed text-sm md:text-base font-light">{config.aboutText}</p>
+
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+                  <a href="#register" onClick={(e)=>{e.preventDefault(); scrollTo('register');}} className="w-full sm:w-auto bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-8 py-4 text-xs font-bold tracking-widest uppercase transition-all duration-300 rounded-full hover:scale-105 shadow-xl flex items-center justify-center gap-3 group">
+                    สำรองที่นั่ง <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                  </a>
+                  <div className="text-xs text-gray-500 dark:text-gray-400 font-medium flex items-center gap-3">
+                    <div className="w-10 h-10 sm:hidden rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+                      <svg className="w-5 h-5 text-[#F97316]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    </div>
+                    <div>
+                      <span className="block text-gray-900 dark:text-white font-bold text-base md:text-lg">{config.date}</span>
+                      {config.location}
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div className="reveal delay-1">
-                <div className="video-wrapper">
-                  <iframe src={getValidVideoUrl(config.videoUrl)} title="Video Player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+
+              <div className="lg:col-span-5 w-full mt-10 lg:mt-0 reveal delay-2">
+                <div className="w-full h-[350px] md:h-[550px] shadow-2xl border-[6px] border-white dark:border-[#111827] rounded-[1.5rem] relative overflow-hidden group">
+                  <img src={config.heroBg} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" alt="Hero"/>
+                  <div className="absolute bottom-4 left-4 right-4 bg-white/80 dark:bg-gray-900/80 backdrop-blur-lg p-4 rounded-2xl shadow-xl transform translate-y-2 group-hover:translate-y-0 transition duration-500 border border-white/50 dark:border-gray-700/50">
+                    <div className="flex items-center gap-3 mb-1.5">
+                      <span className="flex h-2.5 w-2.5 relative"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#10B981] opacity-75"></span><span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#10B981]"></span></span>
+                      <div className="text-gray-900 dark:text-white text-[9px] font-bold uppercase tracking-widest">Event Update</div>
+                    </div>
+                    <div className="text-[#F97316] text-xs md:text-sm font-bold leading-tight font-sans">Main Stage Highlights</div>
+                  </div>
                 </div>
               </div>
             </div>
           </section>
-        )}
 
-        <section id="concept" className="section">
-          <div className="container">
-            <div className="sec-header reveal">
-              <div className="sec-badge">EXHIBITION HALLS</div>
-              <h2 className="sec-title">EVENT ZONES</h2>
-              <div className="sec-line"></div>
-            </div>
-            <div className="grid-4 reveal delay-1">
-              <div className="concept-card"><div className="concept-icon">📐</div><h3 style={{ fontSize: '16px', fontWeight: 700, color: '#fff', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '1px' }}>Innovation Expo</h3><p style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: 300 }}>โซนจัดแสดงเทคโนโลยีและนวัตกรรมวัสดุจากบริษัทชั้นนำทั่วโลก</p></div>
-              <div className="concept-card delay-1"><div className="concept-icon">🏢</div><h3 style={{ fontSize: '16px', fontWeight: 700, color: '#fff', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '1px' }}>Main Stage</h3><p style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: 300 }}>เวทีเสวนาหลักรวบรวมสถาปนิกและนักออกแบบระดับท็อปของอุตสาหกรรม</p></div>
-              <div className="concept-card delay-2"><div className="concept-icon">💻</div><h3 style={{ fontSize: '16px', fontWeight: 700, color: '#fff', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '1px' }}>Masterclasses</h3><p style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: 300 }}>กิจกรรมเวิร์กชอปเจาะลึกเทคโนโลยี AI และซอฟต์แวร์ออกแบบร่วมกับผู้เชี่ยวชาญ</p></div>
-              <div className="concept-card delay-3"><div className="concept-icon">🍷</div><h3 style={{ fontSize: '16px', fontWeight: 700, color: '#fff', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '1px' }}>Networking Lounge</h3><p style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: 300 }}>พื้นที่พบปะสังสรรค์ เจรจาธุรกิจ และสร้างคอนเนคชันใหม่ๆ ในแวดวง</p></div>
+          {/* Marquee */}
+          <div className="w-full overflow-hidden bg-[#0A0D14] py-3 border-y border-gray-800 relative z-10 pointer-events-none">
+            <div className="marquee-container text-white text-[9px] md:text-[10px] font-bold tracking-widest uppercase opacity-80">
+              <div className="flex justify-around items-center w-max md:w-1/2 shrink-0 pr-8">
+                <span className="text-[#F97316] flex items-center gap-2 shrink-0">🔥 Tickets Selling Fast</span>
+                <span className="text-gray-700 mx-4 md:mx-6 shrink-0">•</span><span className="shrink-0">{config.title}</span><span className="text-gray-700 mx-4 md:mx-6 shrink-0">•</span>
+                <span className="text-[#10B981] shrink-0">Limited Seats Available</span><span className="text-gray-700 mx-4 md:mx-6 shrink-0">•</span>
+                <span className="shrink-0">{config.location}</span><span className="text-gray-700 mx-4 md:mx-6 shrink-0">•</span>
+              </div>
+              <div className="flex justify-around items-center w-max md:w-1/2 shrink-0 pr-8">
+                <span className="text-[#F97316] flex items-center gap-2 shrink-0">🔥 Tickets Selling Fast</span>
+                <span className="text-gray-700 mx-4 md:mx-6 shrink-0">•</span><span className="shrink-0">{config.title}</span><span className="text-gray-700 mx-4 md:mx-6 shrink-0">•</span>
+                <span className="text-[#10B981] shrink-0">Limited Seats Available</span><span className="text-gray-700 mx-4 md:mx-6 shrink-0">•</span>
+                <span className="shrink-0">{config.location}</span><span className="text-gray-700 mx-4 md:mx-6 shrink-0">•</span>
+              </div>
             </div>
           </div>
-        </section>
 
-        <section id="speakers" className="section section-alt">
-          <div className="container">
-            <div className="sec-header reveal">
-              <div className="sec-badge">ARCHITECTS & DESIGNERS</div>
-              <h2 className="sec-title">พบกับวิทยากรระดับโลก</h2>
-              <div className="sec-line"></div>
-            </div>
-            <div className="grid-4">
-              {config.speakers?.map((speaker, i) => (
-                <div key={speaker.id} className={`speaker-card reveal delay-${i%4}`} onClick={() => setSelectedSpeaker(speaker)}>
-                  <div className="speaker-img-wrap"><img src={speaker.img} alt={speaker.name} className="speaker-img" /><span className="speaker-tag" style={{ background: speaker.color, color: '#fff' }}>{speaker.tag}</span></div>
-                  <div className="speaker-info">
-                    <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#fff', marginBottom: '5px', textTransform: 'uppercase' }}>{speaker.name}</h3>
-                    <p style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 600, letterSpacing: '1px', textTransform: 'uppercase' }}>{speaker.role}</p>
-                  </div>
+          {/* Concept Section */}
+          <section id="concept" className="py-16 md:py-24 bg-white dark:bg-gray-950 relative z-10 border-b border-gray-100 dark:border-gray-900">
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[500px] md:w-[800px] h-[500px] md:h-[800px] bg-orange-50/50 dark:bg-orange-500/5 rounded-full blur-[80px] md:blur-[100px] pointer-events-none"></div>
+            <div className="max-w-7xl mx-auto px-4 relative z-10">
+              <div className="text-center mb-16 md:mb-20 reveal">
+                <div className="text-[#F97316] text-[10px] font-bold tracking-widest uppercase mb-4">What You Will Learn</div>
+                <h2 className="font-serif text-3xl md:text-5xl text-gray-900 dark:text-white mb-6">Discover & Connect</h2>
+                <div className="w-16 h-1 bg-[#F97316] mx-auto mb-6 rounded-full"></div>
+                <p className="text-gray-500 dark:text-gray-400 text-sm md:text-base max-w-2xl mx-auto leading-relaxed font-light px-2">
+                    เข้าร่วมสัมมนาที่จะเปิดมุมมองใหม่ สร้างแรงบันดาลใจ และเจาะลึก 4 เสาหลักสำคัญที่ขับเคลื่อนองค์กรระดับโลก เพื่อเชื่อมโยงคุณเข้ากับโอกาสทางธุรกิจที่ไร้ขีดจำกัด
+                </p>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 reveal delay-1">
+                <div className="bg-[#FDFBF7] dark:bg-[#111827] p-6 md:p-8 rounded-3xl premium-card text-center border border-transparent dark:border-gray-800">
+                  <div className="w-14 h-14 md:w-16 md:h-16 bg-white dark:bg-gray-800 text-[#F97316] rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6 text-xl md:text-2xl shadow-sm border border-gray-100 dark:border-gray-700">🚀</div>
+                  <h3 className="font-bold text-gray-900 dark:text-white text-base md:text-lg mb-2 md:mb-3">Business Scaling</h3>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed font-light">เรียนรู้กลยุทธ์การขยายขีดความสามารถของธุรกิจ (Scaling) จาก Case Study จริงของบริษัทชั้นนำที่ผ่านการทำ Digital Transformation สำเร็จ</p>
                 </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section id="schedule" className="section">
-          <div className="container">
-            <div className="sec-header reveal">
-              <div className="sec-badge">EVENT AGENDA</div>
-              <h2 className="sec-title">กำหนดการกิจกรรม</h2>
-              <div className="sec-line"></div>
-            </div>
-            <div className="timeline-wrap reveal delay-1">
-              {config.schedule?.map((s) => (
-                <div key={s.id} className="time-card">
-                  <div className="time-dot" style={{ borderColor: s.color }}></div>
-                  <div className="time-left"><div className="time-text" style={{ color: s.color }}>{s.time}</div></div>
-                  <div>
-                    <div style={{ display: 'inline-block', fontSize: '9px', fontWeight: '700', color: '#121212', background: s.color, padding: '4px 10px', marginBottom: '10px', letterSpacing: '1px', textTransform: 'uppercase' }}>{s.tag}</div>
-                    <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#fff', marginBottom: '8px', textTransform: 'uppercase' }}>{s.title}</h3>
-                    <p style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: 1.6, fontWeight: 300 }}>{s.desc}</p>
-                  </div>
+                <div className="bg-[#FDFBF7] dark:bg-[#111827] p-6 md:p-8 rounded-3xl premium-card text-center border border-transparent dark:border-gray-800">
+                  <div className="w-14 h-14 md:w-16 md:h-16 bg-white dark:bg-gray-800 text-[#3B82F6] rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6 text-xl md:text-2xl shadow-sm border border-gray-100 dark:border-gray-700">🤖</div>
+                  <h3 className="font-bold text-gray-900 dark:text-white text-base md:text-lg mb-2 md:mb-3">Emerging Tech</h3>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed font-light">เจาะลึกเทคโนโลยีปัญญาประดิษฐ์ (AI), IoT และ Automation ที่กำลังจะเปลี่ยนวิถีการทำงานและพฤติกรรมผู้บริโภคในอนาคตอันใกล้</p>
                 </div>
-              ))}
+                <div className="bg-[#FDFBF7] dark:bg-[#111827] p-6 md:p-8 rounded-3xl premium-card text-center border border-transparent dark:border-gray-800">
+                  <div className="w-14 h-14 md:w-16 md:h-16 bg-white dark:bg-gray-800 text-[#10B981] rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6 text-xl md:text-2xl shadow-sm border border-gray-100 dark:border-gray-700">🌱</div>
+                  <h3 className="font-bold text-gray-900 dark:text-white text-base md:text-lg mb-2 md:mb-3">Sustainable ESG</h3>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed font-light">ทำความเข้าใจแนวทางการดำเนินธุรกิจอย่างยั่งยืน (ESG) เพื่อมัดใจนักลงทุนระดับสากล และเพิ่มขีดความสามารถในการแข่งขันระยะยาว</p>
+                </div>
+                <div className="bg-[#FDFBF7] dark:bg-[#111827] p-6 md:p-8 rounded-3xl premium-card text-center border border-transparent dark:border-gray-800">
+                  <div className="w-14 h-14 md:w-16 md:h-16 bg-white dark:bg-gray-800 text-[#EC4899] rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6 text-xl md:text-2xl shadow-sm border border-gray-100 dark:border-gray-700">🤝</div>
+                  <h3 className="font-bold text-gray-900 dark:text-white text-base md:text-lg mb-2 md:mb-3">Exclusive Network</h3>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed font-light">พบปะพูดคุยและสร้างคอนเนกชันกับ C-Levels, Founders และผู้บริหารระดับสูงกว่า 500 ท่าน ในช่วงเวลา Networking Session</p>
+                </div>
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
 
-        <div style={{ backgroundImage: `url(${config.sponsorBg})`, backgroundSize: 'cover', backgroundAttachment: 'fixed', position: 'relative', padding: '100px 0', overflow: 'hidden', borderTop: '1px solid rgba(255,255,255,0.05)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-          <div style={{ position: 'absolute', inset: 0, background: 'rgba(18, 18, 18, 0.95)' }}></div>
-          <div className="container text-center reveal" style={{ position: 'relative', zIndex: 1, marginBottom: '40px' }}>
-            <h3 style={{ color: '#fff', fontSize: '18px', fontWeight: 700, letterSpacing: '4px', textTransform: 'uppercase' }}>OFFICIAL PARTNERS</h3>
-            <div className="sec-line" style={{ marginTop: '15px' }}></div>
-          </div>
-          <div style={{ position: 'relative', zIndex: 1, display: 'flex', overflow: 'hidden', whiteSpace: 'nowrap' }}>
-            <div style={{ display: 'flex', animation: 'marquee 30s linear infinite' }}>
-              {config.sponsors?.map(s => <div key={s.id} style={{ fontSize: '28px', fontWeight: 800, color: 'transparent', WebkitTextStroke: '1px rgba(255,255,255,0.3)', margin: '0 40px', textTransform: 'uppercase', letterSpacing: '2px', fontFamily: 'monospace' }}>{s.name}</div>)}
-              {config.sponsors?.map(s => <div key={s.id+'dup'} style={{ fontSize: '28px', fontWeight: 800, color: 'transparent', WebkitTextStroke: '1px rgba(255,255,255,0.3)', margin: '0 40px', textTransform: 'uppercase', letterSpacing: '2px', fontFamily: 'monospace' }}>{s.name}</div>)}
-            </div>
-          </div>
-        </div>
+          {/* Speakers Section */}
+          <section id="speakers" className="py-16 md:py-24 bg-white dark:bg-gray-950 border-b border-gray-100 dark:border-gray-900">
+            <div className="max-w-7xl mx-auto px-4">
+              <div className="flex flex-col md:flex-row justify-between items-end mb-12 md:mb-16 gap-4 md:gap-6 border-b border-gray-100 dark:border-gray-800 pb-6 reveal">
+                <div>
+                  <div className="text-[#F97316] text-[10px] font-bold tracking-widest uppercase mb-3">The Visionaries</div>
+                  <h2 className="font-serif text-3xl md:text-5xl text-gray-900 dark:text-white">Keynote Speakers</h2>
+                </div>
+                <p className="text-sm text-gray-500 dark:text-gray-400 font-light mb-2 hidden md:block">* คลิกที่รูปเพื่อดูรายละเอียดเพิ่มเติม</p>
+              </div>
 
-        <section id="register" className="section section-alt">
-          <div className="container">
-            <div className="sec-header reveal">
-              <div className="sec-badge">ADMISSION</div>
-              <h2 className="sec-title">เลือกระดับการเข้าร่วมงาน</h2>
-              <div className="sec-line"></div>
-            </div>
-
-            <div className="grid-3 reveal delay-1" style={{ marginBottom: '80px', alignItems: 'end' }}>
-              {config.tickets?.map(ticket => (
-                <label key={ticket.id} className="ticket-wrapper">
-                  <input type="radio" name="ticketId" className="ticket-radio hidden" value={ticket.id} checked={String(formData.ticketId) === String(ticket.id)} onChange={handleInputChange} />
-                  <div className="ticket-card">
-                    {ticket.badge && <div className="ticket-badge" style={ticket.type === 'vip' ? { background: 'var(--primary)', color: 'var(--bg-dark)' } : {}}>{ticket.badge}</div>}
-                    <h3 style={{ fontSize: '20px', fontWeight: '700', color: '#fff', textAlign: 'center', textTransform: 'uppercase', letterSpacing: '1px' }}>{ticket.name}</h3>
-                    <div style={{ fontSize: '42px', fontWeight: '700', color: ticket.type === 'vip' ? 'var(--primary)' : '#fff', margin: '15px 0 20px', textAlign: 'center', lineHeight: 1, fontFamily: 'monospace' }}>{Number(ticket.price).toLocaleString()} <span style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: 400, fontFamily: 'Inter' }}>THB</span></div>
-                    <div style={{ flex: 1, marginBottom: '25px' }}>
-                      {ticket.features.split('\n').map((f, i) => (
-                        <div key={i} style={{ padding: '10px 0', display: 'flex', gap: '10px', alignItems: 'flex-start', borderBottom: '1px solid rgba(255,255,255,0.05)', fontSize: '13px', color: '#d4d4d8', fontWeight: 300 }}>
-                          <span style={{ color: ticket.type === 'vip' ? 'var(--primary)' : 'var(--text-muted)', fontWeight: 700 }}>+</span> {f}
-                        </div>
-                      ))}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 reveal delay-1">
+                {config.speakers?.map((speaker, i) => (
+                  <div key={speaker.id} className="group cursor-pointer premium-card bg-white dark:bg-[#111827] border border-gray-100 dark:border-gray-800 p-3 rounded-[2rem] shadow-sm" onClick={() => setSelectedSpeaker(speaker)}>
+                    <div className="h-64 md:h-72 overflow-hidden rounded-[1.5rem] mb-4 relative bg-gray-100 dark:bg-gray-800">
+                      <img src={speaker.img} className="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-110 transition duration-700" alt={speaker.name}/>
+                      <div className="absolute top-4 left-4 text-white text-[9px] font-bold px-3 py-1.5 tracking-widest uppercase rounded-full border border-transparent dark:border-gray-700" style={{backgroundColor: speaker.color}}>{speaker.tag}</div>
                     </div>
-                    <div className="btn" style={{ width: '100%', background: String(formData.ticketId) === String(ticket.id) ? 'var(--primary)' : 'transparent', color: String(formData.ticketId) === String(ticket.id) ? 'var(--bg-dark)' : '#fff', border: String(formData.ticketId) === String(ticket.id) ? '1px solid var(--primary)' : '1px solid var(--border)' }}>
-                      {String(formData.ticketId) === String(ticket.id) ? 'SELECTED' : 'SELECT PASS'}
+                    <div className="px-2 pb-2">
+                      <div className="text-[9px] text-gray-400 uppercase tracking-widest mb-1 font-bold">ID: {String(speaker.id).slice(-4)}</div>
+                      <h3 className="text-lg md:text-xl font-bold text-gray-900 dark:text-white mb-1 font-serif group-hover:text-[#F97316] dark:group-hover:text-[#F97316] transition-colors">{speaker.name}</h3>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 font-light truncate">{speaker.role}</p>
                     </div>
                   </div>
-                </label>
-              ))}
+                ))}
+              </div>
+              <div className="text-center mt-10 block md:hidden text-xs text-gray-400 font-light">* แตะที่รูปเพื่อดูรายละเอียดเพิ่มเติม</div>
             </div>
+          </section>
 
-            <div className="form-box-wrapper reveal">
-              <div className="form-box">
-                <h3 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '30px', color: '#fff', display: 'flex', alignItems: 'center', gap: '10px', textTransform: 'uppercase', letterSpacing: '1px' }}>
-                  <span style={{ width: '30px', height: '30px', background: 'var(--primary)', color: 'var(--bg-dark)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '14px' }}>📝</span> Registration
-                </h3>
-                <form onSubmit={handleRegisterSubmit}>
-                  <div className="grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
-                    <div className="form-group mb-0"><label>ชื่อ-นามสกุล (Full Name) *</label><input type="text" name="name" className="form-input" required value={formData.name} onChange={handleInputChange} placeholder="John Doe" /></div>
-                    <div className="form-group mb-0"><label>อีเมล (Email) *</label><input type="email" name="email" className="form-input" required value={formData.email} onChange={handleInputChange} placeholder="john@example.com" /></div>
-                  </div>
-                  <div className="grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
-                    <div className="form-group mb-0"><label>เบอร์โทรศัพท์ (Phone) *</label><input type="tel" name="phone" className="form-input" required value={formData.phone} onChange={handleInputChange} placeholder="089-XXX-XXXX" /></div>
-                    <div className="form-group mb-0"><label>องค์กร / สตูดิโอ (Company)</label><input type="text" name="company" className="form-input" value={formData.company} onChange={handleInputChange} placeholder="Company Name" /></div>
-                  </div>
+          {/* Schedule */}
+          <section id="schedule" className="py-16 md:py-24 bg-[#FDFBF7] dark:bg-[#0A0D14] relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-[400px] md:w-[600px] h-[400px] md:h-[600px] bg-[#F97316]/5 rounded-full blur-[100px] pointer-events-none"></div>
+            <div className="max-w-4xl mx-auto px-4 relative z-10">
+              <div className="text-center mb-16 md:mb-20 reveal">
+                <div className="text-[#F97316] text-[10px] font-bold tracking-widest uppercase mb-4">Event Agenda</div>
+                <h2 className="font-serif text-3xl md:text-5xl text-gray-900 dark:text-white mb-6">กำหนดการกิจกรรม</h2>
+                <div className="w-16 h-1 bg-[#F97316] mx-auto rounded-full"></div>
+              </div>
 
-                  <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border)', padding: '25px', marginTop: '30px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '20px' }}>
-                    <div>
-                      <div style={{ fontSize:'11px', fontWeight: '700', letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--primary)', marginBottom: '5px' }}>🎟️ {selectedTicket?.name || '-'} (1 PASS)</div>
-                      <div style={{ color: 'var(--text-muted)', fontSize: '13px', fontWeight: 400 }}>Subtotal: {subtotal.toLocaleString()} ฿ | VAT 7%: {vat.toLocaleString()} ฿</div>
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '20px', flexWrap: 'wrap' }}>
-                      <div style={{ textAlign: 'right' }}>
-                        <div style={{ fontSize: '9px', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '1px' }}>Total Amount</div>
-                        <div style={{ fontSize: '28px', fontWeight: '700', color: '#fff', lineHeight: 1, fontFamily: 'monospace' }}>{total.toLocaleString()} <span style={{ fontSize: '12px', fontWeight: 400, fontFamily: 'Inter' }}>฿</span></div>
+              <div className="relative border-l-2 border-dashed border-gray-200 dark:border-gray-800 ml-4 md:ml-6 space-y-12 md:space-y-16 pb-8 reveal delay-1">
+                {config.schedule?.map((s) => (
+                  <div key={s.id} className="relative pl-8 md:pl-16 group">
+                    <div className="absolute -left-[11px] md:-left-[11px] top-8 md:top-10 w-[20px] h-[20px] rounded-full border-4 border-[#FDFBF7] dark:border-[#0A0D14] transition-all duration-300 group-hover:scale-125 z-10" style={{backgroundColor: s.color, boxShadow: `0 0 15px ${s.color}80`}}></div>
+                    <div className="bg-white dark:bg-[#111827] border border-gray-100 dark:border-gray-800 rounded-[2rem] p-6 md:p-8 shadow-sm group-hover:shadow-xl group-hover:-translate-y-1 transition-all duration-300 flex flex-col md:flex-row gap-6 items-start">
+                      <div className="md:w-40 shrink-0 border-l-4 pl-4" style={{borderColor: s.color}}>
+                        <div className="font-black text-3xl md:text-4xl tracking-tight" style={{color: s.color}}>{s.time}</div>
+                        <div className="text-[10px] md:text-[11px] text-gray-400 mt-1 uppercase tracking-wider font-medium">Session</div>
                       </div>
-                      <button type="submit" className="btn btn-primary w-full sm:w-auto" style={{ padding: '14px 28px', fontSize: '13px' }} disabled={isSubmitting}>
+                      <div className="flex-grow">
+                        <div className="inline-block text-[9px] font-bold uppercase tracking-widest mb-3 px-3 py-1 rounded-full border" style={{color: s.color, backgroundColor: `${s.color}15`, borderColor: `${s.color}30`}}>{s.tag}</div>
+                        <h4 className="text-gray-900 dark:text-white font-bold text-xl md:text-2xl mb-2 md:mb-3 font-serif group-hover:opacity-80 transition-opacity">{s.title}</h4>
+                        <p className="text-sm md:text-[15px] text-gray-500 dark:text-gray-400 leading-relaxed font-light mb-4">{s.desc}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* Sponsor Marquee */}
+          <div className="w-full overflow-hidden bg-white dark:bg-[#0A0D14] py-8 md:py-10 border-y border-gray-100 dark:border-gray-900 mt-8 md:mt-0 z-10 relative">
+            <div className="max-w-7xl mx-auto px-4 text-center mb-6 md:mb-8">
+              <div className="text-[9px] md:text-[10px] text-gray-400 font-bold uppercase tracking-widest">ผู้สนับสนุนหลักอย่างเป็นทางการ</div>
+            </div>
+            <div className="w-full overflow-hidden">
+              <div className="sponsor-track text-lg md:text-3xl font-bold font-serif text-gray-300 dark:text-gray-700">
+                <div className="flex items-center justify-around shrink-0 px-4">
+                  {config.sponsors?.map(s => <React.Fragment key={s.id}><span className="mx-4 md:mx-6 hover:text-[#F97316] transition-colors cursor-pointer">{s.name}</span><span className="text-[#F97316] text-sm md:text-lg mx-4 md:mx-6">•</span></React.Fragment>)}
+                </div>
+                <div className="flex items-center justify-around shrink-0 px-4">
+                  {config.sponsors?.map(s => <React.Fragment key={s.id+'dup'}><span className="mx-4 md:mx-6 hover:text-[#F97316] transition-colors cursor-pointer">{s.name}</span><span className="text-[#F97316] text-sm md:text-lg mx-4 md:mx-6">•</span></React.Fragment>)}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Form Registration Section */}
+          <section id="register" className="py-16 md:py-24 bg-[#FDFBF7] dark:bg-[#0A0D14] relative z-10 border-t border-gray-100 dark:border-gray-900">
+            <div className="max-w-5xl mx-auto px-4">
+              <div className="text-center mb-12 reveal">
+                <div className="inline-block bg-orange-100 dark:bg-orange-500/10 text-[#F97316] text-[10px] font-bold tracking-widest uppercase mb-4 px-3 py-1 rounded-full border border-orange-200 dark:border-orange-500/20">Participation Passes</div>
+                <h2 className="font-serif text-3xl md:text-5xl text-gray-900 dark:text-white mb-6">แบบฟอร์มลงทะเบียนออนไลน์</h2>
+                <div className="w-16 h-1 bg-[#F97316] mx-auto rounded-full"></div>
+              </div>
+
+              {/* Ticket Cards Dynamic Mapping */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 max-w-5xl mx-auto reveal delay-1">
+                {config.tickets?.map((ticket) => {
+                  const isVIP = ticket.type === 'vip';
+                  const isSelected = String(formData.ticketId) === String(ticket.id);
+                  
+                  return (
+                    <label key={ticket.id} className="cursor-pointer relative group block mt-4 md:mt-0">
+                      <input type="radio" name="ticketId" value={ticket.id} checked={isSelected} onChange={(e) => setFormData(prev => ({...prev, ticketId: e.target.value}))} className="ticket-radio peer sr-only" />
+                      <div className={`p-6 md:p-8 rounded-[2rem] flex flex-col h-full transition-all premium-card relative ${isVIP ? 'bg-gray-900 dark:bg-black border border-orange-500/40 shadow-[0_10px_40px_-10px_rgba(249,115,22,0.15)] overflow-hidden' : 'bg-white dark:bg-[#111827] border border-gray-100 dark:border-gray-800 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.08)] dark:shadow-none'}`}>
+                        
+                        {isVIP && <div className="absolute inset-0 rounded-[2rem] overflow-hidden pointer-events-none"><div className="vip-shimmer"></div></div>}
+
+                        {ticket.badge && (
+                          <div className={`badge-float absolute -top-3 left-1/2 transform -translate-x-1/2 text-white text-[9px] md:text-[10px] font-black px-4 md:px-6 py-1.5 rounded-full whitespace-nowrap tracking-widest uppercase shadow-lg z-20 ${isVIP ? 'bg-gradient-to-r from-amber-500 to-orange-600 shadow-orange-500/40 border border-orange-400' : 'bg-[#F97316] shadow-orange-500/30 border border-orange-400'}`}>
+                            {ticket.badge}
+                          </div>
+                        )}
+                        
+                        <div className="flex justify-between items-start mb-4 mt-2 relative z-10">
+                          <h3 className={`text-xl font-bold font-serif transition-colors ${isVIP ? 'text-white' : 'text-gray-900 dark:text-white'}`}>{ticket.name}</h3>
+                          <div className="w-5 h-5 rounded-full bg-[#F97316] text-white hidden peer-checked:flex items-center justify-center shadow-lg shadow-orange-500/40">
+                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path></svg>
+                          </div>
+                        </div>
+                        
+                        <div className="text-3xl md:text-4xl font-black text-[#F97316] mb-6 flex items-baseline gap-2 relative z-10">
+                          {Number(ticket.price).toLocaleString()} <span className="text-sm font-medium text-gray-400">บาท</span>
+                        </div>
+                        
+                        <ul className={`text-xs md:text-sm space-y-3 mb-8 flex-grow font-light transition-colors relative z-10 ${isVIP ? 'text-gray-300' : 'text-gray-600 dark:text-gray-400'}`}>
+                          {(ticket.features || '').split('\n').map((f, i) => (
+                            <li key={i} className={`flex gap-3 items-start ${isVIP && i > 0 ? 'text-amber-200' : ''}`}>
+                              <svg className={`w-4 h-4 shrink-0 mt-0.5 ${isVIP && i > 0 ? 'text-amber-400' : (isVIP ? 'text-[#F97316]' : 'text-gray-400 dark:text-gray-500')}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7"></path></svg>
+                              <span>{f}</span>
+                            </li>
+                          ))}
+                        </ul>
+                        
+                        <div className={`py-3 text-[10px] font-bold uppercase tracking-wider rounded-full text-center w-full transition-all relative z-10 ${isSelected ? (isVIP ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/30 border-none' : 'bg-[#F97316] text-white border-none') : (isVIP ? 'bg-gradient-to-r from-orange-500/20 to-amber-500/20 text-[#F97316] border border-orange-500/30 group-hover:from-[#F97316] group-hover:to-amber-500 group-hover:text-white' : 'bg-orange-50 dark:bg-orange-500/10 text-[#F97316] border border-orange-200 dark:border-orange-500/20 group-hover:bg-[#F97316] group-hover:text-white')}`}>
+                          {isSelected ? '✓ เลือกแล้ว' : `เลือก ${ticket.name}`}
+                        </div>
+                      </div>
+                    </label>
+                  );
+                })}
+              </div>
+
+              <div className="bg-white dark:bg-[#111827] border border-gray-100 dark:border-gray-800 p-6 md:p-12 shadow-2xl relative rounded-[2rem] md:rounded-[2.5rem] premium-card reveal delay-2">
+                <form onSubmit={handleRegisterSubmit} className="space-y-8">
+                  
+                  <div>
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-3 border-b border-gray-100 dark:border-gray-800 pb-3 font-serif">
+                      <span className="w-6 h-6 rounded-full bg-[#F97316] text-white flex items-center justify-center text-xs font-sans">1</span> ข้อมูลส่วนตัว
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="bg-gray-50 dark:bg-[#0A0D14] p-2 rounded-xl border border-transparent focus-within:border-[#F97316] transition-all">
+                        <label className="block text-[10px] font-bold text-gray-500 uppercase px-3 pt-1">ชื่อ-นามสกุล *</label>
+                        <input type="text" name="name" value={formData.name} onChange={handleInputChange} required className="w-full bg-transparent px-3 py-2 text-sm focus:outline-none dark:text-white" placeholder="John Doe"/>
+                      </div>
+                      <div className="bg-gray-50 dark:bg-[#0A0D14] p-2 rounded-xl border border-transparent focus-within:border-[#F97316] transition-all">
+                        <label className="block text-[10px] font-bold text-gray-500 uppercase px-3 pt-1">อีเมล *</label>
+                        <input type="email" name="email" value={formData.email} onChange={handleInputChange} required className="w-full bg-transparent px-3 py-2 text-sm focus:outline-none dark:text-white" placeholder="email@example.com"/>
+                      </div>
+                      <div className="bg-gray-50 dark:bg-[#0A0D14] p-2 rounded-xl border border-transparent focus-within:border-[#F97316] transition-all md:col-span-2">
+                        <label className="block text-[10px] font-bold text-gray-500 uppercase px-3 pt-1">เบอร์โทรศัพท์ *</label>
+                        <input type="tel" name="phone" value={formData.phone} onChange={handleInputChange} required className="w-full bg-transparent px-3 py-2 text-sm focus:outline-none dark:text-white" placeholder="089-XXX-XXXX"/>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-3 border-b border-gray-100 dark:border-gray-800 pb-3 font-serif mt-8">
+                      <span className="w-6 h-6 rounded-full bg-[#3B82F6] text-white flex items-center justify-center text-xs font-sans">2</span> ข้อมูลองค์กร
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="bg-gray-50 dark:bg-[#0A0D14] p-2 rounded-xl border border-transparent focus-within:border-[#3B82F6] transition-all relative">
+                        <label className="block text-[10px] font-bold text-gray-500 uppercase px-3 pt-1">ตำแหน่ง / อาชีพ *</label>
+                        <select name="role" value={formData.role} onChange={handleInputChange} required className="w-full bg-transparent px-3 py-2 text-sm focus:outline-none dark:text-white appearance-none cursor-pointer">
+                          <option value="" disabled>-- เลือก --</option>
+                          <option value="พนักงานบริษัท">พนักงานบริษัท</option>
+                          <option value="นักวิจัย">นักวิจัย / นักวิชาการ</option>
+                          <option value="นักศึกษา">นักศึกษา</option>
+                          <option value="other">อื่นๆ (โปรดระบุ)</option>
+                        </select>
+                        <div className="pointer-events-none absolute top-8 right-4 flex items-center text-gray-400"><svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg></div>
+                        {formData.role === 'other' && <input type="text" name="roleOther" value={formData.roleOther} onChange={handleInputChange} placeholder="โปรดระบุตำแหน่ง/อาชีพ" required className="w-full bg-transparent px-3 py-2 text-sm mt-2 border-t border-gray-200 dark:border-gray-700 focus:outline-none dark:text-white" />}
+                      </div>
+
+                      <div className="bg-gray-50 dark:bg-[#0A0D14] p-2 rounded-xl border border-transparent focus-within:border-[#3B82F6] transition-all relative">
+                        <label className="block text-[10px] font-bold text-gray-500 uppercase px-3 pt-1">องค์กร / บริษัท *</label>
+                        <select name="company" value={formData.company} onChange={handleInputChange} required className="w-full bg-transparent px-3 py-2 text-sm focus:outline-none dark:text-white appearance-none cursor-pointer">
+                          <option value="" disabled>-- เลือก --</option>
+                          <option value="สถาบันการศึกษา">สถาบันการศึกษา</option>
+                          <option value="องค์กรธุรกิจ">องค์กรธุรกิจเอกชน</option>
+                          <option value="ธุรกิจส่วนตัว / ฟรีแลนซ์">ธุรกิจส่วนตัว / ฟรีแลนซ์</option>
+                          <option value="other">อื่นๆ (โปรดระบุ)</option>
+                        </select>
+                        <div className="pointer-events-none absolute top-8 right-4 flex items-center text-gray-400"><svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg></div>
+                        {formData.company === 'other' && <input type="text" name="companyOther" value={formData.companyOther} onChange={handleInputChange} placeholder="โปรดระบุชื่อองค์กร" required className="w-full bg-transparent px-3 py-2 text-sm mt-2 border-t border-gray-200 dark:border-gray-700 focus:outline-none dark:text-white" />}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-orange-50 dark:bg-[#1A2530] border-2 border-orange-200 dark:border-gray-800 p-6 md:p-8 rounded-3xl mt-10 flex flex-col md:flex-row justify-between items-center gap-6 relative overflow-hidden">
+                    <div className="absolute left-0 top-0 w-2 h-full bg-[#F97316]"></div>
+                    <div className="text-center md:text-left w-full md:w-auto">
+                      <div className="text-xs text-[#F97316] font-bold uppercase tracking-widest mb-3">{selectedTicket.name} (1 ท่าน)</div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">Subtotal: {subtotal.toLocaleString()} ฿ | VAT 7%: {vat.toLocaleString()} ฿</div>
+                    </div>
+                    <div className="flex flex-col sm:flex-row items-center gap-6 w-full md:w-auto">
+                      <div className="text-center md:text-right">
+                        <div className="text-[10px] text-gray-500 uppercase font-bold">NET TOTAL</div>
+                        <div className="text-3xl font-bold font-serif text-gray-900 dark:text-white">{total.toLocaleString()} <span className="text-sm font-sans text-gray-400">฿</span></div>
+                      </div>
+                      <button type="submit" disabled={isSubmitting} className="w-full sm:w-auto bg-gray-900 dark:bg-white hover:bg-gray-800 text-white dark:text-gray-900 px-8 py-4 text-[11px] font-bold rounded-full uppercase tracking-widest transition-transform hover:scale-105 shadow-xl disabled:opacity-50">
                         PAY SECURELY
                       </button>
                     </div>
                   </div>
-                </form>
-              </div>
+
+              </form>
             </div>
           </div>
         </section>
 
-        <section id="faq" className="section">
-          <div className="container" style={{ maxWidth: '800px' }}>
-            <div className="sec-header reveal">
-              <div className="sec-badge">INFORMATION</div>
-              <h2 className="sec-title">คำถามที่พบบ่อย (FAQ)</h2>
+        <section id="faq" className="py-16 md:py-24 border-t border-gray-100 dark:border-gray-900">
+          <div className="max-w-3xl mx-auto px-4">
+            <div className="text-center mb-12 md:mb-16 reveal">
+              <div className="inline-block bg-orange-100 dark:bg-orange-500/10 text-[#F97316] text-[10px] font-bold tracking-widest uppercase mb-3 px-3 py-1 rounded-full border border-orange-200 dark:border-orange-500/20">Got Questions?</div>
+              <h2 className="font-serif text-2xl md:text-4xl text-gray-900 dark:text-white">คำถามที่พบบ่อย (FAQ)</h2>
             </div>
-            <div className="reveal delay-1">
+            <div className="space-y-3 md:space-y-4 reveal delay-1">
               {config.faqs?.map(faq => (
-                <div key={faq.id} className={`faq-item ${activeFaq === faq.id ? 'active' : ''}`} onClick={() => setActiveFaq(activeFaq === faq.id ? null : faq.id)}>
-                  <div className="faq-q">{faq.q} <span>{activeFaq === faq.id ? '−' : '+'}</span></div>
-                  <div className="faq-a">{faq.a}</div>
+                <div key={faq.id} className={`faq-item bg-[#FDFBF7] dark:bg-[#111827] border border-gray-100 dark:border-gray-800 rounded-2xl p-5 md:p-6 cursor-pointer hover:border-[#F97316] dark:hover:border-[#F97316] transition-colors ${activeFaq === faq.id ? 'active' : ''}`} onClick={() => setActiveFaq(activeFaq === faq.id ? null : faq.id)}>
+                  <div className="flex justify-between items-center font-bold text-gray-900 dark:text-white text-sm md:text-base">
+                    <span className="font-medium">{faq.q}</span>
+                    <svg className="w-5 h-5 text-gray-400 faq-icon transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                  </div>
+                  <div className="faq-answer text-xs md:text-sm text-gray-500 dark:text-gray-400 font-light"><div className="pt-3">{faq.a}</div></div>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        <footer style={{ background: '#0a0a0a', padding: '60px 0 30px', borderTop: '1px solid var(--border)' }}>
-          <div className="container" style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '30px', borderBottom: '1px solid rgba(255,255,255,0.05)', paddingBottom: '30px', marginBottom: '30px' }}>
-            <div>
-              <div className="logo" style={{ marginBottom: '15px', fontSize: '20px' }}><div className="logo-mark" style={{ width:'28px', height:'28px', fontSize:'14px' }}>V</div> {config.title}</div>
-              <p style={{ fontSize: '13px', color: 'var(--text-muted)', maxWidth: '300px', lineHeight: 1.6, fontWeight: 400 }}>{config.aboutText.substring(0, 80)}...</p>
+        <footer className="bg-gray-900 dark:bg-[#0A0D14] pt-16 pb-12 text-white border-t border-gray-800 relative z-10">
+          <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6">
+             <div className="flex items-center gap-3">
+                <div className="w-1.5 h-6 bg-[#F97316] rounded-full shadow-[0_0_8px_#F97316]"></div>
+                <span className="font-serif font-bold text-xl tracking-wide">{config.title}</span>
             </div>
-            <div>
-              <h4 style={{ color: '#fff', fontWeight: 700, marginBottom: '15px', fontSize: '14px', textTransform: 'uppercase', letterSpacing: '1px' }}>Contact Us</h4>
-              <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '8px', fontWeight: 400 }}>✉️ {config.contactEmail}</p>
-              <p style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: 400 }}>📞 {config.contactPhone}</p>
-            </div>
-          </div>
-          <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '15px' }}>
-            <p style={{ fontSize: '11px', color: '#52525b', fontWeight: 400 }}>© 2026 {config.title}. All rights reserved.</p>
-            <div onClick={() => setCurrentView('admin')} style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#52525b', fontSize: '10px', cursor: 'pointer', fontWeight: 600, transition: '0.3s', letterSpacing: '1px', textTransform: 'uppercase' }} onMouseOver={e => e.currentTarget.style.color='var(--primary)'} onMouseOut={e => e.currentTarget.style.color='#52525b'}>
-              EVENT PLATFORM (ADMIN)
-            </div>
+            <div className="text-xs text-gray-500 font-light">© 2026 {config.title}. All rights reserved.</div>
+            <button onClick={() => setCurrentView('admin')} className="text-[10px] font-bold text-gray-500 hover:text-[#F97316] transition-colors uppercase tracking-widest">
+              Admin Access
+            </button>
           </div>
         </footer>
 
-        {/* Modals */}
+        {/* Modal Speaker */}
         {selectedSpeaker && (
-          <div style={{ position: 'fixed', inset: 0, background: 'rgba(18,18,18,0.95)', backdropFilter: 'blur(10px)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 2000, padding: '20px' }} onClick={() => setSelectedSpeaker(null)}>
-            <div className="glass" style={{ width: '100%', maxWidth: '900px', display: 'flex', flexDirection: window.innerWidth < 768 ? 'column' : 'row', overflow: 'hidden', position: 'relative', maxHeight: '90vh', overflowY: 'auto', border: '1px solid var(--border)' }} onClick={e => e.stopPropagation()}>
-              <button onClick={() => setSelectedSpeaker(null)} style={{ position:'absolute', top:'15px', right:'15px', background:'rgba(255,255,255,0.1)', border:'1px solid rgba(255,255,255,0.2)', width: '35px', height: '35px', color:'#fff', cursor:'pointer', zIndex:10, fontWeight: '300', fontSize: '14px' }}>✕</button>
-              <div style={{ flex: '1', minHeight: window.innerWidth < 768 ? '250px' : '400px' }}><img src={selectedSpeaker.img} style={{ width: '100%', height: '100%', objectFit: 'cover', filter: 'grayscale(50%) contrast(1.1)' }} alt="speaker" /></div>
-              <div style={{ flex: '1.2', padding: window.innerWidth < 768 ? '30px' : '50px', background: 'var(--bg-card)' }}>
-                <span style={{ display: 'inline-block', border: '1px solid ' + selectedSpeaker.color, color: selectedSpeaker.color, padding: '4px 12px', fontSize: '9px', fontWeight: 700, letterSpacing: '1px', marginBottom: '15px', textTransform: 'uppercase' }}>{selectedSpeaker.tag}</span>
-                <h3 style={{ fontSize: window.innerWidth < 768 ? '24px' : '32px', fontWeight: 800, margin: '0 0 10px', color: '#fff', textTransform: 'uppercase' }}>{selectedSpeaker.name}</h3>
-                <div style={{ fontSize: '13px', color: 'var(--text-muted)', fontWeight: '600', marginBottom: '20px', letterSpacing: '1px', textTransform: 'uppercase' }}>{selectedSpeaker.role}</div>
-                <div style={{ width: '40px', height: '2px', background: 'var(--primary)', marginBottom: '20px' }}></div>
-                <p style={{ color: 'var(--text-muted)', lineHeight: '1.7', fontSize: '14px', fontWeight: 300 }}>{selectedSpeaker.desc}</p>
+          <div className="fixed inset-0 z-[2000] bg-black/80 backdrop-blur-md flex items-center justify-center p-4" onClick={() => setSelectedSpeaker(null)}>
+            <div className="bg-white dark:bg-[#111827] max-w-2xl w-full rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row transform transition-transform duration-300 border border-gray-100 dark:border-gray-800" onClick={e => e.stopPropagation()}>
+              <div className="h-48 md:h-auto md:w-2/5 relative p-3">
+                <div className="w-full h-full relative overflow-hidden rounded-[1.5rem] bg-gray-100 dark:bg-gray-800">
+                  <img src={selectedSpeaker.img} className="w-full h-full object-cover" alt="speaker" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent md:bg-gradient-to-r md:from-transparent md:to-black/80"></div>
+                  <div className="absolute bottom-4 left-4 text-white text-[9px] font-bold px-3 py-1 rounded-full uppercase tracking-widest" style={{backgroundColor: selectedSpeaker.color}}>{selectedSpeaker.tag}</div>
+                </div>
+              </div>
+              <div className="p-6 md:p-8 md:w-3/5 relative flex flex-col">
+                <button onClick={() => setSelectedSpeaker(null)} className="absolute top-4 right-4 text-gray-400 hover:text-gray-800 dark:hover:text-white bg-gray-100 dark:bg-gray-800 rounded-full p-1 z-10"><svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+                <div className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1 md:mb-2 mt-2">{selectedSpeaker.role}</div>
+                <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-3 md:mb-4 font-serif">{selectedSpeaker.name}</h3>
+                <div className="overflow-y-auto max-h-32 md:max-h-48 pr-2 text-xs md:text-sm text-gray-600 dark:text-gray-400 font-light leading-relaxed mb-4 md:mb-6">{selectedSpeaker.desc}</div>
+                <div className="mt-auto">
+                  <a href="#schedule" onClick={() => setSelectedSpeaker(null)} className="inline-flex items-center gap-2 text-[9px] md:text-[10px] font-bold text-[#F97316] uppercase tracking-widest hover:text-orange-600">ดูกำหนดการ <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg></a>
+                </div>
               </div>
             </div>
           </div>
         )}
 
+        {/* Modal Ticket Success (No QR - Big Name) */}
         {ticketModal.isOpen && (
-          <div style={{ position: 'fixed', inset: 0, background: 'rgba(18,18,18,0.95)', backdropFilter: 'blur(15px)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 2000, padding: '20px' }}>
-            <div className="glow-box" style={{ background: 'var(--bg-card)', border: '1px solid var(--primary)', width: '100%', maxWidth: '400px', padding: '40px 30px', textAlign: 'center', position: 'relative', overflow: 'hidden' }}>
-              <div style={{ width: '50px', height: '50px', background: 'transparent', color: 'var(--primary)', border: '1px solid var(--primary)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', margin: '0 auto 15px', fontWeight: 400 }}>✓</div>
-              <h2 style={{ marginBottom: '10px', color: '#fff', fontSize: '20px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1px' }}>Registration Confirmed</h2>
-              <p style={{ color: 'var(--text-muted)', fontSize: '12px', marginBottom: '25px', fontWeight: 400 }}>ระบบส่ง E-TICKET ไปยังอีเมลของท่านเรียบร้อยแล้ว</p>
-              
-              <div style={{ background: '#fff', padding: '15px', display: 'inline-block', margin: '0 auto 25px', boxShadow: '0 10px 30px rgba(0,0,0,0.5)' }}><img src={ticketModal.qrUrl} alt="QR" width="150" style={{ display: 'block' }} /></div>
-              
-              <div style={{ background: 'rgba(0,0,0,0.3)', padding: '15px', marginBottom: '25px', border: '1px solid var(--border)', textAlign: 'center' }}>
-                <div>
-                  <div style={{ fontSize: '9px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>Guest Name</div>
-                  <div style={{ fontSize: '16px', fontWeight: 700, color: '#fff', marginBottom: '10px', wordBreak: 'break-all', textTransform: 'uppercase' }}>{ticketModal.name}</div>
-                  <div style={{ fontSize: '9px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>Access Type</div>
-                  <div style={{ fontSize: '13px', color: 'var(--primary)', fontWeight: 700, marginTop: '2px', textTransform: 'uppercase', wordBreak: 'break-all' }}>{ticketModal.tier || 'UNKNOWN PASS'}</div>
+          <div className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/90 backdrop-blur-md p-4">
+            <div className="flex flex-col items-center max-w-sm w-full">
+              <div className="bg-[#FDFBF7] dark:bg-[#111827] w-full shadow-2xl relative p-8 md:p-10 text-center rounded-[2rem] overflow-hidden border border-gray-200 dark:border-gray-800">
+                <div className="absolute top-0 left-0 w-full h-2 bg-[#F97316]"></div>
+                <h2 className="font-serif text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-1 md:mb-2 mt-2">{config.title.split(' ')[0]}</h2>
+                <div className="text-[#F97316] text-[9px] font-bold tracking-widest uppercase mb-6 md:mb-8 pb-3 md:pb-4 border-b border-gray-200 dark:border-gray-800">Official E-Ticket</div>
+                
+                <div className="text-left bg-white dark:bg-gray-900 p-5 md:p-6 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm">
+                  <div className="text-gray-400 text-[9px] font-bold uppercase tracking-widest mb-1">Attendee</div>
+                  <div className="text-lg md:text-xl font-bold text-gray-900 dark:text-white mb-3 md:mb-4 font-serif border-b border-gray-100 dark:border-gray-800 pb-2 md:pb-3 break-words">{ticketModal.name}</div>
+                  <div className="text-gray-400 text-[9px] font-bold uppercase tracking-widest mb-1">Ticket Type</div>
+                  <div className="text-xs md:text-sm font-bold text-[#F97316] uppercase tracking-widest">{ticketModal.tier}</div>
                 </div>
+                <p className="text-xs text-gray-500 mt-6 leading-relaxed">E-Ticket และรายละเอียดงาน<br/>ถูกจัดส่งไปยังอีเมลของท่านแล้ว</p>
               </div>
-              
-              <button className="btn btn-primary" style={{ width: '100%', padding: '14px', fontSize: '13px' }} onClick={() => setTicketModal({ isOpen: false, name: '', tier: '', qrUrl: '' })}>CLOSE WINDOW</button>
+              <div className="mt-6 md:mt-8 w-full">
+                <button onClick={() => setTicketModal({isOpen:false})} className="w-full bg-gray-900 dark:bg-white hover:bg-gray-800 text-white dark:text-gray-900 text-[11px] font-bold py-3.5 uppercase tracking-widest transition rounded-full shadow-xl">ปิดหน้าต่าง / Close</button>
+              </div>
             </div>
           </div>
         )}
+        </div>
       </>
     );
   }
 
   // ==========================================
-  // RENDER: ADMIN VIEW (MODERN DASHBOARD)
+  // RENDER: ADMIN VIEW (DASHBOARD)
   // ==========================================
   return (
     <>
-      <script src="https://cdn.tailwindcss.com"></script>
-      
-      <div className="flex flex-col md:flex-row h-screen bg-[#0a0a0a] text-slate-200 font-sans overflow-hidden selection:bg-blue-500/30">
+      <div className="flex flex-col md:flex-row h-screen bg-[#0A0D14] text-gray-200 font-sans overflow-hidden selection:bg-[#F97316]/30">
         
         {/* Mobile Admin Header */}
-        <div className="md:hidden flex items-center justify-between p-4 bg-[#121212] border-b border-white/5 relative z-50 shadow-md">
+        <div className="md:hidden flex items-center justify-between p-4 bg-[#111827] border-b border-gray-800 shadow-md z-50">
            <div className="flex items-center gap-3">
-             <div className="w-8 h-8 flex items-center justify-center text-black font-bold text-sm" style={{ background: config.primaryColor || '#D4AF37' }}>V</div>
-             <span className="font-bold text-white uppercase tracking-wider text-xs">Event Platform</span>
+             <div className="w-8 h-8 flex items-center justify-center text-white font-bold text-sm rounded-lg bg-[#F97316]">E</div>
+             <span className="font-bold text-white uppercase tracking-wider text-xs">Event Admin</span>
            </div>
            <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-white p-2">
-             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={isMobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} /></svg>
+             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={isMobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} /></svg>
            </button>
         </div>
 
         {/* Sidebar */}
-        <aside className={`fixed md:relative z-40 w-72 h-[calc(100vh-65px)] md:h-full bg-[#121212] border-r border-white/5 flex flex-col shadow-2xl transition-transform transform ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
+        <aside className={`fixed md:relative z-40 w-72 h-[calc(100vh-65px)] md:h-full bg-[#111827] border-r border-gray-800 flex flex-col shadow-2xl transition-transform transform ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
           
-          <div className="hidden md:flex p-6 border-b border-white/5 items-center gap-4 cursor-pointer hover:bg-white/5 transition-colors" onClick={() => setCurrentView('customer')}>
-            <div className="w-10 h-10 flex items-center justify-center text-black font-bold text-lg shadow-lg" style={{ background: config.primaryColor || '#D4AF37' }}>V</div>
+          <div className="hidden md:flex p-6 border-b border-gray-800 items-center gap-4 cursor-pointer hover:bg-gray-800/50 transition-colors" onClick={() => setCurrentView('customer')}>
+            <div className="w-10 h-10 flex items-center justify-center text-white font-bold text-xl rounded-xl bg-[#F97316] shadow-lg shadow-orange-500/20">E</div>
             <div>
-              <h1 className="font-bold text-white text-sm tracking-widest uppercase">Dashboard</h1>
-              <span className="text-[9px] text-emerald-400 font-medium flex items-center gap-1.5 mt-1 uppercase tracking-widest"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Online</span>
+              <h1 className="font-bold text-white text-sm tracking-wide uppercase">Dashboard</h1>
+              <span className="text-[9px] text-[#10B981] font-semibold flex items-center gap-1.5 mt-1 uppercase tracking-wider"><span className="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-pulse"></span> Online</span>
             </div>
           </div>
 
           <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-            <div className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest mb-3 px-3">Management</div>
-            <button onClick={() => {setAdminTab('dashboard'); setIsMobileMenuOpen(false);}} className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-medium transition-all ${adminTab === 'dashboard' ? 'bg-white/10 text-white shadow-sm border-l-2 border-white' : 'text-zinc-400 hover:bg-white/5 hover:text-white border-l-2 border-transparent'}`}>
-              <span className="text-base opacity-80">📊</span> Live Analytics
+            <div className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3 px-3">Management</div>
+            <button onClick={() => {setAdminTab('dashboard'); setIsMobileMenuOpen(false);}} className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold transition-all rounded-xl ${adminTab === 'dashboard' ? 'bg-gray-800 text-white shadow-sm border-l-2 border-[#F97316]' : 'text-gray-400 hover:bg-gray-800/50 hover:text-white border-l-2 border-transparent'}`}>
+              <span className="text-lg opacity-80">📊</span> Live Analytics
             </button>
-            <button onClick={() => {setAdminTab('users'); setIsMobileMenuOpen(false);}} className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-medium transition-all ${adminTab === 'users' ? 'bg-white/10 text-white shadow-sm border-l-2 border-white' : 'text-zinc-400 hover:bg-white/5 hover:text-white border-l-2 border-transparent'}`}>
-              <span className="text-base opacity-80">📋</span> Attendee List
+            <button onClick={() => {setAdminTab('users'); setIsMobileMenuOpen(false);}} className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold transition-all rounded-xl ${adminTab === 'users' ? 'bg-gray-800 text-white shadow-sm border-l-2 border-[#F97316]' : 'text-gray-400 hover:bg-gray-800/50 hover:text-white border-l-2 border-transparent'}`}>
+              <span className="text-lg opacity-80">📋</span> Attendee List
             </button>
-            <button onClick={() => {setAdminTab('scanner'); setIsMobileMenuOpen(false);}} className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-medium transition-all ${adminTab === 'scanner' ? 'bg-white/10 text-white shadow-sm border-l-2 border-white' : 'text-zinc-400 hover:bg-white/5 hover:text-white border-l-2 border-transparent'}`}>
-              <span className="text-base opacity-80">📷</span> Event Check-In
+            <button onClick={() => {setAdminTab('scanner'); setIsMobileMenuOpen(false);}} className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold transition-all rounded-xl ${adminTab === 'scanner' ? 'bg-gray-800 text-white shadow-sm border-l-2 border-[#F97316]' : 'text-gray-400 hover:bg-gray-800/50 hover:text-white border-l-2 border-transparent'}`}>
+              <span className="text-lg opacity-80">📷</span> Event Check-In
             </button>
             
-            <div className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest mb-3 px-3 mt-8">Configuration</div>
-            <button onClick={() => {setAdminTab('settings'); setIsMobileMenuOpen(false);}} className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-medium transition-all ${adminTab === 'settings' ? 'bg-white/10 text-white shadow-sm border-l-2 border-white' : 'text-zinc-400 hover:bg-white/5 hover:text-white border-l-2 border-transparent'}`}>
-              <span className="text-base opacity-80">⚙️</span> Event Config
+            <div className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3 px-3 mt-8">Configuration</div>
+            <button onClick={() => {setAdminTab('settings'); setIsMobileMenuOpen(false);}} className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold transition-all rounded-xl ${adminTab === 'settings' ? 'bg-gray-800 text-white shadow-sm border-l-2 border-[#F97316]' : 'text-gray-400 hover:bg-gray-800/50 hover:text-white border-l-2 border-transparent'}`}>
+              <span className="text-lg opacity-80">⚙️</span> Event Config
             </button>
-            <button onClick={() => {setAdminTab('schedule'); setIsMobileMenuOpen(false);}} className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-medium transition-all ${adminTab === 'schedule' ? 'bg-white/10 text-white shadow-sm border-l-2 border-white' : 'text-zinc-400 hover:bg-white/5 hover:text-white border-l-2 border-transparent'}`}>
-              <span className="text-base opacity-80">⏱️</span> Schedule
+            <button onClick={() => {setAdminTab('schedule'); setIsMobileMenuOpen(false);}} className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold transition-all rounded-xl ${adminTab === 'schedule' ? 'bg-gray-800 text-white shadow-sm border-l-2 border-[#F97316]' : 'text-gray-400 hover:bg-gray-800/50 hover:text-white border-l-2 border-transparent'}`}>
+              <span className="text-lg opacity-80">⏱️</span> Schedule
             </button>
-            <button onClick={() => {setAdminTab('speakers'); setIsMobileMenuOpen(false);}} className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-medium transition-all ${adminTab === 'speakers' ? 'bg-white/10 text-white shadow-sm border-l-2 border-white' : 'text-zinc-400 hover:bg-white/5 hover:text-white border-l-2 border-transparent'}`}>
-              <span className="text-base opacity-80">🎤</span> Speakers & VIPs
+            <button onClick={() => {setAdminTab('speakers'); setIsMobileMenuOpen(false);}} className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold transition-all rounded-xl ${adminTab === 'speakers' ? 'bg-gray-800 text-white shadow-sm border-l-2 border-[#F97316]' : 'text-gray-400 hover:bg-gray-800/50 hover:text-white border-l-2 border-transparent'}`}>
+              <span className="text-lg opacity-80">🏵️</span> Speakers
             </button>
-            <button onClick={() => {setAdminTab('tickets'); setIsMobileMenuOpen(false);}} className={`w-full flex items-center gap-3 px-4 py-3 text-xs font-medium transition-all ${adminTab === 'tickets' ? 'bg-white/10 text-white shadow-sm border-l-2 border-white' : 'text-zinc-400 hover:bg-white/5 hover:text-white border-l-2 border-transparent'}`}>
-              <span className="text-base opacity-80">🎟️</span> Tickets
+            <button onClick={() => {setAdminTab('tickets'); setIsMobileMenuOpen(false);}} className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold transition-all rounded-xl ${adminTab === 'tickets' ? 'bg-gray-800 text-white shadow-sm border-l-2 border-[#F97316]' : 'text-gray-400 hover:bg-gray-800/50 hover:text-white border-l-2 border-transparent'}`}>
+              <span className="text-lg opacity-80">🎟️</span> Ticketing
             </button>
           </nav>
 
-          <div className="p-4 border-t border-white/5 bg-[#121212]">
-            <button onClick={() => setCurrentView('customer')} className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-white/5 hover:bg-white/10 text-white text-[10px] font-bold uppercase tracking-wider transition-all border border-white/10">
-              ← View Live Site
+          <div className="p-4 border-t border-gray-800 bg-[#111827]">
+            <button onClick={() => setCurrentView('customer')} className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-transparent hover:bg-gray-800 text-gray-400 hover:text-white text-[11px] font-bold uppercase tracking-wider transition-all border border-gray-700 rounded-xl">
+              ← Return to Site
             </button>
           </div>
         </aside>
@@ -901,87 +1000,91 @@ export default function App() {
         {/* Overlay for mobile sidebar */}
         {isMobileMenuOpen && <div className="fixed inset-0 bg-black/60 z-30 md:hidden backdrop-blur-sm" onClick={() => setIsMobileMenuOpen(false)}></div>}
 
-        {/* Main Content Area */}
-        <main className="flex-1 p-4 md:p-8 lg:p-10 overflow-y-auto relative" style={{ backgroundColor: '#0a0a0a', backgroundImage: 'radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px)', backgroundSize: '20px 20px' }}>
+        {/* Main Content Area (Admin Backend Upgraded) */}
+        <main className="flex-1 p-4 md:p-8 lg:p-10 overflow-y-auto relative" style={{ backgroundColor: '#0A0D14', backgroundImage: 'radial-gradient(rgba(249,115,22,0.05) 1.5px, transparent 1.5px)', backgroundSize: '35px 35px' }}>
           
           {adminTab === 'dashboard' && (
-            <div className="max-w-7xl mx-auto space-y-6 md:space-y-8 relative z-10">
+            <div className="max-w-7xl mx-auto space-y-6 md:space-y-8 relative z-10 stagger-enter">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
-                  <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight uppercase">Live Analytics</h2>
-                  <p className="text-zinc-500 text-[10px] md:text-xs mt-1 uppercase tracking-widest">Real-time Event Data</p>
+                  <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight uppercase glow-text">Live Analytics</h2>
+                  <p className="text-[#F97316] text-[10px] md:text-xs mt-1 uppercase tracking-wider font-bold">Real-time Event Data Insight</p>
                 </div>
-                <button onClick={() => syncWithGoogleSheet()} disabled={isSyncing} className="w-full sm:w-auto px-5 py-2.5 bg-white/5 hover:bg-white/10 text-white text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 border border-white/10">
-                  <span className={isSyncing ? "animate-spin" : ""}>🔄</span> {isSyncing ? "SYNCING..." : "FORCE SYNC"}
+                <button onClick={() => syncWithGoogleSheet()} disabled={isSyncing} className="w-full sm:w-auto px-5 py-2.5 bg-gradient-to-r from-gray-800 to-gray-900 hover:from-gray-700 hover:to-gray-800 text-white text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 border border-gray-700 rounded-lg shadow-[0_0_15px_rgba(0,0,0,0.3)] hover:border-[#F97316]">
+                  <span className={isSyncing ? "animate-spin" : ""}>🔄</span> {isSyncing ? "SYNCING DATA..." : "FORCE SYNC"}
                 </button>
               </div>
 
-              {/* Bento Grid Stats - No Truncate, Allow break-words */}
+              {/* Bento Grid Stats */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
-                <div className="bg-[#121212] border border-white/5 p-6 md:p-8 relative overflow-hidden group hover:border-blue-500/30 transition-colors">
-                  <div className="text-xl md:text-2xl mb-4 md:mb-6 opacity-80">👥</div>
-                  <p className="text-[9px] md:text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1 md:mb-2">Total Attendees</p>
+                <div className="admin-glass p-6 rounded-2xl relative overflow-hidden group hover:border-blue-500/50">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-blue-500/10 rounded-bl-full -z-10 group-hover:scale-110 transition-transform"></div>
+                  <div className="w-10 h-10 bg-blue-500/20 text-blue-400 flex items-center justify-center rounded-xl text-xl mb-4 border border-blue-500/30">👥</div>
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Total Attendees</p>
                   <div className="text-3xl lg:text-4xl font-bold text-white break-words font-mono">{registrations.length}</div>
                 </div>
-                <div className="bg-[#121212] border border-white/5 p-6 md:p-8 relative overflow-hidden group hover:border-emerald-500/30 transition-colors">
-                  <div className="text-xl md:text-2xl mb-4 md:mb-6 opacity-80">💰</div>
-                  <p className="text-[9px] md:text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1 md:mb-2">Net Revenue</p>
+                <div className="admin-glass p-6 rounded-2xl relative overflow-hidden group hover:border-[#10B981]/50">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-[#10B981]/10 rounded-bl-full -z-10 group-hover:scale-110 transition-transform"></div>
+                  <div className="w-10 h-10 bg-[#10B981]/20 text-[#10B981] flex items-center justify-center rounded-xl text-xl mb-4 border border-[#10B981]/30">💰</div>
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Net Revenue</p>
                   <div className="text-2xl lg:text-3xl font-bold text-white font-mono break-words leading-tight">฿{totalRevenueNum.toLocaleString()}</div>
                 </div>
-                <div className="bg-[#121212] border border-white/5 p-6 md:p-8 relative overflow-hidden group hover:border-amber-500/30 transition-colors">
-                  <div className="text-xl md:text-2xl mb-4 md:mb-6 opacity-80">🏆</div>
-                  <p className="text-[9px] md:text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1 md:mb-2">Top Ticket</p>
+                <div className="admin-glass p-6 rounded-2xl relative overflow-hidden group hover:border-[#F97316]/50">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-[#F97316]/10 rounded-bl-full -z-10 group-hover:scale-110 transition-transform"></div>
+                  <div className="w-10 h-10 bg-[#F97316]/20 text-[#F97316] flex items-center justify-center rounded-xl text-xl mb-4 border border-[#F97316]/30">🏆</div>
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Top Ticket</p>
                   <div className="text-lg lg:text-xl font-bold text-white mt-1 uppercase break-words leading-tight">{topTicket?.name || '-'}</div>
                 </div>
-                <div className="bg-[#121212] border border-white/5 p-6 md:p-8 relative overflow-hidden group hover:border-pink-500/30 transition-colors">
-                  <div className="text-xl md:text-2xl mb-4 md:mb-6 opacity-80">📊</div>
-                  <p className="text-[9px] md:text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-1 md:mb-2">Avg. Ticket Value</p>
+                <div className="admin-glass p-6 rounded-2xl relative overflow-hidden group hover:border-pink-500/50">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-pink-500/10 rounded-bl-full -z-10 group-hover:scale-110 transition-transform"></div>
+                  <div className="w-10 h-10 bg-pink-500/20 text-pink-400 flex items-center justify-center rounded-xl text-xl mb-4 border border-pink-500/30">📊</div>
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Avg. Ticket Value</p>
                   <div className="text-2xl lg:text-3xl font-bold text-white font-mono break-words leading-tight">฿{avgOrderValue.toLocaleString()}</div>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
-                <div className="lg:col-span-1 bg-[#121212] p-6 md:p-8 border border-white/5">
+                <div className="lg:col-span-1 admin-glass p-6 md:p-8 rounded-2xl">
                   <h3 className="text-sm md:text-base font-bold text-white mb-6 uppercase tracking-wide">Ticket Allocation</h3>
                   <div className="space-y-5">
                     {ticketStats.map((t, i) => (
                       <div key={i}>
-                        <div className="flex justify-between text-[10px] md:text-[11px] font-semibold mb-2 uppercase">
-                          <span className="text-zinc-400 break-words pr-2">{t.name}</span>
-                          <span className="text-white flex-shrink-0">{t.count} <span className="text-zinc-600 font-normal">({t.percent}%)</span></span>
+                        <div className="flex justify-between text-[11px] md:text-xs font-semibold mb-2 uppercase">
+                          <span className="text-gray-400 break-words pr-2">{t.name}</span>
+                          <span className="text-white flex-shrink-0">{t.count} <span className="text-gray-600 font-normal">({t.percent}%)</span></span>
                         </div>
-                        <div className="w-full h-1 bg-white/10 overflow-hidden">
-                          <div className={`h-full transition-all duration-1000 ${i===0?'bg-blue-500':i===1?'bg-emerald-500':'bg-amber-500'}`} style={{ width: `${t.percent}%` }}></div>
+                        <div className="w-full h-1 bg-white/10 overflow-hidden rounded-full">
+                          <div className={`h-full transition-all duration-1000 ${i===0?'bg-blue-500':i===1?'bg-[#10B981]':'bg-amber-500'}`} style={{ width: `${t.percent}%` }}></div>
                         </div>
                       </div>
                     ))}
                   </div>
                 </div>
 
-                <div className="lg:col-span-2 bg-[#121212] p-6 md:p-8 border border-white/5 flex flex-col">
+                <div className="lg:col-span-2 admin-glass p-6 md:p-8 flex flex-col rounded-2xl">
                   <div className="flex justify-between items-center mb-6">
                     <h3 className="text-sm md:text-base font-bold text-white uppercase tracking-wide">Recent Registrations</h3>
-                    <button onClick={() => setAdminTab('users')} className="text-[9px] font-bold text-zinc-400 hover:text-white uppercase tracking-widest bg-white/5 px-3 py-1.5 transition-colors">View All →</button>
+                    <button onClick={() => setAdminTab('users')} className="text-[10px] font-bold text-gray-400 hover:text-[#F97316] uppercase tracking-wider bg-black/40 px-3 py-1.5 rounded-lg transition-colors border border-gray-800">View All →</button>
                   </div>
                   {registrations.length === 0 ? (
-                    <div className="flex-1 flex flex-col items-center justify-center text-zinc-600 text-xs md:text-sm py-12 border border-dashed border-white/10">
+                    <div className="flex-1 flex flex-col items-center justify-center text-gray-600 text-xs md:text-sm py-12 border border-dashed border-gray-700/50 rounded-xl">
                       NO DATA YET
                     </div>
                   ) : (
                     <div className="space-y-2 flex-1 overflow-x-auto">
                       {registrations.slice(0, 5).map(r => (
-                        <div key={r.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-transparent border border-white/5 hover:bg-white/[0.02] transition-colors gap-3 sm:gap-0 min-w-[300px]">
+                        <div key={r.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-transparent border-b border-gray-800/50 hover:bg-gray-800/30 transition-colors gap-3 sm:gap-0 min-w-[300px] rounded-lg">
                           <div className="flex items-center gap-3 md:gap-4">
-                            <div className="text-zinc-600 text-[9px] md:text-[10px] w-12 md:w-16 flex-shrink-0 font-mono">#{r.id.toString().slice(-6)}</div>
+                            <div className="text-gray-500 text-[10px] w-12 flex-shrink-0 font-mono">#{r.id.toString().slice(-6)}</div>
                             <div>
-                              <div className="font-semibold text-white text-xs uppercase break-words max-w-[150px] md:max-w-[200px]">{r.name}</div>
-                              <div className="text-[9px] text-zinc-500 uppercase tracking-wider break-words max-w-[150px] md:max-w-[200px]">{r.company || r.email}</div>
+                              <div className="font-bold text-white text-xs md:text-sm uppercase break-words max-w-[150px] md:max-w-[200px]">{r.name}</div>
+                              <div className="text-[9px] text-gray-500 uppercase tracking-wider break-words max-w-[150px] md:max-w-[200px]">{r.company || r.email}</div>
                             </div>
                           </div>
                           <div className="flex sm:justify-end items-center gap-3 md:gap-4 ml-14 sm:ml-0">
-                            {r.status === 'Checked In' && <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981] flex-shrink-0"></span>}
-                            <span className="inline-block px-2 py-1 text-[8px] font-semibold bg-white/5 text-zinc-300 uppercase tracking-wider border border-white/10 break-words text-center max-w-[100px] md:max-w-[120px]">{r.ticketName || 'UNKNOWN PASS'}</span>
-                            <div className="text-xs font-semibold text-emerald-400 font-mono w-16 md:w-24 text-right flex-shrink-0">฿{Number(r.totalPaid).toLocaleString()}</div>
+                            {r.status === 'Checked In' && <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#10B981] shadow-[0_0_8px_#10B981] flex-shrink-0"></span>}
+                            <span className="inline-block px-2 py-1 text-[8px] font-bold bg-black/40 text-gray-300 uppercase tracking-wider border border-gray-700 rounded break-words text-center max-w-[100px] md:max-w-[120px] backdrop-blur-sm">{r.ticketName || 'UNKNOWN PASS'}</span>
+                            <div className="text-xs font-bold text-[#F97316] font-mono w-16 md:w-24 text-right flex-shrink-0">฿{Number(r.totalPaid).toLocaleString()}</div>
                           </div>
                         </div>
                       ))}
@@ -993,47 +1096,44 @@ export default function App() {
           )}
 
           {adminTab === 'scanner' && (
-             <div className="max-w-4xl mx-auto space-y-6 relative z-10">
+             <div className="max-w-4xl mx-auto space-y-6 relative z-10 stagger-enter">
                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 md:mb-6">
                  <div>
-                   <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight uppercase">Event Check-In</h2>
-                   <p className="text-zinc-500 text-[10px] md:text-xs mt-1 uppercase tracking-widest">Scan QR or Barcode</p>
+                   <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight uppercase glow-text">Event Check-In</h2>
+                   <p className="text-[#F97316] text-[10px] md:text-xs mt-1 uppercase tracking-widest font-bold">Scan QR or Barcode</p>
                  </div>
                </div>
 
-               <div className="bg-[#121212] border border-white/5 p-4 md:p-8 shadow-xl flex flex-col items-center justify-center text-center relative overflow-hidden min-h-[400px]">
+               <div className="admin-glass p-4 md:p-8 shadow-sm flex flex-col items-center justify-center text-center relative overflow-hidden min-h-[400px] rounded-2xl">
                  
                  <div className="flex justify-center gap-4 mb-6 md:mb-8 relative z-10 w-full sm:w-auto">
-                    <button onClick={() => setIsScanning(!isScanning)} className={`w-full sm:w-auto px-5 py-3 text-white text-[10px] font-bold uppercase tracking-wider transition-all border shadow-lg ${isScanning ? 'bg-red-600 hover:bg-red-700 border-red-600' : 'bg-transparent hover:bg-white/5 border-white/20'}`}>
+                    <button onClick={() => setIsScanning(!isScanning)} className={`w-full sm:w-auto px-5 py-3 text-white text-[10px] font-bold uppercase tracking-wider transition-all border shadow-lg rounded-lg ${isScanning ? 'bg-red-600/80 hover:bg-red-600 border-red-500' : 'bg-[#F97316]/80 hover:bg-[#F97316] border-[#F97316]'}`}>
                       {isScanning ? '🛑 Close Camera' : '📷 Open Camera Scanner'}
                     </button>
                  </div>
 
                  {isScanning && (
-                   <div id="qr-reader" className="w-full max-w-sm mx-auto overflow-hidden border border-white/20 mb-8 bg-black"></div>
+                   <div id="qr-reader" className="w-full max-w-sm mx-auto overflow-hidden border border-gray-600 mb-8 bg-black rounded-xl shadow-[0_0_30px_rgba(249,115,22,0.2)]"></div>
                  )}
 
                  <div className="relative z-10 w-full max-w-md">
                    {scanResult && (
-                     <div className={`mb-8 p-6 border ${scanResult.type === 'success' ? 'bg-emerald-900/10 border-emerald-500/30' : scanResult.type === 'duplicate' ? 'bg-amber-900/10 border-amber-500/30' : 'bg-red-900/10 border-red-500/30'} shadow-xl transition-all`}>
-                       <div className={`text-4xl md:text-5xl mb-4 ${scanResult.type === 'success' ? 'text-emerald-500' : scanResult.type === 'duplicate' ? 'text-amber-500' : 'text-red-500'}`}>
+                     <div className={`mb-8 p-6 border ${scanResult.type === 'success' ? 'bg-[#10B981]/10 border-[#10B981]/50 shadow-[0_0_30px_rgba(16,185,129,0.2)]' : scanResult.type === 'duplicate' ? 'bg-amber-900/20 border-amber-500/50' : 'bg-red-900/20 border-red-500/50'} backdrop-blur-md transition-all rounded-xl`}>
+                       <div className={`text-4xl md:text-5xl mb-4 ${scanResult.type === 'success' ? 'text-[#10B981]' : scanResult.type === 'duplicate' ? 'text-amber-500' : 'text-red-500'}`}>
                          {scanResult.type === 'success' ? '✅' : scanResult.type === 'duplicate' ? '⚠️' : '❌'}
                        </div>
                        <h3 className="text-lg md:text-xl font-bold text-white uppercase mb-2 leading-tight">{scanResult.message}</h3>
                        
                        {scanResult.user && (
-                         <div className="mt-5 pt-5 border-t border-white/5 text-left bg-black/20 p-4 md:p-5">
-                           <div className="text-[9px] text-zinc-500 uppercase tracking-widest mb-1">Guest Name</div>
-                           <div className="text-lg font-bold text-white uppercase mb-4 break-words">{scanResult.user.name}</div>
+                         <div className="mt-5 pt-5 border-t border-gray-700 text-left bg-black/40 p-4 md:p-5 rounded-lg">
+                           <div className="text-[9px] text-gray-400 uppercase tracking-widest mb-1">Guest Name</div>
+                           <div className="text-lg font-bold text-white uppercase mb-4 break-words glow-text">{scanResult.user.name}</div>
                            
-                           <div className="text-[9px] text-zinc-500 uppercase tracking-widest mb-1">Ticket Type</div>
-                           <div className={`text-xs font-bold uppercase px-3 py-1 inline-block border ${scanResult.type === 'success' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : 'bg-amber-500/10 text-amber-400 border-amber-500/30'}`}>{scanResult.user.ticketName || 'UNKNOWN PASS'}</div>
+                           <div className="text-[9px] text-gray-400 uppercase tracking-widest mb-1">Ticket Type</div>
+                           <div className={`text-xs font-bold uppercase px-3 py-1 inline-block border rounded ${scanResult.type === 'success' ? 'bg-[#10B981]/20 text-[#10B981] border-[#10B981]/50' : 'bg-amber-500/20 text-amber-400 border-amber-500/50'}`}>{scanResult.user.ticketName || 'UNKNOWN PASS'}</div>
                            
-                           <div className="text-[9px] text-zinc-500 uppercase tracking-widest mt-4 mb-1">Contact</div>
-                           <div className="text-xs text-zinc-300 break-all font-mono">{scanResult.user.phone || '-'}</div>
-
-                           <button onClick={() => printBadge(scanResult.user)} className="mt-6 w-full py-3 bg-transparent border border-white/20 hover:bg-white/5 text-white text-[10px] font-bold uppercase tracking-widest transition-all">
-                             🖨️ PRINT BADGE (NO QR)
+                           <button onClick={() => printBadge(scanResult.user)} className="mt-6 w-full py-3 bg-gray-800 hover:bg-gray-700 text-white text-[10px] font-bold uppercase tracking-widest transition-all rounded-lg border border-gray-600 shadow-sm">
+                             🖨️ PRINT BADGE
                            </button>
                          </div>
                        )}
@@ -1041,15 +1141,14 @@ export default function App() {
                    )}
 
                    <form onSubmit={(e) => { e.preventDefault(); processScan(scanQuery); setScanQuery(''); }} className="relative">
-                     <label className="block text-[9px] md:text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-2 md:mb-3">USB / Bluetooth Scanner</label>
+                     <label className="block text-[9px] md:text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 md:mb-3">USB / Bluetooth Scanner</label>
                      <input 
                        ref={scannerInputRef}
                        type="text" 
                        value={scanQuery}
                        onChange={e => setScanQuery(e.target.value)}
-                       autoFocus
                        placeholder="CLICK TO SCAN..." 
-                       className="w-full p-4 md:p-5 bg-[#050505] border border-white/10 focus:border-primary text-center text-xs md:text-sm text-white outline-none transition-all uppercase tracking-widest"
+                       className="w-full p-4 md:p-5 bg-black/50 border border-gray-700 focus:border-[#F97316] focus:shadow-[0_0_15px_rgba(249,115,22,0.3)] text-center text-xs md:text-sm text-white outline-none transition-all uppercase tracking-widest rounded-xl backdrop-blur-sm"
                      />
                    </form>
                  </div>
@@ -1058,79 +1157,74 @@ export default function App() {
           )}
 
           {adminTab === 'users' && (
-             <div className="max-w-7xl mx-auto space-y-4 md:space-y-6 relative z-10">
-               <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight mb-4 md:mb-6 uppercase">Attendee List</h2>
-               <div className="bg-[#121212] border border-white/5 overflow-hidden">
+             <div className="max-w-7xl mx-auto space-y-4 md:space-y-6 relative z-10 stagger-enter">
+               <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight mb-4 md:mb-6 uppercase glow-text">Attendee Database</h2>
+               <div className="admin-glass rounded-2xl overflow-hidden shadow-2xl">
                  {registrations.length === 0 ? (
-                   <div className="text-center py-20 text-zinc-600 text-xs md:text-sm uppercase tracking-widest">Awaiting Entries...</div>
+                   <div className="text-center py-20 text-gray-500 text-xs md:text-sm uppercase tracking-widest">Awaiting Entries...</div>
                  ) : (
                    <div className="overflow-x-auto">
                      <table className="w-full text-left border-collapse min-w-[750px]">
                        <thead>
-                         <tr className="bg-white/5 border-b border-white/5 text-[9px] md:text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
-                           <th className="py-4 px-4 md:py-5 md:px-6">Guest Info</th>
-                           <th className="py-4 px-4 md:py-5 md:px-6">Comms</th>
-                           <th className="py-4 px-4 md:py-5 md:px-6">Ticket Type</th>
-                           <th className="py-4 px-4 md:py-5 md:px-6 text-center">Status</th>
+                         <tr className="bg-black/40 border-b border-gray-700/50 text-[10px] font-bold text-[#F97316] uppercase tracking-widest backdrop-blur-sm">
+                           <th className="py-4 px-4 md:py-5 md:px-6">Guest Profile</th>
+                           <th className="py-4 px-4 md:py-5 md:px-6">Contact Info</th>
+                           <th className="py-4 px-4 md:py-5 md:px-6">Pass Type</th>
+                           <th className="py-4 px-4 md:py-5 md:px-6 text-center">Check-in Status</th>
                            <th className="py-4 px-4 md:py-5 md:px-6 text-center">Action</th>
                          </tr>
                        </thead>
-                       <tbody className="divide-y divide-white/5 text-xs">
+                       <tbody className="divide-y divide-gray-800/30 text-xs">
                          {registrations.map(r => (
-                           <tr key={r.id} className="hover:bg-white/[0.02] transition-colors">
+                           <tr key={r.id} className="admin-table-row cursor-default">
                              {editingUserId === r.id ? (
                                <>
                                  <td className="py-4 px-4 md:px-6 space-y-2">
-                                   <input className="w-full p-2 bg-black border border-white/10 text-xs text-white font-semibold uppercase focus:border-primary outline-none" value={editUserForm.name} onChange={e => setEditUserForm({...editUserForm, name: e.target.value})} placeholder="Name" />
-                                   <input className="w-full p-2 bg-black border border-white/10 text-[10px] text-white uppercase focus:border-primary outline-none" value={editUserForm.company} onChange={e => setEditUserForm({...editUserForm, company: e.target.value})} placeholder="Company" />
+                                   <input className="w-full p-2 bg-black/60 border border-gray-700 text-xs text-white font-semibold uppercase focus:border-[#F97316] outline-none rounded" value={editUserForm.name || ''} onChange={e => setEditUserForm({...editUserForm, name: e.target.value})} placeholder="Name" />
+                                   <input className="w-full p-2 bg-black/60 border border-gray-700 text-[10px] text-white uppercase focus:border-[#F97316] outline-none rounded" value={editUserForm.company || ''} onChange={e => setEditUserForm({...editUserForm, company: e.target.value})} placeholder="Company" />
                                  </td>
                                  <td className="py-4 px-4 md:px-6 space-y-2">
-                                   <input className="w-full p-2 bg-black border border-white/10 text-[10px] text-zinc-300 focus:border-primary outline-none" value={editUserForm.email} onChange={e => setEditUserForm({...editUserForm, email: e.target.value})} placeholder="Email" />
-                                   <input className="w-full p-2 bg-black border border-white/10 text-[10px] text-zinc-300 focus:border-primary outline-none" value={editUserForm.phone} onChange={e => setEditUserForm({...editUserForm, phone: e.target.value})} placeholder="Phone" />
+                                   <input className="w-full p-2 bg-black/60 border border-gray-700 text-[10px] text-gray-300 focus:border-[#F97316] outline-none rounded" value={editUserForm.email || ''} onChange={e => setEditUserForm({...editUserForm, email: e.target.value})} placeholder="Email" />
+                                   <input className="w-full p-2 bg-black/60 border border-gray-700 text-[10px] text-gray-300 focus:border-[#F97316] outline-none rounded" value={editUserForm.phone || ''} onChange={e => setEditUserForm({...editUserForm, phone: e.target.value})} placeholder="Phone" />
                                  </td>
                                  <td className="py-4 px-4 md:px-6">
-                                    <select className="w-full p-2 bg-black border border-white/10 text-[10px] text-white uppercase focus:border-primary outline-none" value={editUserForm.ticketName || ''} onChange={e => setEditUserForm({...editUserForm, ticketName: e.target.value})}>
-                                      <option value="">-- Select Ticket --</option>
-                                      {config.tickets?.map(t => (
-                                        <option key={t.id} value={t.name}>{t.name}</option>
-                                      ))}
-                                    </select>
+                                    <input className="w-full p-2 bg-black/60 border border-gray-700 text-[10px] text-white uppercase focus:border-[#F97316] outline-none rounded" value={editUserForm.ticketName || ''} onChange={e => setEditUserForm({...editUserForm, ticketName: e.target.value})} placeholder="Ticket Name" />
                                  </td>
                                  <td className="py-4 px-4 md:px-6 text-center">
-                                    <select className="bg-black border border-white/10 text-[10px] text-white p-2 outline-none uppercase font-semibold" value={editUserForm.status || 'Pending'} onChange={e => setEditUserForm({...editUserForm, status: e.target.value})}>
+                                    <select className="bg-black/60 border border-gray-700 text-[10px] text-white p-2 outline-none uppercase font-semibold rounded" value={editUserForm.status || 'Pending'} onChange={e => setEditUserForm({...editUserForm, status: e.target.value})}>
                                       <option value="Pending">Pending</option>
                                       <option value="Checked In">Checked In</option>
                                     </select>
                                  </td>
                                  <td className="py-4 px-4 md:px-6 text-center space-x-1 md:space-x-2 whitespace-nowrap">
-                                   <button onClick={saveUserEdit} className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white text-[9px] font-semibold uppercase tracking-wider transition-colors">Save</button>
-                                   <button onClick={() => setEditingUserId(null)} className="px-3 py-1.5 bg-transparent hover:bg-white/10 text-white text-[9px] font-semibold uppercase tracking-wider border border-white/20 transition-colors">Cancel</button>
+                                   <button onClick={saveUserEdit} className="px-3 py-1.5 bg-[#10B981]/90 hover:bg-[#10B981] text-white text-[9px] font-bold uppercase tracking-wider transition-colors rounded">Save</button>
+                                   <button onClick={() => setEditingUserId(null)} className="px-3 py-1.5 bg-gray-800 hover:bg-gray-700 text-white text-[9px] font-bold uppercase tracking-wider border border-gray-700 transition-colors rounded">Cancel</button>
                                  </td>
                                </>
                              ) : (
                                <>
                                  <td className="py-4 md:py-5 px-4 md:px-6 max-w-[200px]">
                                    <div className="font-semibold text-white text-xs uppercase break-words">{r.name}</div>
-                                   <div className="text-[9px] text-zinc-500 font-medium mt-1 uppercase tracking-wider truncate">{r.company || '-'}</div>
+                                   <div className="text-[9px] text-gray-400 font-medium mt-1 uppercase tracking-wider truncate">{r.company || '-'}</div>
                                  </td>
                                  <td className="py-4 md:py-5 px-4 md:px-6 max-w-[150px]">
-                                   <div className="text-zinc-300 text-[10px] truncate">{r.email}</div>
-                                   <div className="text-[9px] text-zinc-600 mt-1 font-mono">{r.phone}</div>
+                                   <div className="text-gray-300 text-[10px] truncate">{r.email}</div>
+                                   <div className="text-[9px] text-gray-500 mt-1 font-mono">{r.phone}</div>
                                  </td>
                                  <td className="py-4 md:py-5 px-4 md:px-6 max-w-[150px]">
-                                   <span className="px-2 md:px-3 py-1 text-[8px] font-medium bg-white/5 text-zinc-300 border border-white/10 uppercase tracking-widest break-words inline-block text-center">{r.ticketName || 'UNKNOWN PASS'}</span>
+                                   <span className="px-2 md:px-3 py-1 text-[8px] font-bold bg-black/50 text-gray-300 border border-gray-700 uppercase tracking-widest break-words inline-block text-center rounded backdrop-blur-sm">{r.ticketName || 'UNKNOWN PASS'}</span>
                                  </td>
                                  <td className="py-4 md:py-5 px-4 md:px-6 text-center">
                                     {r.status === 'Checked In' ? (
-                                       <span className="px-2 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 text-[8px] font-semibold uppercase tracking-wider">Checked In</span>
+                                       <span className="px-2 py-1 bg-[#10B981]/10 text-[#10B981] border border-[#10B981]/30 text-[8px] font-bold uppercase tracking-wider rounded">Checked In</span>
                                     ) : (
-                                       <span className="px-2 py-1 bg-transparent text-zinc-500 border border-white/10 text-[8px] font-semibold uppercase tracking-wider">Pending</span>
+                                       <span className="px-2 py-1 bg-transparent text-gray-500 border border-gray-800 text-[8px] font-bold uppercase tracking-wider rounded">Pending</span>
                                     )}
                                  </td>
                                  <td className="py-4 md:py-5 px-4 md:px-6 text-center space-x-1 md:space-x-2 whitespace-nowrap">
-                                   <button onClick={() => printBadge(r)} className="px-2 md:px-3 py-1 text-blue-400 hover:text-white bg-transparent border border-white/20 font-semibold text-[8px] uppercase tracking-wider transition-colors" title="Print Badge">Print</button>
-                                   <button onClick={() => startEditUser(r)} className="px-2 md:px-3 py-1 text-zinc-400 hover:text-white bg-transparent border border-white/10 font-semibold text-[8px] uppercase tracking-wider transition-colors" title="Edit">Edit</button>
-                                   <button onClick={() => deleteUser(r.id)} className="px-2 md:px-3 py-1 text-rose-500 hover:text-white bg-transparent border border-white/10 font-semibold text-[8px] uppercase tracking-wider transition-colors" title="Delete">Del</button>
+                                   <button onClick={() => printBadge(r)} className="px-2 md:px-3 py-1 text-blue-400 hover:text-blue-300 hover:bg-blue-900/20 bg-black/40 border border-gray-700 font-bold text-[8px] uppercase tracking-wider transition-colors rounded" title="Print Badge">Print</button>
+                                   <button onClick={() => startEditUser(r)} className="px-2 md:px-3 py-1 text-gray-300 hover:text-white hover:bg-gray-800 bg-black/40 border border-gray-700 font-bold text-[8px] uppercase tracking-wider transition-colors rounded" title="Edit">Edit</button>
+                                   <button onClick={() => deleteUser(r.id)} className="px-2 md:px-3 py-1 text-red-500 hover:text-red-400 hover:bg-red-900/20 bg-black/40 border border-gray-700 font-bold text-[8px] uppercase tracking-wider transition-colors rounded" title="Delete">Del</button>
                                  </td>
                                </>
                              )}
@@ -1145,135 +1239,116 @@ export default function App() {
            )}
 
            {adminTab === 'settings' && (
-            <div className="max-w-5xl mx-auto space-y-6 relative z-10">
+            <div className="max-w-5xl mx-auto space-y-6 relative z-10 stagger-enter">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 md:mb-6">
-                <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight uppercase">Event Config</h2>
-                <button onClick={handleSaveConfig} className="w-full sm:w-auto px-6 md:px-8 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold uppercase text-[10px] md:text-xs tracking-widest shadow-sm transition-all">
+                <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight uppercase glow-text">Event Config</h2>
+                <button onClick={handleSaveConfig} className="w-full sm:w-auto px-6 md:px-8 py-3 bg-[#F97316] hover:bg-orange-600 text-white font-semibold uppercase text-[10px] md:text-xs tracking-widest shadow-[0_0_15px_rgba(249,115,22,0.4)] rounded-lg transition-all">
                   💾 SAVE CONFIG
                 </button>
               </div>
 
-              {/* BACKGROUND IMAGES SETTING */}
-              <div className="bg-[#121212] p-6 md:p-8 border border-white/5 shadow-sm space-y-6">
-                <div className="border-b border-white/5 pb-4">
-                  <h3 className="text-base md:text-lg font-bold text-white uppercase">🖼️ Background Images</h3>
-                  <p className="text-[9px] md:text-[10px] text-zinc-500 uppercase tracking-widest mt-1">ใส่ลิงก์รูปภาพ (URL) สำหรับเปลี่ยนพื้นหลังเว็บ</p>
+              <div className="admin-glass p-6 md:p-8 space-y-6 rounded-2xl">
+                <div className="border-b border-gray-700/50 pb-4">
+                  <h3 className="text-base md:text-lg font-bold text-[#F97316] uppercase">🖼️ Background Images</h3>
+                  <p className="text-[10px] text-gray-400 uppercase tracking-widest mt-1">ใส่ลิงก์รูปภาพ (URL) สำหรับเปลี่ยนพื้นหลังเว็บ</p>
                 </div>
                 <div className="grid grid-cols-1 gap-4 md:gap-6">
                   <div className="space-y-1.5 md:space-y-2">
-                    <label className="text-[9px] md:text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Hero Background</label>
-                    <input type="text" value={config.heroBg} onChange={(e) => setConfig({...config, heroBg: e.target.value})} placeholder="https://..." className="w-full p-3 bg-black border border-white/10 text-xs text-zinc-300 focus:border-primary outline-none" />
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Hero Background</label>
+                    <input type="text" value={config.heroBg} onChange={(e) => setConfig({...config, heroBg: e.target.value})} placeholder="https://..." className="w-full p-3 bg-black/50 border border-gray-700 text-xs text-gray-200 focus:border-[#F97316] outline-none rounded-lg" />
                   </div>
                   <div className="space-y-1.5 md:space-y-2">
-                    <label className="text-[9px] md:text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Sponsors Background</label>
-                    <input type="text" value={config.sponsorBg} onChange={(e) => setConfig({...config, sponsorBg: e.target.value})} placeholder="https://..." className="w-full p-3 bg-black border border-white/10 text-xs text-zinc-300 focus:border-primary outline-none" />
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Sponsors Background</label>
+                    <input type="text" value={config.sponsorBg} onChange={(e) => setConfig({...config, sponsorBg: e.target.value})} placeholder="https://..." className="w-full p-3 bg-black/50 border border-gray-700 text-xs text-gray-200 focus:border-[#F97316] outline-none rounded-lg" />
                   </div>
                 </div>
               </div>
 
-              {/* VIDEO ON DEMAND SETTINGS */}
-              <div className="bg-[#121212] p-6 md:p-8 border border-white/5 shadow-sm space-y-6">
-                <div className="flex justify-between items-center border-b border-white/5 pb-4">
-                  <h3 className="text-base md:text-lg font-bold text-white uppercase">🎬 VOD Highlight</h3>
+              <div className="admin-glass p-6 md:p-8 space-y-6 rounded-2xl">
+                <div className="flex justify-between items-center border-b border-gray-700/50 pb-4">
+                  <h3 className="text-base md:text-lg font-bold text-[#F97316] uppercase">🎬 VOD Highlight</h3>
                   <label className="flex items-center cursor-pointer">
                     <div className="relative">
                       <input type="checkbox" className="sr-only" checked={config.showVideo} onChange={(e) => setConfig({...config, showVideo: e.target.checked})} />
-                      <div className={`block w-10 h-5 transition-colors border border-white/10 ${config.showVideo ? 'bg-emerald-600' : 'bg-black'}`}></div>
-                      <div className={`dot absolute left-1 top-1 w-3 h-3 transition-transform ${config.showVideo ? 'bg-white transform translate-x-5' : 'bg-zinc-600'}`}></div>
+                      <div className={`block w-10 h-5 transition-colors border border-gray-700 rounded-full ${config.showVideo ? 'bg-[#F97316]' : 'bg-black/50'}`}></div>
+                      <div className={`dot absolute left-1 top-1 w-3 h-3 rounded-full transition-transform ${config.showVideo ? 'bg-white transform translate-x-5 shadow-sm' : 'bg-gray-500'}`}></div>
                     </div>
-                    <span className="ml-3 text-[9px] md:text-[10px] font-bold text-zinc-500 uppercase tracking-widest">{config.showVideo ? 'LIVE' : 'OFFLINE'}</span>
+                    <span className="ml-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">{config.showVideo ? 'LIVE' : 'OFFLINE'}</span>
                   </label>
                 </div>
                 
                 {config.showVideo && (
                   <div className="grid grid-cols-1 gap-4 md:gap-6">
                     <div className="space-y-1.5 md:space-y-2">
-                      <label className="text-[9px] md:text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Video Title</label>
-                      <input type="text" value={config.videoTitle} onChange={(e) => setConfig({...config, videoTitle: e.target.value})} className="w-full p-3 bg-black border border-white/10 text-xs font-semibold text-white focus:border-primary outline-none uppercase" />
+                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Video Title</label>
+                      <input type="text" value={config.videoTitle} onChange={(e) => setConfig({...config, videoTitle: e.target.value})} className="w-full p-3 bg-black/50 border border-gray-700 text-xs font-semibold text-white focus:border-[#F97316] outline-none uppercase rounded-lg" />
                     </div>
                     <div className="space-y-1.5 md:space-y-2">
-                      <label className="text-[9px] md:text-[10px] font-bold text-zinc-500 uppercase tracking-widest">YouTube Video Link</label>
-                      <input type="text" value={config.videoUrl} onChange={(e) => setConfig({...config, videoUrl: e.target.value})} className="w-full p-3 bg-black border border-white/10 text-xs text-primary font-mono focus:border-primary outline-none" />
+                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">YouTube Video Link</label>
+                      <input type="text" value={config.videoUrl} onChange={(e) => setConfig({...config, videoUrl: e.target.value})} className="w-full p-3 bg-black/50 border border-gray-700 text-xs text-[#3B82F6] font-mono focus:border-[#F97316] outline-none rounded-lg" />
                     </div>
                     <div className="space-y-1.5 md:space-y-2">
-                      <label className="text-[9px] md:text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Description</label>
-                      <textarea value={config.videoDesc} onChange={(e) => setConfig({...config, videoDesc: e.target.value})} className="w-full p-3 bg-black border border-white/10 text-xs text-zinc-300 focus:border-primary outline-none" rows="3"></textarea>
+                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Description</label>
+                      <textarea value={config.videoDesc} onChange={(e) => setConfig({...config, videoDesc: e.target.value})} className="w-full p-3 bg-black/50 border border-gray-700 text-xs text-gray-300 focus:border-[#F97316] outline-none rounded-lg" rows="3"></textarea>
                     </div>
                   </div>
                 )}
               </div>
 
-              <div className="bg-[#121212] p-6 md:p-8 border border-white/5 shadow-sm space-y-6 md:space-y-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 p-4 md:p-6 bg-white/5 border border-white/10">
-                    <div className="space-y-1.5 md:space-y-2">
-                        <label className="text-[9px] md:text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Primary Color</label>
-                        <div className="flex gap-2 md:gap-3">
-                            <input type="color" value={config.primaryColor} onChange={(e) => setConfig({...config, primaryColor: e.target.value})} className="w-10 h-10 bg-black border border-white/10 cursor-pointer p-1 flex-shrink-0" />
-                            <input type="text" value={config.primaryColor} onChange={(e) => setConfig({...config, primaryColor: e.target.value})} className="flex-1 p-2.5 bg-black border border-white/10 text-xs font-semibold text-white uppercase outline-none" />
-                        </div>
-                    </div>
-                    <div className="space-y-1.5 md:space-y-2">
-                        <label className="text-[9px] md:text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Secondary Color</label>
-                        <div className="flex gap-2 md:gap-3">
-                            <input type="color" value={config.secondaryColor} onChange={(e) => setConfig({...config, secondaryColor: e.target.value})} className="w-10 h-10 bg-black border border-white/10 cursor-pointer p-1 flex-shrink-0" />
-                            <input type="text" value={config.secondaryColor} onChange={(e) => setConfig({...config, secondaryColor: e.target.value})} className="flex-1 p-2.5 bg-black border border-white/10 text-xs font-semibold text-white uppercase outline-none" />
-                        </div>
-                    </div>
-                </div>
-
+              <div className="admin-glass p-6 md:p-8 space-y-6 md:space-y-8 rounded-2xl">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
-                  <div className="space-y-1.5 md:space-y-2"><label className="text-[9px] md:text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Event Title</label><input type="text" value={config.title} onChange={(e) => setConfig({...config, title: e.target.value})} className="w-full p-3 bg-black border border-white/10 text-xs font-semibold text-white focus:border-primary outline-none uppercase" /></div>
-                  <div className="space-y-1.5 md:space-y-2"><label className="text-[9px] md:text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Subtitle / Tagline</label><input type="text" value={config.subtitle} onChange={(e) => setConfig({...config, subtitle: e.target.value})} className="w-full p-3 bg-black border border-white/10 text-xs text-white focus:border-primary outline-none font-semibold" /></div>
-                  <div className="space-y-1.5 md:space-y-2"><label className="text-[9px] md:text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Event Date</label><input type="text" value={config.date} onChange={(e) => setConfig({...config, date: e.target.value})} className="w-full p-3 bg-black border border-white/10 text-xs font-semibold text-white focus:border-primary outline-none uppercase" /></div>
-                  <div className="space-y-1.5 md:space-y-2"><label className="text-[9px] md:text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Countdown Target</label><input type="datetime-local" value={config.targetDate?.slice(0,16)} onChange={(e) => setConfig({...config, targetDate: e.target.value + ":00"})} className="w-full p-3 bg-black border border-white/10 text-xs font-mono text-zinc-300 focus:border-primary outline-none [color-scheme:dark]" /></div>
-                  <div className="md:col-span-2 space-y-1.5 md:space-y-2"><label className="text-[9px] md:text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Location</label><input type="text" value={config.location} onChange={(e) => setConfig({...config, location: e.target.value})} className="w-full p-3 bg-black border border-white/10 text-xs font-semibold text-white focus:border-primary outline-none uppercase" /></div>
-                  <div className="md:col-span-2 space-y-1.5 md:space-y-2"><label className="text-[9px] md:text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Description</label><textarea value={config.aboutText} onChange={(e) => setConfig({...config, aboutText: e.target.value})} className="w-full p-3 bg-black border border-white/10 text-xs text-zinc-300 focus:border-primary outline-none" rows="4"></textarea></div>
+                  <div className="space-y-1.5 md:space-y-2"><label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Event Title</label><input type="text" value={config.title} onChange={(e) => setConfig({...config, title: e.target.value})} className="w-full p-3 bg-black/50 border border-gray-700 text-xs font-semibold text-white focus:border-[#F97316] outline-none uppercase rounded-lg" /></div>
+                  <div className="space-y-1.5 md:space-y-2"><label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Subtitle / Tagline</label><input type="text" value={config.subtitle} onChange={(e) => setConfig({...config, subtitle: e.target.value})} className="w-full p-3 bg-black/50 border border-gray-700 text-xs text-white focus:border-[#F97316] outline-none font-semibold rounded-lg" /></div>
+                  <div className="space-y-1.5 md:space-y-2"><label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Event Date</label><input type="text" value={config.date} onChange={(e) => setConfig({...config, date: e.target.value})} className="w-full p-3 bg-black/50 border border-gray-700 text-xs font-semibold text-white focus:border-[#F97316] outline-none uppercase rounded-lg" /></div>
+                  <div className="space-y-1.5 md:space-y-2"><label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Countdown Target</label><input type="datetime-local" value={config.targetDate?.slice(0,16)} onChange={(e) => setConfig({...config, targetDate: e.target.value + ":00"})} className="w-full p-3 bg-black/50 border border-gray-700 text-xs font-mono text-gray-300 focus:border-[#F97316] outline-none rounded-lg [color-scheme:dark]" /></div>
+                  <div className="md:col-span-2 space-y-1.5 md:space-y-2"><label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Location</label><input type="text" value={config.location} onChange={(e) => setConfig({...config, location: e.target.value})} className="w-full p-3 bg-black/50 border border-gray-700 text-xs font-semibold text-white focus:border-[#F97316] outline-none uppercase rounded-lg" /></div>
+                  <div className="md:col-span-2 space-y-1.5 md:space-y-2"><label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Description</label><textarea value={config.aboutText} onChange={(e) => setConfig({...config, aboutText: e.target.value})} className="w-full p-3 bg-black/50 border border-gray-700 text-xs text-gray-300 focus:border-[#F97316] outline-none rounded-lg" rows="4"></textarea></div>
                 </div>
               </div>
             </div>
           )}
 
           {adminTab === 'speakers' && (
-            <div className="max-w-6xl mx-auto space-y-6 relative z-10">
+            <div className="max-w-6xl mx-auto space-y-6 relative z-10 stagger-enter">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-                <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight uppercase">Speakers & VIPs</h2>
-                <button onClick={handleSaveConfig} className="w-full sm:w-auto px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold uppercase text-[10px] tracking-widest shadow-sm transition-all">
+                <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight uppercase glow-text">Speakers & VIPs</h2>
+                <button onClick={handleSaveConfig} className="w-full sm:w-auto px-6 py-3 bg-[#F97316] hover:bg-orange-600 text-white font-semibold uppercase text-[10px] tracking-widest shadow-[0_0_15px_rgba(249,115,22,0.4)] rounded-lg transition-all">
                   💾 SAVE CONFIG
                 </button>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                 {config.speakers?.map(speaker => (
-                  <div key={speaker.id} className="bg-[#121212] p-6 md:p-8 border border-white/5 relative shadow-sm">
-                    <button onClick={() => removeArrayItem('speakers', speaker.id)} className="absolute top-4 right-4 px-3 py-1.5 bg-transparent border border-rose-500/50 text-rose-500 text-[9px] font-bold uppercase hover:bg-rose-500/10 transition-all">Delete</button>
+                  <div key={speaker.id} className="admin-glass p-6 relative rounded-2xl">
+                    <button onClick={() => removeArrayItem('speakers', speaker.id)} className="absolute top-4 right-4 px-3 py-1.5 bg-transparent border border-rose-500/50 text-rose-500 text-[9px] font-bold uppercase hover:bg-rose-500/10 transition-all rounded-md">Delete</button>
                     <div className="flex flex-col sm:flex-row gap-4 items-start mb-6">
-                      <img src={speaker.img} className="w-20 h-20 object-cover border border-white/10" alt="speaker" />
+                      <img src={speaker.img} className="w-20 h-20 object-cover border border-gray-700 rounded-lg shadow-md" alt="speaker" />
                       
                       <div className="flex-1 w-full space-y-2">
                         <div className="space-y-1">
-                          <label className="block text-[9px] font-bold text-zinc-500 uppercase tracking-widest">Image URL</label>
-                          <input type="text" value={speaker.img} onChange={(e) => handleArrayChange('speakers', speaker.id, 'img', e.target.value)} className="w-full p-2 bg-black border border-white/10 text-[10px] font-mono text-blue-400 focus:border-primary outline-none" placeholder="https://..." />
+                          <label className="block text-[9px] font-bold text-gray-400 uppercase tracking-widest">Image URL</label>
+                          <input type="text" value={speaker.img} onChange={(e) => handleArrayChange('speakers', speaker.id, 'img', e.target.value)} className="w-full p-2 bg-black/50 border border-gray-700 text-[10px] font-mono text-[#3B82F6] focus:border-[#F97316] outline-none rounded-md" placeholder="https://..." />
                         </div>
                         <div className="space-y-1">
-                          <label className="block text-[9px] font-bold text-zinc-500 uppercase tracking-widest">Or Upload File</label>
-                          <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'speakers', speaker.id)} className="w-full text-[10px] text-zinc-400 file:mr-2 file:py-1 file:px-3 file:border-0 file:text-[9px] file:font-semibold file:uppercase file:bg-white/5 file:text-white hover:file:bg-white/10 cursor-pointer" />
+                          <label className="block text-[9px] font-bold text-gray-400 uppercase tracking-widest">Or Upload File</label>
+                          <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'speakers', speaker.id)} className="w-full text-[10px] text-gray-400 file:mr-2 file:py-1 file:px-3 file:border-0 file:text-[9px] file:font-semibold file:uppercase file:bg-gray-800 file:text-white hover:file:bg-gray-700 cursor-pointer rounded-md" />
                         </div>
                       </div>
 
                     </div>
                     <div className="space-y-3">
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <input type="text" value={speaker.name} onChange={(e) => handleArrayChange('speakers', speaker.id, 'name', e.target.value)} className="w-full p-2.5 bg-black border border-white/10 text-xs font-semibold uppercase text-white focus:border-primary outline-none" placeholder="Name" />
-                        <input type="text" value={speaker.role} onChange={(e) => handleArrayChange('speakers', speaker.id, 'role', e.target.value)} className="w-full p-2.5 bg-black border border-white/10 text-[10px] font-medium uppercase text-zinc-400 focus:border-primary outline-none" placeholder="Role/Company" />
+                        <input type="text" value={speaker.name} onChange={(e) => handleArrayChange('speakers', speaker.id, 'name', e.target.value)} className="w-full p-2.5 bg-black/50 border border-gray-700 text-xs font-semibold uppercase text-white focus:border-[#F97316] outline-none rounded-md" placeholder="Name" />
+                        <input type="text" value={speaker.role} onChange={(e) => handleArrayChange('speakers', speaker.id, 'role', e.target.value)} className="w-full p-2.5 bg-black/50 border border-gray-700 text-[10px] font-medium uppercase text-gray-300 focus:border-[#F97316] outline-none rounded-md" placeholder="Role/Company" />
                       </div>
                       <div className="flex gap-3">
-                         <input type="text" value={speaker.tag} onChange={(e) => handleArrayChange('speakers', speaker.id, 'tag', e.target.value)} className="flex-1 p-2.5 bg-black border border-white/10 text-[10px] font-semibold text-white uppercase focus:border-primary outline-none" placeholder="Category" />
-                         <input type="color" value={speaker.color} onChange={(e) => handleArrayChange('speakers', speaker.id, 'color', e.target.value)} className="w-10 h-9 bg-black border border-white/10 cursor-pointer p-0.5" />
+                         <input type="text" value={speaker.tag} onChange={(e) => handleArrayChange('speakers', speaker.id, 'tag', e.target.value)} className="flex-1 p-2.5 bg-black/50 border border-gray-700 text-[10px] font-semibold text-white uppercase focus:border-[#F97316] outline-none rounded-md" placeholder="Category" />
+                         <input type="color" value={speaker.color} onChange={(e) => handleArrayChange('speakers', speaker.id, 'color', e.target.value)} className="w-10 h-9 bg-black border border-gray-700 cursor-pointer p-0.5 rounded-md" />
                       </div>
-                      <textarea value={speaker.desc} onChange={(e) => handleArrayChange('speakers', speaker.id, 'desc', e.target.value)} className="w-full p-3 bg-black border border-white/10 text-[10px] text-zinc-400 focus:border-primary outline-none" rows="3" placeholder="Biography..."></textarea>
+                      <textarea value={speaker.desc} onChange={(e) => handleArrayChange('speakers', speaker.id, 'desc', e.target.value)} className="w-full p-3 bg-black/50 border border-gray-700 text-[10px] text-gray-300 focus:border-[#F97316] outline-none rounded-md" rows="3" placeholder="Biography..."></textarea>
                     </div>
                   </div>
                 ))}
-                <button onClick={addSpeaker} className="min-h-[150px] border border-dashed border-white/20 hover:border-primary text-zinc-500 hover:text-primary font-semibold text-xs uppercase transition-all flex flex-col items-center justify-center gap-2 bg-transparent p-6">
+                <button onClick={addSpeaker} className="min-h-[150px] border border-dashed border-gray-600 hover:border-[#F97316] text-gray-400 hover:text-[#F97316] font-semibold text-xs uppercase transition-all flex flex-col items-center justify-center gap-2 bg-black/20 rounded-2xl p-6 backdrop-blur-sm">
                   <span className="text-3xl">+</span> Add Speaker
                 </button>
               </div>
@@ -1281,31 +1356,31 @@ export default function App() {
           )}
 
           {adminTab === 'schedule' && (
-            <div className="max-w-4xl mx-auto space-y-6 relative z-10">
+            <div className="max-w-4xl mx-auto space-y-6 relative z-10 stagger-enter">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-                <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight uppercase">Event Schedule</h2>
-                <button onClick={handleSaveConfig} className="w-full sm:w-auto px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold uppercase text-[10px] tracking-widest shadow-sm transition-all">
+                <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight uppercase glow-text">Event Schedule</h2>
+                <button onClick={handleSaveConfig} className="w-full sm:w-auto px-6 py-3 bg-[#F97316] hover:bg-orange-600 text-white font-semibold uppercase text-[10px] tracking-widest shadow-[0_0_15px_rgba(249,115,22,0.4)] rounded-lg transition-all">
                   💾 SAVE CONFIG
                 </button>
               </div>
               <div className="space-y-4">
                 {config.schedule?.map(s => (
-                  <div key={s.id} className="bg-[#121212] p-6 border border-white/5 flex flex-col sm:flex-row gap-4 md:gap-6 relative group shadow-sm">
-                    <button onClick={() => removeArrayItem('schedule', s.id)} className="absolute top-4 right-4 md:opacity-0 group-hover:opacity-100 px-3 py-1.5 bg-transparent border border-rose-500/50 text-rose-500 text-[9px] font-bold uppercase transition-all">Delete</button>
+                  <div key={s.id} className="admin-glass p-6 flex flex-col sm:flex-row gap-4 md:gap-6 relative group rounded-2xl">
+                    <button onClick={() => removeArrayItem('schedule', s.id)} className="absolute top-4 right-4 md:opacity-0 group-hover:opacity-100 px-3 py-1.5 bg-transparent border border-rose-500/50 text-rose-500 text-[9px] font-bold uppercase transition-all rounded-md">Delete</button>
                     <div className="w-full sm:w-24 flex sm:flex-col gap-3">
-                      <input type="text" value={s.time} onChange={(e) => handleArrayChange('schedule', s.id, 'time', e.target.value)} className="w-full p-3 bg-black border border-white/10 text-center font-bold text-lg text-white focus:border-primary outline-none" />
-                      <input type="color" value={s.color} onChange={(e) => handleArrayChange('schedule', s.id, 'color', e.target.value)} className="w-12 sm:w-full h-12 sm:h-8 bg-black border border-white/10 cursor-pointer p-0.5 flex-shrink-0" />
+                      <input type="text" value={s.time} onChange={(e) => handleArrayChange('schedule', s.id, 'time', e.target.value)} className="w-full p-3 bg-black/50 border border-gray-700 text-center font-bold text-lg text-white focus:border-[#F97316] outline-none rounded-lg" />
+                      <input type="color" value={s.color} onChange={(e) => handleArrayChange('schedule', s.id, 'color', e.target.value)} className="w-12 sm:w-full h-12 sm:h-8 bg-black border border-gray-700 cursor-pointer p-0.5 flex-shrink-0 rounded-md" />
                     </div>
                     <div className="flex-1 space-y-3 sm:pr-8">
                       <div className="flex flex-col sm:flex-row gap-3">
-                        <input type="text" value={s.tag} onChange={(e) => handleArrayChange('schedule', s.id, 'tag', e.target.value)} className="w-full sm:w-28 p-2.5 bg-black border border-white/10 text-[9px] font-bold text-zinc-400 uppercase tracking-widest focus:border-primary outline-none" placeholder="TAG" />
-                        <input type="text" value={s.title} onChange={(e) => handleArrayChange('schedule', s.id, 'title', e.target.value)} className="flex-1 p-2.5 bg-black border border-white/10 text-sm font-semibold uppercase text-white focus:border-primary outline-none" placeholder="Session Title" />
+                        <input type="text" value={s.tag} onChange={(e) => handleArrayChange('schedule', s.id, 'tag', e.target.value)} className="w-full sm:w-28 p-2.5 bg-black/50 border border-gray-700 text-[9px] font-bold text-gray-400 uppercase tracking-widest focus:border-[#F97316] outline-none rounded-lg" placeholder="TAG" />
+                        <input type="text" value={s.title} onChange={(e) => handleArrayChange('schedule', s.id, 'title', e.target.value)} className="flex-1 p-2.5 bg-black/50 border border-gray-700 text-sm font-semibold uppercase text-white focus:border-[#F97316] outline-none rounded-lg" placeholder="Session Title" />
                       </div>
-                      <textarea value={s.desc} onChange={(e) => handleArrayChange('schedule', s.id, 'desc', e.target.value)} className="w-full p-3 bg-black border border-white/10 text-[10px] text-zinc-400 focus:border-primary outline-none" rows="2" placeholder="Description"></textarea>
+                      <textarea value={s.desc} onChange={(e) => handleArrayChange('schedule', s.id, 'desc', e.target.value)} className="w-full p-3 bg-black/50 border border-gray-700 text-[10px] text-gray-300 focus:border-[#F97316] outline-none rounded-lg" rows="2" placeholder="Description"></textarea>
                     </div>
                   </div>
                 ))}
-                <button onClick={addSchedule} className="w-full py-6 border border-dashed border-white/20 hover:border-primary text-zinc-500 hover:text-primary font-semibold text-xs uppercase transition-all bg-transparent">
+                <button onClick={addSchedule} className="w-full py-6 border border-dashed border-gray-600 hover:border-[#F97316] text-gray-400 hover:text-[#F97316] font-semibold text-xs uppercase transition-all bg-black/20 backdrop-blur-sm rounded-2xl">
                   + Add Session
                 </button>
               </div>
@@ -1313,12 +1388,12 @@ export default function App() {
           )}
 
           {adminTab === 'tickets' && (
-            <div className="max-w-6xl mx-auto space-y-6 relative z-10">
+            <div className="max-w-6xl mx-auto space-y-6 relative z-10 stagger-enter">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-                 <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight uppercase">Ticketing</h2>
+                 <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight uppercase glow-text">Ticketing</h2>
                  <div className="flex w-full sm:w-auto gap-3">
-                   <button onClick={addTicket} className="flex-1 sm:flex-none px-4 py-3 bg-transparent hover:bg-white/5 text-white text-[10px] font-semibold uppercase tracking-wider border border-white/20 transition-all">+ Add Ticket</button>
-                   <button onClick={handleSaveConfig} className="flex-1 sm:flex-none px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold uppercase text-[10px] tracking-widest shadow-sm transition-all">
+                   <button onClick={addTicket} className="flex-1 sm:flex-none px-4 py-3 bg-black/50 hover:bg-gray-800 text-white text-[10px] font-semibold uppercase tracking-wider border border-gray-600 transition-all rounded-lg backdrop-blur-sm">+ Add Ticket</button>
+                   <button onClick={handleSaveConfig} className="flex-1 sm:flex-none px-6 py-3 bg-[#F97316] hover:bg-orange-600 text-white font-semibold uppercase text-[10px] tracking-widest shadow-[0_0_15px_rgba(249,115,22,0.4)] rounded-lg transition-all">
                      💾 SAVE CONFIG
                    </button>
                  </div>
@@ -1326,30 +1401,30 @@ export default function App() {
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
                 {config.tickets?.map(ticket => (
-                  <div key={ticket.id} className="bg-[#121212] p-6 md:p-8 border border-white/5 flex flex-col gap-4 relative shadow-sm">
-                    <button onClick={() => removeArrayItem('tickets', ticket.id)} className="absolute top-4 right-4 px-3 py-1.5 bg-transparent border border-rose-500/50 text-rose-500 text-[9px] font-bold uppercase transition-all z-10">Delete</button>
+                  <div key={ticket.id} className="admin-glass p-6 flex flex-col gap-4 relative rounded-2xl">
+                    <button onClick={() => removeArrayItem('tickets', ticket.id)} className="absolute top-4 right-4 px-3 py-1.5 bg-transparent border border-rose-500/50 text-rose-500 text-[9px] font-bold uppercase transition-all z-10 rounded-md hover:bg-rose-500/10">Delete</button>
                     
                     <div className="space-y-1">
-                      <label className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest mt-2">Ticket Name</label>
-                      <input type="text" value={ticket.name} onChange={(e) => handleArrayChange('tickets', ticket.id, 'name', e.target.value)} className="w-full p-3 bg-black border border-white/10 text-sm font-semibold uppercase text-white focus:border-primary outline-none text-center" />
+                      <label className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mt-2">Ticket Name</label>
+                      <input type="text" value={ticket.name} onChange={(e) => handleArrayChange('tickets', ticket.id, 'name', e.target.value)} className="w-full p-3 bg-black/50 border border-gray-700 text-sm font-semibold uppercase text-white focus:border-[#F97316] outline-none text-center rounded-lg" />
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest mt-2">Price (THB)</label>
+                      <label className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mt-2">Price (THB)</label>
                       <div className="relative">
-                         <span className="absolute left-4 top-3 text-zinc-600 font-bold text-sm">฿</span>
-                         <input type="number" value={ticket.price} onChange={(e) => handleArrayChange('tickets', ticket.id, 'price', e.target.value)} className="w-full p-3 pl-8 bg-black border border-white/10 text-xl font-bold font-mono text-emerald-400 focus:border-primary outline-none text-center" />
+                         <span className="absolute left-4 top-3 text-gray-500 font-bold text-sm">฿</span>
+                         <input type="number" value={ticket.price} onChange={(e) => handleArrayChange('tickets', ticket.id, 'price', e.target.value)} className="w-full p-3 pl-8 bg-black/50 border border-gray-700 text-xl font-bold font-mono text-[#10B981] focus:border-[#F97316] outline-none text-center rounded-lg" />
                       </div>
                     </div>
 
                     <div className="space-y-1">
-                      <label className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest mt-2">Highlight Badge (Optional)</label>
-                      <input type="text" value={ticket.badge || ''} onChange={(e) => handleArrayChange('tickets', ticket.id, 'badge', e.target.value)} className="w-full p-2.5 bg-black border border-white/10 text-[10px] font-semibold text-primary uppercase text-center outline-none" placeholder="e.g. VIP ZONE" />
+                      <label className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mt-2">Highlight Badge (Optional)</label>
+                      <input type="text" value={ticket.badge || ''} onChange={(e) => handleArrayChange('tickets', ticket.id, 'badge', e.target.value)} className="w-full p-2.5 bg-black/50 border border-gray-700 text-[10px] font-semibold text-[#F97316] uppercase text-center outline-none rounded-lg" placeholder="e.g. VIP ZONE" />
                     </div>
 
                     <div className="space-y-1 flex-1 flex flex-col">
-                      <label className="text-[9px] font-bold text-zinc-500 uppercase tracking-widest mt-2">Access & Perks</label>
-                      <textarea value={ticket.features} onChange={(e) => handleArrayChange('tickets', ticket.id, 'features', e.target.value)} className="w-full flex-1 p-3 bg-black border border-white/10 text-[10px] text-zinc-400 focus:border-primary outline-none leading-relaxed" rows="5"></textarea>
+                      <label className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mt-2">Access & Perks</label>
+                      <textarea value={ticket.features} onChange={(e) => handleArrayChange('tickets', ticket.id, 'features', e.target.value)} className="w-full flex-1 p-3 bg-black/50 border border-gray-700 text-[10px] text-gray-300 focus:border-[#F97316] outline-none leading-relaxed rounded-lg" rows="5"></textarea>
                     </div>
                   </div>
                 ))}
