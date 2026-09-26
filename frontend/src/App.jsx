@@ -1,69 +1,63 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 
 // ==========================================
-// 1. CONFIG & BACKEND SETUP (EXPANDED & DETAILED EVENT)
+// 1. CONFIG & BACKEND SETUP (THAICRAFT THEME)
 // ==========================================
-// อัปเดต URL ใหม่ตามที่กำหนด
-const GAS_URL = "https://script.google.com/macros/s/AKfycbwYYNpRI6ygCVgN30nDRuJ00vWc8zNgTPyjRJ2zmpVeFQkMOvfyLfta_T_eLbItocpm/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycby5McbTH-_VnGxChrvI04xtSSZ_yTr5kGI0WSLMvkOJKdEnm6DadWkt7HXy8xt-wPmH/exec";
 
-// ข้อมูลเริ่มต้นแบบจัดเต็ม เพื่อให้หน้าเว็บดูมีรายละเอียดและเป็นประโยชน์กับผู้อ่าน
+// ข้อมูลเริ่มต้นสำหรับงาน ThaiCraft
 const defaultConfig = {
-  title: "FUTURE TECH",
-  subtitle: "Navigating the Next Digital Frontier",
-  date: "25 พฤศจิกายน 2026",
-  targetDate: "2026-11-25T08:30:00", 
-  location: "True Icon Hall, ICONSIAM",
-  aboutText: "งานสัมมนาเทคโนโลยีและธุรกิจที่ยิ่งใหญ่ที่สุดแห่งปี รวบรวมผู้นำทางความคิด ผู้เชี่ยวชาญระดับแนวหน้า และนักประดิษฐ์จากทั่วโลก มาร่วมเจาะลึกเทรนด์อนาคต ไม่ว่าจะเป็น AI, Web3, Sustainability และ Data-Driven Business พร้อมเวิร์กชอปปฏิบัติจริงที่จะช่วยยกระดับทักษะของคุณให้ก้าวทันโลกดิจิทัลที่เปลี่ยนแปลงอย่างรวดเร็ว โอกาสสำคัญในการอัปสกิลและขยายเครือข่ายที่คุณไม่ควรพลาด!",
-  contactEmail: "contact@futuretechsummit.co",
-  contactPhone: "02-123-4567",
+  title: "THAICRAFT 2026",
+  subtitle: "สืบสานสถาปัตยกรรมและงานออกแบบไทยสู่อนาคต",
+  date: "15 สิงหาคม 2026",
+  targetDate: "2026-08-15T09:00:00", 
+  location: "หอศิลปวัฒนธรรมแห่งกรุงเทพมหานคร (BACC)",
+  aboutText: "เวทีระดับชาติที่รวบรวมสถาปนิก นักออกแบบ และช่างฝีมือชั้นครู มาร่วมแลกเปลี่ยนมุมมองการนำศิลปะและสถาปัตยกรรมไทยดั้งเดิมมาประยุกต์ใช้ในบริบทร่วมสมัย ถอดรหัสความงามจากอดีตสู่นวัตกรรมเพื่ออนาคต สัมผัสประสบการณ์ผ่านการบรรยายและเวิร์กชอปลงมือทำจริง",
+  contactEmail: "contact@thaicraftdesign.com",
+  contactPhone: "02-987-6543",
   
-  primaryColor: "#F97316", // Brand Orange
-  secondaryColor: "#3B82F6", // Brand Blue
+  primaryColor: "#C5A059", // Gold/Brass color for Thai Theme
+  secondaryColor: "#1E293B", // Slate Dark
   
-  heroBg: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?q=80&w=2000&auto=format&fit=crop", 
+  heroBg: "https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?q=80&w=2000&auto=format&fit=crop", 
   marqueeBg: "", 
   sponsorBg: "", 
 
   showVideo: false,
-  videoTitle: "EVENT HIGHLIGHTS 2025",
+  videoTitle: "THAICRAFT HIGHLIGHTS",
   videoUrl: "", 
-  videoDesc: "ชมภาพบรรยากาศและความประทับใจจากงานสัมมนาปีที่ผ่านมา ที่รวบรวมผู้เข้าร่วมงานกว่า 2,000 คนจากหลากหลายอุตสาหกรรม",
+  videoDesc: "ชมภาพบรรยากาศและความประทับใจจากงานสัมมนาปีที่ผ่านมา ที่รวบรวมนักออกแบบและสถาปนิกชั้นนำของเมืองไทย",
 
   speakers: [
-    { id: 1, name: "ดร. วิทยา อนาคตไกล", role: "ผู้อำนวยการศูนย์วิจัย AI & Machine Learning", tag: "AI & DATA", color: "#3B82F6", img: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=400&auto=format&fit=crop", desc: "ผู้เชี่ยวชาญด้านปัญญาประดิษฐ์ที่มีประสบการณ์กว่า 15 ปีใน Silicon Valley จะมาบรรยายหัวข้อ 'Generative AI: The Next Business Revolution' เจาะลึกการนำ AI มาใช้ลดต้นทุนและเพิ่มประสิทธิภาพในองค์กร" },
-    { id: 2, name: "คุณสมาร์ท ดิจิทัลพลัส", role: "CEO & Founder, TechFlow Solutions", tag: "BUSINESS", color: "#F97316", img: "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=400&auto=format&fit=crop", desc: "ผู้บริหารรุ่นใหม่ที่ประสบความสำเร็จในการ Transform ธุรกิจแบบดั้งเดิมสู่ดิจิทัล จะมาร่วมแชร์ Case Study จริงในการปรับโครงสร้างองค์กรให้อยู่รอดในยุค Disruption" },
-    { id: 3, name: "Dr. Sarah Jenkins", role: "Global Web3 Strategist, MetaWorld", tag: "WEB 3.0", color: "#8B5CF6", img: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=400&auto=format&fit=crop", desc: "นักยุทธศาสตร์ระดับโลกด้าน Decentralized Finance และ Blockchain จะมาเผยวิสัยทัศน์เกี่ยวกับเศรษฐกิจดิจิทัลยุคใหม่ และโอกาสทางธุรกิจในโลก Web 3.0" },
-    { id: 4, name: "คุณนวัตกรรม สรรสร้าง", role: "Head of UX/UI, Creative Cloud Inc.", tag: "DESIGN", color: "#EC4899", img: "https://images.unsplash.com/photo-1550989460-0adf9ea622e2?q=80&w=400&auto=format&fit=crop", desc: "เจาะลึกพฤติกรรมผู้บริโภคยุคใหม่ผ่านศาสตร์ Human-Computer Interaction (HCI) และการออกแบบประสบการณ์ผู้ใช้ (UX) ที่กระตุ้นยอดขายได้จริง 300%" },
-    { id: 5, name: "คุณยั่งยืน รักษ์โลก", role: "Chief Sustainability Officer, GreenTech", tag: "SUSTAINABILITY", color: "#10B981", img: "https://images.unsplash.com/photo-1533090161767-e6ffed986c88?q=80&w=400&auto=format&fit=crop", desc: "ผู้บุกเบิกเทคโนโลยีเพื่อสิ่งแวดล้อม (Green Tech) กับบรรยายพิเศษเรื่อง 'ESG as a Growth Engine' เปลี่ยนข้อบังคับด้านสิ่งแวดล้อมให้เป็นโอกาสทำกำไรขององค์กร" },
-    { id: 6, name: "Mr. Alex Chen", role: "Lead Cybersecurity Architect", tag: "SECURITY", color: "#EF4444", img: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=400&auto=format&fit=crop", desc: "ผู้เชี่ยวชาญด้านความปลอดภัยทางไซเบอร์ จะมาอัปเดตภัยคุกคามทางดิจิทัลในปี 2026 และวิธีวางกรอบการป้องกันข้อมูลระดับองค์กร (Zero Trust Architecture)" }
+    { id: 1, name: "รศ.ดร. ภูมิปัญญา สถาปัตย์", role: "ผู้เชี่ยวชาญด้านสถาปัตยกรรมไทย", tag: "KEYNOTE", color: "#C5A059", img: "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png", desc: "คณบดีและผู้เชี่ยวชาญด้านประวัติศาสตร์สถาปัตยกรรม จะมาบรรยายหัวข้อ 'รากเหง้าสถาปัตยกรรมไทยในกระแสโลกาภิวัตน์'" },
+    { id: 2, name: "คุณศิลป์ สร้างสรรค์", role: "Design Director, ThaiCraft Studio", tag: "DESIGN", color: "#F97316", img: "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png", desc: "นักออกแบบรางวัลระดับโลก ผู้ผสานงานหัตถศิลป์พื้นบ้านเข้ากับงานเฟอร์นิเจอร์และสถาปัตยกรรมภายในแบบร่วมสมัย" },
+    { id: 3, name: "คุณไม้ ดินน้ำ", role: "Material Innovator", tag: "INNOVATION", color: "#10B981", img: "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png", desc: "นักวิจัยด้านวัสดุธรรมชาติ จะมาเผยเทคนิคการนำ ดินเผา ไม้ไผ่ และพืชท้องถิ่น มาใช้ในงานโครงสร้างยุคใหม่เพื่อความยั่งยืน" }
   ],
   
   sponsors: [
-    { id: 1, name: "TECH SAUCE" }, { id: 2, name: "GOOGLE CLOUD" },
-    { id: 3, name: "MICROSOFT" }, { id: 4, name: "AWS THAILAND" }, { id: 5, name: "EVENTFORU" }
+    { id: 1, name: "สมาคมสถาปนิกสยาม" }, { id: 2, name: "SCG BUILDING MATERIALS" },
+    { id: 3, name: "TCDC" }, { id: 4, name: "SILPAKORN UNIVERSITY" }, { id: 5, name: "BACC" }
   ],
 
   tickets: [
-    { id: 1, name: "Early Bird Pass", price: 1500, type: "early", badge: "🔥 BEST VALUE", features: "เข้าฟังสัมมนาได้ทุกเวที (Main & Second Stage)\nเข้าร่วม 1 Masterclass Workshop (เลือกได้)\nอาหารกลางวัน บุฟเฟต์นานาชาติ และ Coffee Break 2 มื้อ\nรับสิทธิ์ดูวิดีโอย้อนหลัง 30 วัน" },
-    { id: 2, name: "Regular Pass", price: 2500, type: "regular", badge: "STANDARD PASS", features: "เข้าฟังสัมมนาได้ทุกเวที (Main & Second Stage)\nเข้าร่วม 1 Masterclass Workshop (เลือกได้)\nอาหารกลางวัน บุฟเฟต์นานาชาติ และ Coffee Break 2 มื้อ\nรับสิทธิ์ดูวิดีโอย้อนหลัง 30 วัน" },
-    { id: 3, name: "VIP Executive", price: 4500, type: "vip", badge: "👑 VIP EXPERIENCE", features: "สิทธิพิเศษทุกประการของ Regular Pass\nที่นั่ง Reserved Seat แถวหน้าสุด พร้อมโต๊ะทำงาน\nเข้าร่วม Exclusive Networking Dinner กับวิทยากร\nช่องทางลงทะเบียนพิเศษ Fast-Track (ไม่ต้องต่อแถว)\nรับสิทธิ์ดูวิดีโอย้อนหลัง 1 ปีเต็ม พร้อมเอกสารสไลด์" }
+    { id: 1, name: "Craftman Pass", price: 1200, type: "early", badge: "🔥 BEST VALUE", features: "เข้าฟังสัมมนาได้ทุกเวที\nเข้าร่วม Masterclass Workshop\nอาหารว่างและเครื่องดื่ม\nรับ E-Certificate ดีไซน์พิเศษ" },
+    { id: 2, name: "Architect Pass", price: 2500, type: "regular", badge: "STANDARD PASS", features: "เข้าฟังสัมมนาได้ทุกเวที\nเข้าร่วม Masterclass Workshop\nอาหารกลางวันและเครื่องดื่ม\nรับ E-Certificate ดีไซน์พิเศษ" },
+    { id: 3, name: "VIP Designer", price: 4500, type: "vip", badge: "👑 VIP EXPERIENCE", features: "สิทธิพิเศษทุกประการของ Architect Pass\nที่นั่ง Reserved Seat แถวหน้าสุด\nเข้าร่วม Exclusive Dinner กับวิทยากรชั้นครู\nรับชุดของที่ระลึก ThaiCraft Limited Edition" }
   ],
 
   schedule: [
-    { id: 1, time: "08:30", title: "Registration & Morning Coffee", desc: "เปิดจุดลงทะเบียนผู้เข้าร่วมงาน รับป้ายชื่อ (Badge) พร้อมรับประทานของว่างและชา/กาแฟยามเช้า", tag: "NETWORKING", color: "#9CA3AF" },
-    { id: 2, time: "09:30", title: "Opening Keynote: The AI Era", desc: "กล่าวเปิดงานและวิสัยทัศน์สู่อนาคต โดย ดร. วิทยา อนาคตไกล เจาะลึกความเปลี่ยนแปลงที่ AI กำลังสร้างขึ้นในอุตสาหกรรมทั่วโลก", tag: "MAIN STAGE", color: "#F97316" },
-    { id: 3, time: "11:00", title: "Panel Discussion: Survival Guide 2026", desc: "เสวนาโต๊ะกลมโดย 3 ผู้บริหารระดับสูง ถกประเด็นกลยุทธ์การปรับตัวของธุรกิจ SME และองค์กรขนาดใหญ่ ในภาวะเศรษฐกิจผันผวน", tag: "PANEL", color: "#3B82F6" },
-    { id: 4, time: "12:30", title: "Networking Lunch", desc: "พักรับประทานอาหารกลางวัน (International Buffet) และโอกาสในการแลกเปลี่ยนนามบัตรและทำความรู้จักพาร์ทเนอร์ใหม่ๆ", tag: "BREAK", color: "#10B981" },
-    { id: 5, time: "14:00", title: "Deep-Dive Masterclasses", desc: "แยกย้ายเข้าห้องสัมมนาย่อย (Track 1: AI Prompt Engineering, Track 2: Green Tech Implementation, Track 3: UX/UI for Conversion)", tag: "WORKSHOP", color: "#8B5CF6" },
-    { id: 6, time: "16:30", title: "Closing Remarks & Lucky Draw", desc: "สรุปใจความสำคัญของงานสัมมนา แจกรางวัลพิเศษจากผู้สนับสนุน และกิจกรรม After Party สำหรับผู้ถือบัตร VIP", tag: "MAIN STAGE", color: "#F97316" }
+    { id: 1, time: "08:30", title: "Registration & Exhibition", desc: "ลงทะเบียนรับป้ายชื่อ และเดินชมนิทรรศการผลงานสถาปัตยกรรมและหัตถศิลป์ไทยประยุกต์", tag: "NETWORKING", color: "#9CA3AF" },
+    { id: 2, time: "09:30", title: "Keynote: อนาคตสถาปัตยกรรมไทยในเวทีโลก", desc: "เปิดมุมมองการนำเอกลักษณ์และภูมิปัญญาไทยไปต่อยอดในงานระดับสากล โดย รศ.ดร. ภูมิปัญญา สถาปัตย์", tag: "MAIN STAGE", color: "#C5A059" },
+    { id: 3, time: "11:00", title: "Panel Discussion: ถอดรหัสงานออกแบบไทยประยุกต์", desc: "ร่วมเสวนาถกประเด็นการรักษารากเหง้าควบคู่ไปกับนวัตกรรมและเทคโนโลยีการก่อสร้าง", tag: "PANEL", color: "#3B82F6" },
+    { id: 4, time: "12:30", title: "Networking Lunch", desc: "พักรับประทานอาหารไทยฟิวชัน และพบปะพูดคุยกับเพื่อนร่วมวงการ", tag: "BREAK", color: "#10B981" },
+    { id: 5, time: "14:00", title: "ThaiCraft Masterclasses", desc: "แยกย้ายเข้าห้องปฏิบัติการ (Track 1: งานไม้ประยุกต์, Track 2: การจัดแสงสถาปัตยกรรม, Track 3: นวัตกรรมสิ่งทอ)", tag: "WORKSHOP", color: "#F97316" },
+    { id: 6, time: "16:30", title: "Closing Remarks & Networking", desc: "สรุปกิจกรรม มอบใบประกาศนียบัตร และ After Party สไตล์ร่วมสมัย", tag: "MAIN STAGE", color: "#C5A059" }
   ],
   
   faqs: [
-    { id: 1, q: "งานสัมมนานี้เหมาะกับใครบ้าง?", a: "งานนี้ออกแบบมาสำหรับผู้ประกอบการ (Entrepreneurs), ผู้บริหาร (C-Levels), นักพัฒนาซอฟต์แวร์, นักการตลาดดิจิทัล และผู้ที่สนใจอัปเดตเทรนด์เทคโนโลยีเพื่อนำไปประยุกต์ใช้ในธุรกิจและการทำงานจริง" },
-    { id: 2, q: "สามารถออกใบกำกับภาษีเต็มรูปแบบได้หรือไม่?", a: "ได้แน่นอนครับ ระบบจะส่งลิงก์สำหรับกรอกข้อมูลการออกใบกำกับภาษี (e-Tax Invoice) ไปยังอีเมลของท่านโดยอัตโนมัติ หลังจากการชำระเงินเสร็จสิ้น" },
-    { id: 3, q: "มีล่ามแปลภาษาสำหรับ Session ของวิทยากรต่างชาติหรือไม่?", a: "ทางผู้จัดงานมีบริการหูฟังแปลภาษา (Simultaneous Translation) ไทย-อังกฤษ และ อังกฤษ-ไทย เตรียมไว้ให้ผู้เข้าร่วมงานทุกคนโดยไม่มีค่าใช้จ่ายเพิ่มเติม" },
-    { id: 4, q: "หากซื้อบัตรแล้วไม่สามารถมาร่วมงานได้ สามารถโอนสิทธิ์ได้ไหม?", a: "สามารถโอนสิทธิ์ให้ผู้อื่นได้ โดยต้องแจ้งเปลี่ยนชื่อและอีเมลผู้เข้าร่วมงานมาที่ contact@futuretechsummit.co ล่วงหน้าอย่างน้อย 3 วันก่อนวันจัดงาน" },
-    { id: 5, q: "ข้อกำหนดเรื่องการแต่งกาย (Dress Code) คืออะไร?", a: "แนะนำให้แต่งกายแบบ Smart Casual หรือ Business Casual เพื่อความสุภาพและสะดวกสบายในการร่วมกิจกรรม Workshop และ Networking ตลอดวัน" }
+    { id: 1, q: "งานสัมมนานี้เหมาะกับใครบ้าง?", a: "เหมาะสำหรับสถาปนิก, มัณฑนากร, นักออกแบบผลิตภัณฑ์, นิสิตนักศึกษา และผู้ที่หลงใหลในศิลปะและสถาปัตยกรรมไทยประยุกต์" },
+    { id: 2, q: "ต้องเตรียมอุปกรณ์อะไรสำหรับ Masterclass หรือไม่?", a: "ทางผู้จัดเตรียมวัสดุอุปกรณ์พื้นฐานให้ครบถ้วน แต่หากท่านมีสมุดสเก็ตช์หรือแท็บเล็ตส่วนตัว สามารถนำมาใช้ประกอบการเวิร์กชอปได้" },
+    { id: 3, q: "การเดินทางและที่จอดรถ?", a: "สถานที่จัดงานคือ หอศิลปวัฒนธรรมแห่งกรุงเทพมหานคร แนะนำให้เดินทางด้วยรถไฟฟ้า BTS สถานีสนามกีฬาแห่งชาติ หากนำรถยนต์มาสามารถจอดได้ที่อาคารจอดรถของหอศิลป์ หรือ MBK" }
   ]
 };
 
@@ -74,16 +68,15 @@ export default function App() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
-  // เปลี่ยน Key V2 เพื่อบังคับให้ดึงข้อมูลชุดใหม่ (Detailed Config)
   const [config, setConfig] = useState(() => {
     try { 
-      const saved = localStorage.getItem('eventPlatformConfigV2'); 
+      const saved = localStorage.getItem('eventPlatformConfigV6'); 
       return saved ? { ...defaultConfig, ...JSON.parse(saved) } : defaultConfig; 
     } catch { return defaultConfig; }
   });
 
   const [registrations, setRegistrations] = useState(() => {
-    try { const saved = localStorage.getItem('eventPlatformRegisV2'); return saved ? JSON.parse(saved) : []; } 
+    try { const saved = localStorage.getItem('eventPlatformRegisV6'); return saved ? JSON.parse(saved) : []; } 
     catch { return []; }
   });
 
@@ -91,6 +84,7 @@ export default function App() {
   const [ticketModal, setTicketModal] = useState({ isOpen: false, name: '', tier: '', qrUrl: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSyncing, setIsSyncing] = useState(true);
+  const [lastSyncTime, setLastSyncTime] = useState(new Date().toLocaleTimeString('th-TH'));
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [activeFaq, setActiveFaq] = useState(null);
 
@@ -131,8 +125,8 @@ export default function App() {
     else { document.documentElement.classList.remove('dark'); localStorage.theme = 'light'; }
   };
 
-  useEffect(() => { localStorage.setItem('eventPlatformConfigV2', JSON.stringify(config)); }, [config]);
-  useEffect(() => { localStorage.setItem('eventPlatformRegisV2', JSON.stringify(registrations)); }, [registrations]);
+  useEffect(() => { localStorage.setItem('eventPlatformConfigV6', JSON.stringify(config)); }, [config]);
+  useEffect(() => { localStorage.setItem('eventPlatformRegisV6', JSON.stringify(registrations)); }, [registrations]);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
@@ -167,9 +161,10 @@ export default function App() {
 
   useEffect(() => {
     syncWithGoogleSheet(true);
-    const interval = setInterval(() => { syncWithGoogleSheet(true); }, 15000);
+    const intervalTime = currentView === 'admin' ? 5000 : 30000; 
+    const interval = setInterval(() => { syncWithGoogleSheet(true); }, intervalTime);
     return () => clearInterval(interval);
-  }, []);
+  }, [currentView]);
 
   useEffect(() => {
     if (adminTab === 'scanner' && scannerInputRef.current) {
@@ -236,7 +231,7 @@ export default function App() {
 
     setRegistrations(prev => [newRegis, ...prev]);
     const qrData = encodeURIComponent(`EVENT|${formData.name}|${selectedTicket.name}|${regId}`);
-    const qrUrl = `https://quickchart.io/qr?text=${qrData}&size=300&margin=1&dark=${(config.primaryColor || '#F97316').replace('#','')}`;
+    const qrUrl = `https://quickchart.io/qr?text=${qrData}&size=300&margin=1&dark=${(config.primaryColor || '#C5A059').replace('#','')}`;
     
     setTicketModal({ isOpen: true, name: formData.name, tier: selectedTicket.name, qrUrl });
     setIsSubmitting(false);
@@ -246,7 +241,7 @@ export default function App() {
   const syncWithGoogleSheet = async (isAuto = false) => {
     if(!isAuto) setIsSyncing(true);
     try {
-      const resReg = await fetch(GAS_URL + "?action=getRegistrations&timestamp=" + new Date().getTime(), { cache: 'no-store' });
+      const resReg = await fetch(GAS_URL + "?action=getRegistrations&timestamp=" + new Date().getTime() + Math.random(), { cache: 'no-store' });
       const regData = await resReg.json();
       if(Array.isArray(regData)) {
         const formattedData = regData.map(r => ({
@@ -262,14 +257,18 @@ export default function App() {
         setRegistrations(formattedData.filter(r => r.name !== ''));
       }
 
-      const resConfig = await fetch(GAS_URL + "?action=getConfig&timestamp=" + new Date().getTime(), { cache: 'no-store' });
-      const configData = await resConfig.json();
-      if (configData && configData.title) setConfig({ ...defaultConfig, ...configData });
+      if (currentView === 'customer' || !isAuto) {
+        const resConfig = await fetch(GAS_URL + "?action=getConfig&timestamp=" + new Date().getTime() + Math.random(), { cache: 'no-store' });
+        const configData = await resConfig.json();
+        if (configData && configData.title) setConfig({ ...defaultConfig, ...configData });
+      }
+      
+      setLastSyncTime(new Date().toLocaleTimeString('th-TH'));
     } catch (error) { console.error("Sync Error:", error); }
     if(!isAuto) setIsSyncing(false);
   };
 
-  const processScan = (rawText) => {
+  const processScan = async (rawText) => {
     if(!rawText) return;
     const parts = rawText.split('|');
     let foundUser = null;
@@ -280,26 +279,14 @@ export default function App() {
        foundUser = registrations.find(r => r.phone === rawText || r.name.toLowerCase().includes(rawText.toLowerCase()) || String(r.id) === rawText);
     }
 
-    if(!foundUser) {
-       setScanResult({ type: 'error', message: '❌ ไม่พบข้อมูล (Invalid Ticket)' });
-       return;
-    }
-    if(foundUser.status === 'Checked In') {
-       setScanResult({ type: 'duplicate', user: foundUser, message: '⚠️ สแกนซ้ำ (Already Checked In)' });
-       return;
-    }
+    if(!foundUser) { setScanResult({ type: 'error', message: '❌ ไม่พบข้อมูล (Invalid Ticket)' }); return; }
+    if(foundUser.status === 'Checked In') { setScanResult({ type: 'duplicate', user: foundUser, message: '⚠️ สแกนซ้ำ (Already Checked In)' }); return; }
 
     const updatedUser = { ...foundUser, status: 'Checked In' };
     setRegistrations(prev => prev.map(r => r.id === updatedUser.id ? updatedUser : r));
     setScanResult({ type: 'success', user: updatedUser, message: '✅ ยืนยันสิทธิ์สำเร็จ (Entry Granted)' });
 
-    try {
-      fetch(GAS_URL, {
-         method: 'POST', mode: 'no-cors',
-         headers: { 'Content-Type': 'application/json' },
-         body: JSON.stringify({ action: 'checkIn', id: updatedUser.id })
-      });
-    } catch (err) { console.error(err); }
+    try { await fetch(GAS_URL, { method: 'POST', body: JSON.stringify({ action: 'checkIn', id: updatedUser.id }) }); } catch (err) {}
   };
 
   const printBadge = (user) => {
@@ -307,29 +294,38 @@ export default function App() {
     const html = `
       <html>
         <head>
-          <title>Print Badge - ${user.name}</title>
+          <title>Preview Badge - ${user.name}</title>
           <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Kanit:wght@400;600;800&display=swap" rel="stylesheet">
           <style>
             body { font-family: 'Kanit', sans-serif; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; background: #e5e5e5; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .badge { width: 100mm; height: 140mm; background: #ffffff; overflow: hidden; position: relative; display: flex; flex-direction: column; color: #171717; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: 1px solid #d4d4d8; border-radius: 20px; }
-            .header { background: #0A0D14; color: #fff; padding: 25px 15px; text-align: center; text-transform: uppercase; display: flex; flex-direction: column; align-items: center; justify-content: center; border-bottom: 5px solid ${config?.primaryColor || '#F97316'}; }
+            .header { background: #1E293B; color: #fff; padding: 25px 15px; text-align: center; text-transform: uppercase; display: flex; flex-direction: column; align-items: center; justify-content: center; border-bottom: 5px solid ${config?.primaryColor || '#C5A059'}; }
             .header h2 { margin: 0; font-size: 22px; font-weight: 700; font-family: 'Playfair Display', serif; }
-            .header p { margin: 5px 0 0; font-size: 10px; font-weight: 400; letter-spacing: 3px; color: ${config?.primaryColor || '#F97316'}; }
-            .content { padding: 40px 20px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; background-image: radial-gradient(rgba(0,0,0,0.03) 1px, transparent 1px); background-size: 15px 15px; }
-            .name { font-size: 38px; font-weight: 800; color: #171717; text-transform: uppercase; margin-bottom: 12px; text-align: center; line-height: 1.1; word-break: break-word; letter-spacing: -0.5px;}
+            .header p { margin: 5px 0 0; font-size: 10px; font-weight: 400; letter-spacing: 3px; color: ${config?.primaryColor || '#C5A059'}; }
+            .content { padding: 40px 20px; flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; background-image: radial-gradient(rgba(197,160,89,0.1) 1.5px, transparent 1.5px); background-size: 15px 15px; }
+            .name { font-size: 36px; font-weight: 800; color: #171717; text-transform: uppercase; margin-bottom: 12px; text-align: center; line-height: 1.1; word-break: break-word; letter-spacing: -0.5px;}
             .company { font-size: 16px; font-weight: 500; color: #737373; text-transform: uppercase; text-align: center; letter-spacing: 1px; }
             .footer { background: #fdfbf7; padding: 25px 20px; text-align: center; border-top: 1px solid #e5e5e5; }
-            .ticket { font-size: 20px; font-weight: 800; color: ${config?.primaryColor || '#F97316'}; text-transform: uppercase; letter-spacing: 2px; display: inline-block; padding: 10px 30px; border-radius: 50px; border: 2px solid ${config?.primaryColor || '#F97316'}; background: rgba(249, 115, 22, 0.05); }
+            .ticket { font-size: 18px; font-weight: 800; color: ${config?.primaryColor || '#C5A059'}; text-transform: uppercase; letter-spacing: 2px; display: inline-block; padding: 10px 30px; border-radius: 50px; border: 2px solid ${config?.primaryColor || '#C5A059'}; background: rgba(197,160,89,0.05); }
+            
+            .no-print { position: fixed; top: 20px; right: 20px; z-index: 1000; }
+            .print-btn { background: ${config?.primaryColor || '#C5A059'}; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-family: 'Kanit', sans-serif; font-weight: bold; font-size: 16px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.15); transition: background 0.2s; }
+            .print-btn:hover { background: #b08a47; }
+            
             @media print {
               body { background: #fff; padding: 0; }
               .badge { box-shadow: none; border: 1px solid #ccc; width: 100vw; height: 100vh; border-radius: 0; }
+              .no-print { display: none !important; }
             }
           </style>
         </head>
         <body>
+          <div class="no-print">
+            <button class="print-btn" onclick="window.print()">🖨️ พิมพ์ / Print Badge</button>
+          </div>
           <div class="badge">
             <div class="header">
-              <h2>${config?.title || 'EVENT'}</h2>
+              <h2>${config?.title || 'THAICRAFT'}</h2>
               <p>SYMPOSIUM PASS</p>
             </div>
             <div class="content">
@@ -340,7 +336,104 @@ export default function App() {
               <div class="ticket">${user.ticketName || 'ACCESS PASS'}</div>
             </div>
           </div>
-          <script>window.onload = () => { setTimeout(() => { window.print(); window.close(); }, 800); }</script>
+        </body>
+      </html>
+    `;
+    printWindow.document.write(html);
+    printWindow.document.close();
+  };
+
+  // ✅ ใบประกาศอัปเกรดเป็นภาษาไทยล้วน + โลโก้ + ลายเซ็นแบบรูปภาพ
+  const printCertificate = (user) => {
+    const printWindow = window.open('', '_blank', 'width=1000,height=700');
+    const html = `
+      <html>
+        <head>
+          <title>Preview Certificate - ${user.name}</title>
+          <link href="https://fonts.googleapis.com/css2?family=Charm:wght@400;700&family=Playfair+Display:wght@700&family=Sarabun:wght@300;400;500;700&display=swap" rel="stylesheet">
+          <style>
+            @page { size: A4 landscape; margin: 0; }
+            body { font-family: 'Sarabun', sans-serif; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; background: #52525B; -webkit-print-color-adjust: exact; print-color-adjust: exact; min-height: 100vh; }
+            
+            .certificate { width: 297mm; height: 210mm; background: #FFFCF5; position: relative; padding: 15mm; box-sizing: border-box; text-align: center; color: #1f2937; box-shadow: 0 10px 40px rgba(0,0,0,0.3); margin: 20px;}
+            .border-outer { border: 8px solid ${config?.primaryColor || '#C5A059'}; height: 100%; box-sizing: border-box; padding: 6px; position: relative; background-image: radial-gradient(${config?.primaryColor || '#C5A059'} 1px, transparent 1px); background-size: 25px 25px; }
+            .border-inner { border: 2px solid ${config?.primaryColor || '#C5A059'}; background: rgba(255,252,245,0.96); height: 100%; box-sizing: border-box; padding: 40px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+            
+            .corner { position: absolute; width: 40px; height: 40px; border: 4px solid ${config?.primaryColor || '#C5A059'}; }
+            .corner-tl { top: -10px; left: -10px; border-right: none; border-bottom: none; }
+            .corner-tr { top: -10px; right: -10px; border-left: none; border-bottom: none; }
+            .corner-bl { bottom: -10px; left: -10px; border-right: none; border-top: none; }
+            .corner-br { bottom: -10px; right: -10px; border-left: none; border-top: none; }
+
+            /* กำหนดขนาดรูปโลโก้และลายเซ็น */
+            .logo-img { height: 90px; object-fit: contain; margin-bottom: 20px; }
+            .sig-img { height: 40px; object-fit: contain; margin-bottom: 5px; }
+            
+            .cert-title { font-family: 'Sarabun', sans-serif; font-size: 32px; color: #1E293B; margin: 0 0 30px; letter-spacing: 1px; font-weight: 500;}
+            
+            .name { font-family: 'Charm', cursive; font-size: 64px; font-weight: 700; color: #1E293B; margin: 10px 0 25px; line-height: 1.2; border-bottom: 2px solid ${config?.primaryColor || '#C5A059'}; padding-bottom: 10px; min-width: 60%; display: inline-block; word-break: break-word;}
+            
+            .reason { font-size: 18px; font-weight: 400; color: #4b5563; line-height: 1.8; max-width: 80%; margin: 0 auto 40px; }
+            .reason strong { font-weight: 700; color: #1E293B; font-size: 22px; font-family: 'Sarabun', sans-serif;}
+            
+            .footer-cert { display: flex; justify-content: space-between; width: 75%; margin-top: auto; }
+            .signature { display: flex; flex-direction: column; align-items: center; }
+            .line { width: 220px; height: 1px; background: #1E293B; margin-bottom: 10px; }
+            .title { font-size: 16px; color: #4b5563; font-weight: 500;}
+            
+            .no-print { position: fixed; top: 20px; right: 20px; z-index: 1000; }
+            .print-btn { background: ${config?.primaryColor || '#C5A059'}; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-family: 'Sarabun', sans-serif; font-weight: bold; font-size: 16px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.15); transition: background 0.2s; }
+            .print-btn:hover { background: #a68444; }
+            
+            @media print {
+              body { background: #fff; align-items: flex-start; justify-content: flex-start; }
+              .certificate { width: 100%; height: 100vh; padding: 10mm; box-shadow: none; margin: 0; }
+              .no-print { display: none !important; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="no-print">
+            <button class="print-btn" onclick="window.print()">🖨️ พิมพ์ / Print Certificate</button>
+          </div>
+          <div class="certificate">
+            <div class="border-outer">
+              <div class="border-inner">
+                <div class="corner corner-tl"></div>
+                <div class="corner corner-tr"></div>
+                <div class="corner corner-bl"></div>
+                <div class="corner corner-br"></div>
+                
+                <!-- ดึงรูปโลโก้ -->
+                <img src="pic/logo.png" class="logo-img" alt="Event Logo" />
+                
+                <h1 class="cert-title">เกียรติบัตรฉบับนี้ให้ไว้เพื่อแสดงว่า</h1>
+                
+                <div class="name">${user.name}</div>
+                
+                <div class="reason">
+                  ได้เข้าร่วมสัมมนาและนิทรรศการด้านสถาปัตยกรรมและงานออกแบบไทยประยุกต์<br>
+                  ในงาน <strong>${config?.title || 'THAICRAFT EVENT'}</strong><br>
+                  จัดขึ้นเมื่อวันที่ ${config?.date || '2026'}
+                </div>
+                
+                <div class="footer-cert">
+                  <div class="signature">
+                    <!-- ดึงรูปลายเซ็นคนที่ 1 -->
+                    <img src="pic/sig1.png" class="sig-img" alt="Signature 1" />
+                    <div class="line"></div>
+                    <div class="title">ประธานกรรมการจัดงาน</div>
+                  </div>
+                  <div class="signature">
+                    <!-- ดึงรูปลายเซ็นคนที่ 2 -->
+                    <img src="pic/sig2.png" class="sig-img" alt="Signature 2" />
+                    <div class="line"></div>
+                    <div class="title">ผู้อำนวยการสถาบันสถาปัตยกรรม</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </body>
       </html>
     `;
@@ -354,41 +447,52 @@ export default function App() {
   const handleSaveConfig = async () => {
     alert('⏳ กำลังบันทึกการตั้งค่าขึ้น Google Sheet...');
     try {
-      await fetch(GAS_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "saveConfig", data: config }) });
-      localStorage.setItem('eventPlatformConfigV2', JSON.stringify(config));
+      await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "saveConfig", data: config }) });
+      localStorage.setItem('eventPlatformConfigV6', JSON.stringify(config));
       alert('✅ บันทึกการตั้งค่าลงระบบ Google Sheet เรียบร้อยแล้ว!');
     } catch (error) { alert('❌ เกิดข้อผิดพลาดในการบันทึกข้อมูล'); }
   };
 
-  const addSpeaker = () => setConfig(prev => ({ ...prev, speakers: [...(prev.speakers || []), { id: Date.now(), name: "ชื่อวิทยากร", role: "ตำแหน่ง", tag: "TAG", color: "#3B82F6", img: "https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=400&auto=format&fit=crop", desc: "รายละเอียด" }] }));
+  const addSpeaker = () => setConfig(prev => ({ ...prev, speakers: [...(prev.speakers || []), { id: Date.now(), name: "รอการประกาศชื่อ", role: "ตำแหน่ง / บริษัท", tag: "NEW", color: "#C5A059", img: "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png", desc: "ข้อมูลประวัติและหัวข้อการบรรยายของวิทยากรท่านนี้ จะได้รับการอัปเดตให้ทราบเร็วๆ นี้" }] }));
   const addSchedule = () => setConfig(prev => ({ ...prev, schedule: [...(prev.schedule || []), { id: Date.now(), time: "00:00", title: "กิจกรรม", desc: "รายละเอียด", tag: "INFO", color: "#10B981" }] }));
   const addSponsor = () => setConfig(prev => ({ ...prev, sponsors: [...(prev.sponsors || []), { id: Date.now(), name: "แบรนด์" }] }));
   const addFaq = () => setConfig(prev => ({ ...prev, faqs: [...(prev.faqs || []), { id: Date.now(), q: "คำถาม?", a: "คำตอบ" }] }));
   const addTicket = () => setConfig(prev => ({ ...prev, tickets: [...(prev.tickets || []), { id: Date.now(), name: "ชื่อบัตร", price: 1000, type: "regular", badge: "NEW", features: "Benefit 1" }] }));
   const removeArrayItem = (arr, id) => setConfig(prev => ({ ...prev, [arr]: (prev[arr]||[]).filter(i => i.id !== id) }));
   
+  // ✅ ระบบอัปโหลดรูปแบบง่าย (แปลงเป็น Base64 ฝังในเว็บโดยตรง ไม่ต้องผ่าน Google Drive)
   const handleImageUpload = (e, arr, id) => { 
     const file = e.target.files[0]; 
-    if (file) { 
-      const reader = new FileReader(); 
-      reader.onloadend = () => {
-        if (reader.result.length > 45000) { alert("⚠️ ขนาดรูปภาพใหญ่เกินไป กรุณาใช้วิธีวาง Image URL แทนครับ"); return; }
-        handleArrayChange(arr, id, 'img', reader.result);
-      }; 
-      reader.readAsDataURL(file); 
-    } 
+    if (!file) return; 
+
+    const reader = new FileReader(); 
+    reader.onloadend = () => {
+      // ป้องกันการอัปโหลดไฟล์ Base64 ที่ใหญ่เกินไปจนทำให้ Google Sheet บันทึกไม่ได้
+      if (reader.result.length > 50000) { 
+        alert("⚠️ ขนาดรูปภาพใหญ่เกินไป (เกิน 50KB) กรุณาย่อขนาดรูปก่อน หรือใช้วิธีวาง Image URL แทนเพื่อป้องกันระบบค้างครับ"); 
+        return; 
+      }
+      
+      setConfig(prev => {
+        const newConfig = { ...prev, [arr]: (prev[arr]||[]).map(i => i.id === id ? { ...i, img: reader.result } : i) };
+        localStorage.setItem('eventPlatformConfigV6', JSON.stringify(newConfig));
+        return newConfig;
+      });
+      alert("✅ อัปโหลดและเปลี่ยนรูปวิทยากรสำเร็จ! (อย่าลืมกดปุ่ม SAVE CONFIG สีส้มด้านบนเพื่อบันทึกถาวร)");
+    }; 
+    reader.readAsDataURL(file); 
   };
 
   const startEditUser = (user) => { setEditingUserId(user.id); setEditUserForm(user); };
   const saveUserEdit = async () => { 
     setRegistrations(prev => prev.map(r => r.id === editingUserId ? editUserForm : r)); 
     setEditingUserId(null); 
-    try { await fetch(GAS_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "updateUser", data: editUserForm }) }); } catch (e) {}
+    try { await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "updateUser", data: editUserForm }) }); } catch (e) {}
   };
   const deleteUser = async (id) => { 
     if(window.confirm('ลบข้อมูลถาวร?')) {
       setRegistrations(prev => prev.filter(r => r.id !== id)); 
-      try { await fetch(GAS_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "deleteUser", id: id }) }); } catch (e) {}
+      try { await fetch(GAS_URL, { method: "POST", body: JSON.stringify({ action: "deleteUser", id: id }) }); } catch (e) {}
     }
   };
 
@@ -427,18 +531,18 @@ export default function App() {
             .dark .thai-pattern-bg { opacity: 0.08; filter: invert(65%) sepia(100%) saturate(500%) hue-rotate(350deg) brightness(1.2); mix-blend-mode: screen; }
 
             /* Glow & Float Effects */
-            @keyframes glowPulse { 0% { box-shadow: 0 0 0 2px #F97316, 0 15px 30px -5px rgba(249, 115, 22, 0.2); } 100% { box-shadow: 0 0 0 2px #F97316, 0 20px 45px 10px rgba(249, 115, 22, 0.5); } }
-            .ticket-radio:checked + div { border-color: #F97316 !important; animation: glowPulse 2s infinite alternate ease-in-out !important; transform: translateY(-10px) scale(1.02) !important; z-index: 20; }
+            @keyframes glowPulse { 0% { box-shadow: 0 0 0 2px ${config.primaryColor}, 0 15px 30px -5px rgba(197, 160, 89, 0.2); } 100% { box-shadow: 0 0 0 2px ${config.primaryColor}, 0 20px 45px 10px rgba(197, 160, 89, 0.5); } }
+            .ticket-radio:checked + div { border-color: ${config.primaryColor} !important; animation: glowPulse 2s infinite alternate ease-in-out !important; transform: translateY(-10px) scale(1.02) !important; z-index: 20; }
             
             @keyframes floatBadge { 0%, 100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(-6px); filter: brightness(1.1); } }
             .badge-float { animation: floatBadge 3s ease-in-out infinite; }
 
             .premium-card { transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease; }
             .premium-card:hover { transform: translateY(-10px); box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.15); }
-            .dark .premium-card:hover { box-shadow: 0 30px 60px -12px rgba(249, 115, 22, 0.2); border-color: rgba(249, 115, 22, 0.4); }
+            .dark .premium-card:hover { box-shadow: 0 30px 60px -12px rgba(197, 160, 89, 0.2); border-color: rgba(197, 160, 89, 0.4); }
 
             .premium-card ul li svg { transition: transform 0.3s ease, color 0.3s ease; }
-            .premium-card:hover ul li svg { transform: translateX(4px) scale(1.15); color: #F97316; }
+            .premium-card:hover ul li svg { transform: translateX(4px) scale(1.15); color: ${config.primaryColor}; }
 
             /* VIP Shimmer & Reveal Animation */
             @keyframes shimmerSweep { 0% { transform: translateX(-150%) skewX(-45deg); } 100% { transform: translateX(250%) skewX(-45deg); } }
@@ -456,26 +560,33 @@ export default function App() {
             .faq-answer { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
             .faq-answer > div { overflow: hidden; }
             .faq-item.active .faq-answer { grid-template-rows: 1fr; margin-top: 1rem; }
-            .faq-item.active .faq-icon { transform: rotate(180deg); color: #F97316; }
+            .faq-item.active .faq-icon { transform: rotate(180deg); color: ${config.primaryColor}; }
             
             @keyframes spin-custom { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
             @keyframes pulse-custom { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
             /* Glassmorphism & Admin UI */
             .admin-glass { background: rgba(17, 24, 39, 0.6); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.05); transition: all 0.3s ease; }
-            .admin-glass:hover { border-color: rgba(249, 115, 22, 0.3); transform: translateY(-3px); box-shadow: 0 15px 30px -5px rgba(0,0,0,0.5), 0 0 20px rgba(249,115,22,0.1); }
+            .admin-glass:hover { border-color: rgba(197, 160, 89, 0.3); transform: translateY(-3px); box-shadow: 0 15px 30px -5px rgba(0,0,0,0.5), 0 0 20px rgba(197,160,89,0.1); }
             .admin-table-row { transition: all 0.2s ease; border-left: 2px solid transparent; }
             .admin-table-row:hover { background: rgba(255,255,255,0.03); border-left: 2px solid #F97316; transform: scale(1.01); }
             .stagger-enter { animation: fadeInUp 0.5s ease-out forwards; opacity: 0; }
             @keyframes fadeInUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-            .glow-text { text-shadow: 0 0 10px rgba(249,115,22,0.5); }
+            .glow-text { text-shadow: 0 0 10px rgba(197,160,89,0.5); }
           `}} />
 
           {isSubmitting && (
             <div className="fixed inset-0 bg-white/90 dark:bg-[#0A0D14]/90 backdrop-blur-md z-[9999] flex flex-col items-center justify-center">
-              <div className="w-16 h-16 border-4 border-gray-200 dark:border-gray-800 border-t-[#F97316] rounded-full mb-6" style={{animation: 'spin-custom 1s linear infinite'}}></div>
-              <h2 className="text-xl font-bold font-serif text-gray-900 dark:text-white uppercase tracking-widest" style={{animation: 'pulse-custom 2s infinite'}}>Processing Booking...</h2>
-              <p className="text-sm text-gray-500 mt-2 font-sans">โปรดรอสักครู่ ระบบกำลังสำรองที่นั่งให้คุณ</p>
+              <svg className="animate-spin h-16 w-16 text-[#C5A059] mb-6 drop-shadow-[0_0_15px_rgba(197,160,89,0.5)]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <h2 className="text-xl font-bold font-serif text-gray-900 dark:text-white uppercase tracking-widest animate-pulse">
+                {currentView === 'admin' ? 'Uploading Image...' : 'Processing Booking...'}
+              </h2>
+              <p className="text-sm text-gray-500 mt-2 font-sans">
+                {currentView === 'admin' ? 'ระบบกำลังประมวลผลรูปภาพและบันทึกข้อมูล' : 'โปรดรอสักครู่ ระบบกำลังสำรองที่นั่งให้คุณ'}
+              </p>
             </div>
           )}
 
@@ -486,18 +597,18 @@ export default function App() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="flex items-center justify-between h-16 md:h-20">
                 <div className="flex items-center gap-3 cursor-pointer group" onClick={() => scrollTo('home')}>
-                  <div className="w-1.5 h-6 bg-[#F97316] rounded-full group-hover:h-8 transition-all duration-300 shadow-[0_0_12px_#F97316]"></div>
+                  <div className="w-1.5 h-6 bg-[#C5A059] rounded-full group-hover:h-8 transition-all duration-300 shadow-[0_0_12px_#C5A059]"></div>
                   <span className="text-heading font-bold text-xl tracking-tight text-gray-900 dark:text-white leading-none flex flex-col">
-                    {config?.title?.split(' ')?.[0] || 'EVENT'} {config?.title?.split(' ')?.[1] || 'NAME'}
-                    <span className="text-[9px] tracking-[0.25em] font-sans text-[#F97316] font-bold uppercase mt-1">Official Platform</span>
+                    {config?.title?.split(' ')?.[0] || 'THAI'} {config?.title?.split(' ')?.[1] || 'CRAFT'}
+                    <span className="text-[9px] tracking-[0.25em] font-sans text-[#C5A059] font-bold uppercase mt-1">Design Symposium</span>
                   </span>
                 </div>
                 
                 <div className="hidden lg:flex space-x-10 text-sm font-medium text-gray-500 dark:text-gray-400 relative z-10">
-                  <a href="#about" onClick={(e)=>{e.preventDefault(); scrollTo('home');}} className="hover:text-[#F97316] transition flex items-center gap-1">หน้าแรก</a>
-                  <a href="#concept" onClick={(e)=>{e.preventDefault(); scrollTo('concept');}} className="hover:text-[#F97316] transition flex items-center gap-1">แนวคิด</a>
-                  <a href="#speakers" onClick={(e)=>{e.preventDefault(); scrollTo('speakers');}} className="hover:text-[#F97316] transition flex items-center gap-1">วิทยากร</a>
-                  <a href="#schedule" onClick={(e)=>{e.preventDefault(); scrollTo('schedule');}} className="hover:text-[#F97316] transition flex items-center gap-1">กำหนดการ</a>
+                  <a href="#about" onClick={(e)=>{e.preventDefault(); scrollTo('home');}} className="hover:text-[#C5A059] transition flex items-center gap-1">หน้าแรก</a>
+                  <a href="#concept" onClick={(e)=>{e.preventDefault(); scrollTo('concept');}} className="hover:text-[#C5A059] transition flex items-center gap-1">แนวคิด</a>
+                  <a href="#speakers" onClick={(e)=>{e.preventDefault(); scrollTo('speakers');}} className="hover:text-[#C5A059] transition flex items-center gap-1">วิทยากร</a>
+                  <a href="#schedule" onClick={(e)=>{e.preventDefault(); scrollTo('schedule');}} className="hover:text-[#C5A059] transition flex items-center gap-1">กำหนดการ</a>
                 </div>
                 
                 <div className="flex items-center gap-3 md:gap-4 relative z-10">
@@ -508,7 +619,7 @@ export default function App() {
                       <svg className="w-4 h-4 text-slate-700" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
                     )}
                   </button>
-                  <a href="#register" onClick={(e)=>{e.preventDefault(); scrollTo('register');}} className="bg-[#F97316] text-white px-5 md:px-6 py-2.5 text-[10px] font-bold tracking-widest uppercase transition-all duration-300 rounded-full shadow-[0_8px_20px_-4px_rgba(249,115,22,0.4)] hidden sm:flex items-center gap-2 hover:scale-105">
+                  <a href="#register" onClick={(e)=>{e.preventDefault(); scrollTo('register');}} className="bg-[#C5A059] text-white px-5 md:px-6 py-2.5 text-[10px] font-bold tracking-widest uppercase transition-all duration-300 rounded-full shadow-[0_8px_20px_-4px_rgba(197,160,89,0.4)] hidden sm:flex items-center gap-2 hover:scale-105">
                     ลงทะเบียน <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                   </a>
                   <button className="lg:hidden p-2 text-gray-900 dark:text-white" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
@@ -522,14 +633,14 @@ export default function App() {
           {/* Mobile Menu */}
           {isMobileMenuOpen && (
             <div className="fixed inset-0 z-[100] bg-white/95 dark:bg-[#0A0D14]/95 backdrop-blur-xl flex flex-col justify-center items-center gap-8 text-2xl font-serif font-bold text-gray-900 dark:text-white">
-              <button onClick={() => setIsMobileMenuOpen(false)} className="absolute top-6 right-6 p-2 text-gray-500 hover:text-[#F97316]">
+              <button onClick={() => setIsMobileMenuOpen(false)} className="absolute top-6 right-6 p-2 text-gray-500 hover:text-[#C5A059]">
                   <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
               </button>
               <a href="#about" onClick={(e)=>{e.preventDefault(); scrollTo('home'); setIsMobileMenuOpen(false);}}>หน้าแรก</a>
               <a href="#concept" onClick={(e)=>{e.preventDefault(); scrollTo('concept'); setIsMobileMenuOpen(false);}}>แนวคิด</a>
               <a href="#speakers" onClick={(e)=>{e.preventDefault(); scrollTo('speakers'); setIsMobileMenuOpen(false);}}>วิทยากร</a>
               <a href="#schedule" onClick={(e)=>{e.preventDefault(); scrollTo('schedule'); setIsMobileMenuOpen(false);}}>กำหนดการ</a>
-              <a href="#register" onClick={(e)=>{e.preventDefault(); scrollTo('register'); setIsMobileMenuOpen(false);}} className="bg-[#F97316] text-white px-8 py-3 rounded-full text-lg mt-4 font-sans shadow-[0_8px_20px_-4px_rgba(249,115,22,0.4)]">ลงทะเบียนทันที</a>
+              <a href="#register" onClick={(e)=>{e.preventDefault(); scrollTo('register'); setIsMobileMenuOpen(false);}} className="bg-[#C5A059] text-white px-8 py-3 rounded-full text-lg mt-4 font-sans shadow-[0_8px_20px_-4px_rgba(197,160,89,0.4)]">ลงทะเบียนทันที</a>
             </div>
           )}
 
@@ -537,15 +648,15 @@ export default function App() {
           <section id="home" className="pt-32 md:pt-40 pb-20 px-4 max-w-7xl mx-auto relative z-10 overflow-hidden md:overflow-visible">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 md:gap-12 items-center">
               <div className="lg:col-span-7 mt-8 md:mt-0 reveal delay-1">
-                <div className="inline-flex items-center gap-2 bg-orange-50/80 dark:bg-orange-500/10 border border-orange-100 dark:border-orange-500/20 text-[#F97316] text-[9px] md:text-[10px] font-bold tracking-widest uppercase mb-6 md:mb-8 px-4 py-2 rounded-full backdrop-blur-sm">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#F97316] animate-ping absolute"></span>
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#F97316] relative"></span>
-                  The Premier Event & Symposium
+                <div className="inline-flex items-center gap-2 bg-[#C5A059]/10 border border-[#C5A059]/20 text-[#C5A059] text-[9px] md:text-[10px] font-bold tracking-widest uppercase mb-6 md:mb-8 px-4 py-2 rounded-full backdrop-blur-sm">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#C5A059] animate-ping absolute"></span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#C5A059] relative"></span>
+                  Architecture & Design Symposium
                 </div>
                 
                 <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 dark:text-white leading-[1.15] md:leading-[1.1] mb-6">
-                  {config?.title?.split(' ')?.[0] || 'EVENT'} <br className="hidden md:block"/>{config?.title?.split(' ')?.[1] || 'NAME'}<br/>
-                  <span className="font-sans text-2xl sm:text-3xl md:text-5xl text-[#F97316] font-semibold inline-block mt-2">{config.subtitle}</span><br/>
+                  {config?.title?.split(' ')?.[0] || 'THAI'} <br className="hidden md:block"/>{config?.title?.split(' ')?.[1] || 'CRAFT'}<br/>
+                  <span className="font-sans text-2xl sm:text-3xl md:text-5xl text-[#C5A059] font-semibold inline-block mt-2">{config.subtitle}</span><br/>
                 </h1>
                 
                 <p className="text-gray-500 dark:text-gray-400 mb-8 md:mb-10 max-w-xl leading-relaxed text-sm md:text-base font-light">{config.aboutText}</p>
@@ -556,7 +667,7 @@ export default function App() {
                   </a>
                   <div className="text-xs text-gray-500 dark:text-gray-400 font-medium flex items-center gap-3">
                     <div className="w-10 h-10 sm:hidden rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-                      <svg className="w-5 h-5 text-[#F97316]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                      <svg className="w-5 h-5 text-[#C5A059]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                     </div>
                     <div>
                       <span className="block text-gray-900 dark:text-white font-bold text-base md:text-lg">{config.date}</span>
@@ -574,7 +685,7 @@ export default function App() {
                       <span className="flex h-2.5 w-2.5 relative"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#10B981] opacity-75"></span><span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#10B981]"></span></span>
                       <div className="text-gray-900 dark:text-white text-[9px] font-bold uppercase tracking-widest">Event Update</div>
                     </div>
-                    <div className="text-[#F97316] text-xs md:text-sm font-bold leading-tight font-sans">Main Stage Highlights</div>
+                    <div className="text-[#C5A059] text-xs md:text-sm font-bold leading-tight font-sans">นิทรรศการสถาปัตยกรรมไทยประยุกต์</div>
                   </div>
                 </div>
               </div>
@@ -585,13 +696,13 @@ export default function App() {
           <div className="w-full overflow-hidden bg-[#0A0D14] py-3 border-y border-gray-800 relative z-10 pointer-events-none">
             <div className="marquee-container text-white text-[9px] md:text-[10px] font-bold tracking-widest uppercase opacity-80">
               <div className="flex justify-around items-center w-max md:w-1/2 shrink-0 pr-8">
-                <span className="text-[#F97316] flex items-center gap-2 shrink-0">🔥 Tickets Selling Fast</span>
+                <span className="text-[#C5A059] flex items-center gap-2 shrink-0">🔥 Tickets Selling Fast</span>
                 <span className="text-gray-700 mx-4 md:mx-6 shrink-0">•</span><span className="shrink-0">{config.title}</span><span className="text-gray-700 mx-4 md:mx-6 shrink-0">•</span>
                 <span className="text-[#10B981] shrink-0">Limited Seats Available</span><span className="text-gray-700 mx-4 md:mx-6 shrink-0">•</span>
                 <span className="shrink-0">{config.location}</span><span className="text-gray-700 mx-4 md:mx-6 shrink-0">•</span>
               </div>
               <div className="flex justify-around items-center w-max md:w-1/2 shrink-0 pr-8">
-                <span className="text-[#F97316] flex items-center gap-2 shrink-0">🔥 Tickets Selling Fast</span>
+                <span className="text-[#C5A059] flex items-center gap-2 shrink-0">🔥 Tickets Selling Fast</span>
                 <span className="text-gray-700 mx-4 md:mx-6 shrink-0">•</span><span className="shrink-0">{config.title}</span><span className="text-gray-700 mx-4 md:mx-6 shrink-0">•</span>
                 <span className="text-[#10B981] shrink-0">Limited Seats Available</span><span className="text-gray-700 mx-4 md:mx-6 shrink-0">•</span>
                 <span className="shrink-0">{config.location}</span><span className="text-gray-700 mx-4 md:mx-6 shrink-0">•</span>
@@ -601,36 +712,36 @@ export default function App() {
 
           {/* Concept Section */}
           <section id="concept" className="py-16 md:py-24 bg-white dark:bg-gray-950 relative z-10 border-b border-gray-100 dark:border-gray-900">
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[500px] md:w-[800px] h-[500px] md:h-[800px] bg-orange-50/50 dark:bg-orange-500/5 rounded-full blur-[80px] md:blur-[100px] pointer-events-none"></div>
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[500px] md:w-[800px] h-[500px] md:h-[800px] bg-[#C5A059]/10 rounded-full blur-[80px] md:blur-[100px] pointer-events-none"></div>
             <div className="max-w-7xl mx-auto px-4 relative z-10">
               <div className="text-center mb-16 md:mb-20 reveal">
-                <div className="text-[#F97316] text-[10px] font-bold tracking-widest uppercase mb-4">What You Will Learn</div>
-                <h2 className="font-serif text-3xl md:text-5xl text-gray-900 dark:text-white mb-6">Discover & Connect</h2>
-                <div className="w-16 h-1 bg-[#F97316] mx-auto mb-6 rounded-full"></div>
+                <div className="text-[#C5A059] text-[10px] font-bold tracking-widest uppercase mb-4">Core Pillars</div>
+                <h2 className="font-serif text-3xl md:text-5xl text-gray-900 dark:text-white mb-6">Thai Architectural Design</h2>
+                <div className="w-16 h-1 bg-[#C5A059] mx-auto mb-6 rounded-full"></div>
                 <p className="text-gray-500 dark:text-gray-400 text-sm md:text-base max-w-2xl mx-auto leading-relaxed font-light px-2">
-                    เข้าร่วมสัมมนาที่จะเปิดมุมมองใหม่ สร้างแรงบันดาลใจ และเจาะลึก 4 เสาหลักสำคัญที่ขับเคลื่อนองค์กรระดับโลก เพื่อเชื่อมโยงคุณเข้ากับโอกาสทางธุรกิจที่ไร้ขีดจำกัด
+                    ร่วมเจาะลึก 4 แกนหลักที่จะพลิกโฉมวงการสถาปัตยกรรมและการออกแบบของไทย สู่การสร้างสรรค์ผลงานที่เป็นที่ยอมรับในระดับสากล
                 </p>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 reveal delay-1">
                 <div className="bg-[#FDFBF7] dark:bg-[#111827] p-6 md:p-8 rounded-3xl premium-card text-center border border-transparent dark:border-gray-800">
-                  <div className="w-14 h-14 md:w-16 md:h-16 bg-white dark:bg-gray-800 text-[#F97316] rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6 text-xl md:text-2xl shadow-sm border border-gray-100 dark:border-gray-700">🚀</div>
-                  <h3 className="font-bold text-gray-900 dark:text-white text-base md:text-lg mb-2 md:mb-3">Business Scaling</h3>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed font-light">เรียนรู้กลยุทธ์การขยายขีดความสามารถของธุรกิจ (Scaling) จาก Case Study จริงของบริษัทชั้นนำที่ผ่านการทำ Digital Transformation สำเร็จ</p>
+                  <div className="w-14 h-14 md:w-16 md:h-16 bg-white dark:bg-gray-800 text-[#C5A059] rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6 text-xl md:text-2xl shadow-sm border border-gray-100 dark:border-gray-700">🏯</div>
+                  <h3 className="font-bold text-gray-900 dark:text-white text-base md:text-lg mb-2 md:mb-3">สถาปัตยกรรมไทยประยุกต์</h3>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed font-light">เรียนรู้การผสานภูมิปัญญาช่างไทยโบราณเข้ากับโครงสร้างและฟังก์ชันการใช้งานของอาคารสมัยใหม่</p>
                 </div>
                 <div className="bg-[#FDFBF7] dark:bg-[#111827] p-6 md:p-8 rounded-3xl premium-card text-center border border-transparent dark:border-gray-800">
-                  <div className="w-14 h-14 md:w-16 md:h-16 bg-white dark:bg-gray-800 text-[#3B82F6] rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6 text-xl md:text-2xl shadow-sm border border-gray-100 dark:border-gray-700">🤖</div>
-                  <h3 className="font-bold text-gray-900 dark:text-white text-base md:text-lg mb-2 md:mb-3">Emerging Tech</h3>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed font-light">เจาะลึกเทคโนโลยีปัญญาประดิษฐ์ (AI), IoT และ Automation ที่กำลังจะเปลี่ยนวิถีการทำงานและพฤติกรรมผู้บริโภคในอนาคตอันใกล้</p>
+                  <div className="w-14 h-14 md:w-16 md:h-16 bg-white dark:bg-gray-800 text-[#3B82F6] rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6 text-xl md:text-2xl shadow-sm border border-gray-100 dark:border-gray-700">🧱</div>
+                  <h3 className="font-bold text-gray-900 dark:text-white text-base md:text-lg mb-2 md:mb-3">นวัตกรรมวัสดุท้องถิ่น</h3>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed font-light">เจาะลึกการนำวัสดุพื้นบ้านอย่าง ไม้ ไผ่ หวาย และดินเผา มายกระดับด้วยเทคโนโลยีเพื่อสร้างมูลค่าเพิ่ม</p>
                 </div>
                 <div className="bg-[#FDFBF7] dark:bg-[#111827] p-6 md:p-8 rounded-3xl premium-card text-center border border-transparent dark:border-gray-800">
                   <div className="w-14 h-14 md:w-16 md:h-16 bg-white dark:bg-gray-800 text-[#10B981] rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6 text-xl md:text-2xl shadow-sm border border-gray-100 dark:border-gray-700">🌱</div>
-                  <h3 className="font-bold text-gray-900 dark:text-white text-base md:text-lg mb-2 md:mb-3">Sustainable ESG</h3>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed font-light">ทำความเข้าใจแนวทางการดำเนินธุรกิจอย่างยั่งยืน (ESG) เพื่อมัดใจนักลงทุนระดับสากล และเพิ่มขีดความสามารถในการแข่งขันระยะยาว</p>
+                  <h3 className="font-bold text-gray-900 dark:text-white text-base md:text-lg mb-2 md:mb-3">นิเวศสถาปัตย์วิถีไทย</h3>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed font-light">ทำความเข้าใจการออกแบบที่สอดคล้องกับสภาพภูมิอากาศเขตร้อนชื้น และบริบททางวัฒนธรรมอย่างยั่งยืน</p>
                 </div>
                 <div className="bg-[#FDFBF7] dark:bg-[#111827] p-6 md:p-8 rounded-3xl premium-card text-center border border-transparent dark:border-gray-800">
                   <div className="w-14 h-14 md:w-16 md:h-16 bg-white dark:bg-gray-800 text-[#EC4899] rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6 text-xl md:text-2xl shadow-sm border border-gray-100 dark:border-gray-700">🤝</div>
-                  <h3 className="font-bold text-gray-900 dark:text-white text-base md:text-lg mb-2 md:mb-3">Exclusive Network</h3>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed font-light">พบปะพูดคุยและสร้างคอนเนกชันกับ C-Levels, Founders และผู้บริหารระดับสูงกว่า 500 ท่าน ในช่วงเวลา Networking Session</p>
+                  <h3 className="font-bold text-gray-900 dark:text-white text-base md:text-lg mb-2 md:mb-3">เครือข่ายนักสร้างสรรค์</h3>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed font-light">พบปะสถาปนิก นักออกแบบ และช่างฝีมือระดับแนวหน้าของประเทศเพื่อแลกเปลี่ยนแนวคิดและต่อยอดความร่วมมือ</p>
                 </div>
               </div>
             </div>
@@ -641,7 +752,7 @@ export default function App() {
             <div className="max-w-7xl mx-auto px-4">
               <div className="flex flex-col md:flex-row justify-between items-end mb-12 md:mb-16 gap-4 md:gap-6 border-b border-gray-100 dark:border-gray-800 pb-6 reveal">
                 <div>
-                  <div className="text-[#F97316] text-[10px] font-bold tracking-widest uppercase mb-3">The Visionaries</div>
+                  <div className="text-[#C5A059] text-[10px] font-bold tracking-widest uppercase mb-3">The Visionaries</div>
                   <h2 className="font-serif text-3xl md:text-5xl text-gray-900 dark:text-white">Keynote Speakers</h2>
                 </div>
                 <p className="text-sm text-gray-500 dark:text-gray-400 font-light mb-2 hidden md:block">* คลิกที่รูปเพื่อดูรายละเอียดเพิ่มเติม</p>
@@ -654,9 +765,8 @@ export default function App() {
                       <img src={speaker.img} className="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-110 transition duration-700" alt={speaker.name}/>
                       <div className="absolute top-4 left-4 text-white text-[9px] font-bold px-3 py-1.5 tracking-widest uppercase rounded-full border border-transparent dark:border-gray-700" style={{backgroundColor: speaker.color}}>{speaker.tag}</div>
                     </div>
-                    <div className="px-2 pb-2">
-                      <div className="text-[9px] text-gray-400 uppercase tracking-widest mb-1 font-bold">ID: {String(speaker.id).slice(-4)}</div>
-                      <h3 className="text-lg md:text-xl font-bold text-gray-900 dark:text-white mb-1 font-serif group-hover:text-[#F97316] dark:group-hover:text-[#F97316] transition-colors">{speaker.name}</h3>
+                    <div className="px-2 pb-2 mt-2">
+                      <h3 className="text-lg md:text-xl font-bold text-gray-900 dark:text-white mb-1 font-serif group-hover:text-[#C5A059] dark:group-hover:text-[#C5A059] transition-colors">{speaker.name}</h3>
                       <p className="text-xs text-gray-500 dark:text-gray-400 font-light truncate">{speaker.role}</p>
                     </div>
                   </div>
@@ -668,12 +778,12 @@ export default function App() {
 
           {/* Schedule */}
           <section id="schedule" className="py-16 md:py-24 bg-[#FDFBF7] dark:bg-[#0A0D14] relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-[400px] md:w-[600px] h-[400px] md:h-[600px] bg-[#F97316]/5 rounded-full blur-[100px] pointer-events-none"></div>
+            <div className="absolute top-0 right-0 w-[400px] md:w-[600px] h-[400px] md:h-[600px] bg-[#C5A059]/5 rounded-full blur-[100px] pointer-events-none"></div>
             <div className="max-w-4xl mx-auto px-4 relative z-10">
               <div className="text-center mb-16 md:mb-20 reveal">
-                <div className="text-[#F97316] text-[10px] font-bold tracking-widest uppercase mb-4">Event Agenda</div>
+                <div className="text-[#C5A059] text-[10px] font-bold tracking-widest uppercase mb-4">Event Agenda</div>
                 <h2 className="font-serif text-3xl md:text-5xl text-gray-900 dark:text-white mb-6">กำหนดการกิจกรรม</h2>
-                <div className="w-16 h-1 bg-[#F97316] mx-auto rounded-full"></div>
+                <div className="w-16 h-1 bg-[#C5A059] mx-auto rounded-full"></div>
               </div>
 
               <div className="relative border-l-2 border-dashed border-gray-200 dark:border-gray-800 ml-4 md:ml-6 space-y-12 md:space-y-16 pb-8 reveal delay-1">
@@ -705,10 +815,10 @@ export default function App() {
             <div className="w-full overflow-hidden">
               <div className="sponsor-track text-lg md:text-3xl font-bold font-serif text-gray-300 dark:text-gray-700">
                 <div className="flex items-center justify-around shrink-0 px-4">
-                  {config.sponsors?.map(s => <React.Fragment key={s.id}><span className="mx-4 md:mx-6 hover:text-[#F97316] transition-colors cursor-pointer">{s.name}</span><span className="text-[#F97316] text-sm md:text-lg mx-4 md:mx-6">•</span></React.Fragment>)}
+                  {config.sponsors?.map(s => <React.Fragment key={s.id}><span className="mx-4 md:mx-6 hover:text-[#C5A059] transition-colors cursor-pointer">{s.name}</span><span className="text-[#C5A059] text-sm md:text-lg mx-4 md:mx-6">•</span></React.Fragment>)}
                 </div>
                 <div className="flex items-center justify-around shrink-0 px-4">
-                  {config.sponsors?.map(s => <React.Fragment key={s.id+'dup'}><span className="mx-4 md:mx-6 hover:text-[#F97316] transition-colors cursor-pointer">{s.name}</span><span className="text-[#F97316] text-sm md:text-lg mx-4 md:mx-6">•</span></React.Fragment>)}
+                  {config.sponsors?.map(s => <React.Fragment key={s.id+'dup'}><span className="mx-4 md:mx-6 hover:text-[#C5A059] transition-colors cursor-pointer">{s.name}</span><span className="text-[#C5A059] text-sm md:text-lg mx-4 md:mx-6">•</span></React.Fragment>)}
                 </div>
               </div>
             </div>
@@ -718,13 +828,13 @@ export default function App() {
           <section id="register" className="py-16 md:py-24 bg-[#FDFBF7] dark:bg-[#0A0D14] relative z-10 border-t border-gray-100 dark:border-gray-900">
             <div className="max-w-5xl mx-auto px-4">
               <div className="text-center mb-12 reveal">
-                <div className="inline-block bg-orange-100 dark:bg-orange-500/10 text-[#F97316] text-[10px] font-bold tracking-widest uppercase mb-4 px-3 py-1 rounded-full border border-orange-200 dark:border-orange-500/20">Participation Passes</div>
+                <div className="inline-block bg-[#C5A059]/10 text-[#C5A059] text-[10px] font-bold tracking-widest uppercase mb-4 px-3 py-1 rounded-full border border-[#C5A059]/20">Participation Passes</div>
                 <h2 className="font-serif text-3xl md:text-5xl text-gray-900 dark:text-white mb-6">แบบฟอร์มลงทะเบียนออนไลน์</h2>
-                <div className="w-16 h-1 bg-[#F97316] mx-auto rounded-full"></div>
+                <div className="w-16 h-1 bg-[#C5A059] mx-auto rounded-full"></div>
               </div>
 
               {/* Ticket Cards Dynamic Mapping */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 max-w-5xl mx-auto reveal delay-1">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 max-w-5xl mx-auto reveal delay-1 pt-4">
                 {config.tickets?.map((ticket) => {
                   const isVIP = ticket.type === 'vip';
                   const isSelected = String(formData.ticketId) === String(ticket.id);
@@ -732,37 +842,37 @@ export default function App() {
                   return (
                     <label key={ticket.id} className="cursor-pointer relative group block mt-4 md:mt-0">
                       <input type="radio" name="ticketId" value={ticket.id} checked={isSelected} onChange={(e) => setFormData(prev => ({...prev, ticketId: e.target.value}))} className="ticket-radio peer sr-only" />
-                      <div className={`p-6 md:p-8 rounded-[2rem] flex flex-col h-full transition-all premium-card relative ${isVIP ? 'bg-gray-900 dark:bg-black border border-orange-500/40 shadow-[0_10px_40px_-10px_rgba(249,115,22,0.15)] overflow-hidden' : 'bg-white dark:bg-[#111827] border border-gray-100 dark:border-gray-800 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.08)] dark:shadow-none'}`}>
+                      <div className={`p-6 md:p-8 rounded-[2rem] flex flex-col h-full transition-all premium-card relative ${isVIP ? 'bg-gray-900 dark:bg-black border border-[#C5A059]/40 shadow-[0_10px_40px_-10px_rgba(197,160,89,0.15)]' : 'bg-white dark:bg-[#111827] border border-gray-100 dark:border-gray-800 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.08)] dark:shadow-none'}`}>
                         
                         {isVIP && <div className="absolute inset-0 rounded-[2rem] overflow-hidden pointer-events-none"><div className="vip-shimmer"></div></div>}
 
                         {ticket.badge && (
-                          <div className={`badge-float absolute -top-3 left-1/2 transform -translate-x-1/2 text-white text-[9px] md:text-[10px] font-black px-4 md:px-6 py-1.5 rounded-full whitespace-nowrap tracking-widest uppercase shadow-lg z-20 ${isVIP ? 'bg-gradient-to-r from-amber-500 to-orange-600 shadow-orange-500/40 border border-orange-400' : 'bg-[#F97316] shadow-orange-500/30 border border-orange-400'}`}>
+                          <div className={`badge-float absolute -top-3 left-1/2 transform -translate-x-1/2 text-white text-[9px] md:text-[10px] font-black px-4 md:px-6 py-1.5 rounded-full whitespace-nowrap tracking-widest uppercase shadow-lg z-20 ${isVIP ? 'bg-gradient-to-r from-[#D4AF37] to-[#b08a47] shadow-[#C5A059]/40 border border-[#D4AF37]' : 'bg-[#C5A059] shadow-[#C5A059]/30 border border-[#b08a47]'}`}>
                             {ticket.badge}
                           </div>
                         )}
                         
                         <div className="flex justify-between items-start mb-4 mt-2 relative z-10">
                           <h3 className={`text-xl font-bold font-serif transition-colors ${isVIP ? 'text-white' : 'text-gray-900 dark:text-white'}`}>{ticket.name}</h3>
-                          <div className="w-5 h-5 rounded-full bg-[#F97316] text-white hidden peer-checked:flex items-center justify-center shadow-lg shadow-orange-500/40">
+                          <div className="w-5 h-5 rounded-full bg-[#C5A059] text-white hidden peer-checked:flex items-center justify-center shadow-lg shadow-[#C5A059]/40">
                             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path></svg>
                           </div>
                         </div>
                         
-                        <div className="text-3xl md:text-4xl font-black text-[#F97316] mb-6 flex items-baseline gap-2 relative z-10">
+                        <div className="text-3xl md:text-4xl font-black text-[#C5A059] mb-6 flex items-baseline gap-2 relative z-10">
                           {Number(ticket.price).toLocaleString()} <span className="text-sm font-medium text-gray-400">บาท</span>
                         </div>
                         
-                        <ul className={`text-xs md:text-sm space-y-3 mb-8 flex-grow font-light transition-colors relative z-10 ${isVIP ? 'text-gray-300' : 'text-gray-600 dark:text-gray-400'}`}>
+                        <ul className={`text-xs md:text-sm space-y-3 mb-8 flex-grow font-light transition-colors relative z-10 ${isVIP ? 'text-amber-100' : 'text-gray-600 dark:text-gray-400'}`}>
                           {(ticket.features || '').split('\n').map((f, i) => (
                             <li key={i} className={`flex gap-3 items-start ${isVIP && i > 0 ? 'text-amber-200' : ''}`}>
-                              <svg className={`w-4 h-4 shrink-0 mt-0.5 ${isVIP && i > 0 ? 'text-amber-400' : (isVIP ? 'text-[#F97316]' : 'text-gray-400 dark:text-gray-500')}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7"></path></svg>
+                              <svg className={`w-4 h-4 shrink-0 mt-0.5 ${isVIP && i > 0 ? 'text-[#C5A059]' : (isVIP ? 'text-[#C5A059]' : 'text-gray-400 dark:text-gray-500')}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7"></path></svg>
                               <span>{f}</span>
                             </li>
                           ))}
                         </ul>
                         
-                        <div className={`py-3 text-[10px] font-bold uppercase tracking-wider rounded-full text-center w-full transition-all relative z-10 ${isSelected ? (isVIP ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-lg shadow-orange-500/30 border-none' : 'bg-[#F97316] text-white border-none') : (isVIP ? 'bg-gradient-to-r from-orange-500/20 to-amber-500/20 text-[#F97316] border border-orange-500/30 group-hover:from-[#F97316] group-hover:to-amber-500 group-hover:text-white' : 'bg-orange-50 dark:bg-orange-500/10 text-[#F97316] border border-orange-200 dark:border-orange-500/20 group-hover:bg-[#F97316] group-hover:text-white')}`}>
+                        <div className={`py-3 text-[10px] font-bold uppercase tracking-wider rounded-full text-center w-full transition-all relative z-10 ${isSelected ? (isVIP ? 'bg-gradient-to-r from-[#C5A059] to-[#a68444] text-white shadow-lg shadow-[#C5A059]/30 border-none' : 'bg-[#C5A059] text-white border-none') : (isVIP ? 'bg-gradient-to-r from-[#C5A059]/20 to-[#a68444]/20 text-[#C5A059] border border-[#C5A059]/30 group-hover:from-[#C5A059] group-hover:to-[#a68444] group-hover:text-white' : 'bg-[#C5A059]/10 text-[#C5A059] border border-[#C5A059]/20 group-hover:bg-[#C5A059] group-hover:text-white')}`}>
                           {isSelected ? '✓ เลือกแล้ว' : `เลือก ${ticket.name}`}
                         </div>
                       </div>
@@ -776,18 +886,18 @@ export default function App() {
                   
                   <div>
                     <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-3 border-b border-gray-100 dark:border-gray-800 pb-3 font-serif">
-                      <span className="w-6 h-6 rounded-full bg-[#F97316] text-white flex items-center justify-center text-xs font-sans">1</span> ข้อมูลส่วนตัว
+                      <span className="w-6 h-6 rounded-full bg-[#C5A059] text-white flex items-center justify-center text-xs font-sans">1</span> ข้อมูลส่วนตัว
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="bg-gray-50 dark:bg-[#0A0D14] p-2 rounded-xl border border-transparent focus-within:border-[#F97316] transition-all">
+                      <div className="bg-gray-50 dark:bg-[#0A0D14] p-2 rounded-xl border border-transparent focus-within:border-[#C5A059] transition-all">
                         <label className="block text-[10px] font-bold text-gray-500 uppercase px-3 pt-1">ชื่อ-นามสกุล *</label>
                         <input type="text" name="name" value={formData.name} onChange={handleInputChange} required className="w-full bg-transparent px-3 py-2 text-sm focus:outline-none dark:text-white" placeholder="John Doe"/>
                       </div>
-                      <div className="bg-gray-50 dark:bg-[#0A0D14] p-2 rounded-xl border border-transparent focus-within:border-[#F97316] transition-all">
+                      <div className="bg-gray-50 dark:bg-[#0A0D14] p-2 rounded-xl border border-transparent focus-within:border-[#C5A059] transition-all">
                         <label className="block text-[10px] font-bold text-gray-500 uppercase px-3 pt-1">อีเมล *</label>
                         <input type="email" name="email" value={formData.email} onChange={handleInputChange} required className="w-full bg-transparent px-3 py-2 text-sm focus:outline-none dark:text-white" placeholder="email@example.com"/>
                       </div>
-                      <div className="bg-gray-50 dark:bg-[#0A0D14] p-2 rounded-xl border border-transparent focus-within:border-[#F97316] transition-all md:col-span-2">
+                      <div className="bg-gray-50 dark:bg-[#0A0D14] p-2 rounded-xl border border-transparent focus-within:border-[#C5A059] transition-all md:col-span-2">
                         <label className="block text-[10px] font-bold text-gray-500 uppercase px-3 pt-1">เบอร์โทรศัพท์ *</label>
                         <input type="tel" name="phone" value={formData.phone} onChange={handleInputChange} required className="w-full bg-transparent px-3 py-2 text-sm focus:outline-none dark:text-white" placeholder="089-XXX-XXXX"/>
                       </div>
@@ -796,28 +906,31 @@ export default function App() {
 
                   <div>
                     <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-3 border-b border-gray-100 dark:border-gray-800 pb-3 font-serif mt-8">
-                      <span className="w-6 h-6 rounded-full bg-[#3B82F6] text-white flex items-center justify-center text-xs font-sans">2</span> ข้อมูลองค์กร
+                      <span className="w-6 h-6 rounded-full bg-[#1E293B] text-white flex items-center justify-center text-xs font-sans">2</span> ข้อมูลองค์กร
                     </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="bg-gray-50 dark:bg-[#0A0D14] p-2 rounded-xl border border-transparent focus-within:border-[#3B82F6] transition-all relative">
+                      <div className="bg-gray-50 dark:bg-[#0A0D14] p-2 rounded-xl border border-transparent focus-within:border-[#1E293B] dark:focus-within:border-gray-600 transition-all relative">
                         <label className="block text-[10px] font-bold text-gray-500 uppercase px-3 pt-1">ตำแหน่ง / อาชีพ *</label>
                         <select name="role" value={formData.role} onChange={handleInputChange} required className="w-full bg-transparent px-3 py-2 text-sm focus:outline-none dark:text-white appearance-none cursor-pointer">
                           <option value="" disabled>-- เลือก --</option>
-                          <option value="พนักงานบริษัท">พนักงานบริษัท</option>
-                          <option value="นักวิจัย">นักวิจัย / นักวิชาการ</option>
-                          <option value="นักศึกษา">นักศึกษา</option>
+                          <option value="สถาปนิก">สถาปนิก (Architect)</option>
+                          <option value="มัณฑนากร">มัณฑนากร (Interior Designer)</option>
+                          <option value="นักออกแบบ">นักออกแบบ (Designer)</option>
+                          <option value="ช่างฝีมือ">ช่างฝีมือ (Craftsman)</option>
+                          <option value="นิสิตนักศึกษา">นิสิตนักศึกษา (Student)</option>
                           <option value="other">อื่นๆ (โปรดระบุ)</option>
                         </select>
                         <div className="pointer-events-none absolute top-8 right-4 flex items-center text-gray-400"><svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg></div>
                         {formData.role === 'other' && <input type="text" name="roleOther" value={formData.roleOther} onChange={handleInputChange} placeholder="โปรดระบุตำแหน่ง/อาชีพ" required className="w-full bg-transparent px-3 py-2 text-sm mt-2 border-t border-gray-200 dark:border-gray-700 focus:outline-none dark:text-white" />}
                       </div>
 
-                      <div className="bg-gray-50 dark:bg-[#0A0D14] p-2 rounded-xl border border-transparent focus-within:border-[#3B82F6] transition-all relative">
-                        <label className="block text-[10px] font-bold text-gray-500 uppercase px-3 pt-1">องค์กร / บริษัท *</label>
+                      <div className="bg-gray-50 dark:bg-[#0A0D14] p-2 rounded-xl border border-transparent focus-within:border-[#1E293B] dark:focus-within:border-gray-600 transition-all relative">
+                        <label className="block text-[10px] font-bold text-gray-500 uppercase px-3 pt-1">องค์กร / สตูดิโอ *</label>
                         <select name="company" value={formData.company} onChange={handleInputChange} required className="w-full bg-transparent px-3 py-2 text-sm focus:outline-none dark:text-white appearance-none cursor-pointer">
                           <option value="" disabled>-- เลือก --</option>
+                          <option value="สตูดิโอออกแบบ">สตูดิโอออกแบบ / บริษัทสถาปนิก</option>
+                          <option value="องค์กรธุรกิจ">องค์กรธุรกิจ / บริษัทพัฒนาอสังหาฯ</option>
                           <option value="สถาบันการศึกษา">สถาบันการศึกษา</option>
-                          <option value="องค์กรธุรกิจ">องค์กรธุรกิจเอกชน</option>
                           <option value="ธุรกิจส่วนตัว / ฟรีแลนซ์">ธุรกิจส่วนตัว / ฟรีแลนซ์</option>
                           <option value="other">อื่นๆ (โปรดระบุ)</option>
                         </select>
@@ -827,10 +940,10 @@ export default function App() {
                     </div>
                   </div>
 
-                  <div className="bg-orange-50 dark:bg-[#1A2530] border-2 border-orange-200 dark:border-gray-800 p-6 md:p-8 rounded-3xl mt-10 flex flex-col md:flex-row justify-between items-center gap-6 relative overflow-hidden">
-                    <div className="absolute left-0 top-0 w-2 h-full bg-[#F97316]"></div>
+                  <div className="bg-[#C5A059]/10 border-2 border-[#C5A059]/30 p-6 md:p-8 rounded-3xl mt-10 flex flex-col md:flex-row justify-between items-center gap-6 relative overflow-hidden">
+                    <div className="absolute left-0 top-0 w-2 h-full bg-[#C5A059]"></div>
                     <div className="text-center md:text-left w-full md:w-auto">
-                      <div className="text-xs text-[#F97316] font-bold uppercase tracking-widest mb-3">{selectedTicket.name} (1 ท่าน)</div>
+                      <div className="text-xs text-[#C5A059] font-bold uppercase tracking-widest mb-3">{selectedTicket.name} (1 ท่าน)</div>
                       <div className="text-sm text-gray-600 dark:text-gray-400">Subtotal: {subtotal.toLocaleString()} ฿ | VAT 7%: {vat.toLocaleString()} ฿</div>
                     </div>
                     <div className="flex flex-col sm:flex-row items-center gap-6 w-full md:w-auto">
@@ -852,12 +965,12 @@ export default function App() {
         <section id="faq" className="py-16 md:py-24 border-t border-gray-100 dark:border-gray-900">
           <div className="max-w-3xl mx-auto px-4">
             <div className="text-center mb-12 md:mb-16 reveal">
-              <div className="inline-block bg-orange-100 dark:bg-orange-500/10 text-[#F97316] text-[10px] font-bold tracking-widest uppercase mb-3 px-3 py-1 rounded-full border border-orange-200 dark:border-orange-500/20">Got Questions?</div>
+              <div className="inline-block bg-[#C5A059]/10 text-[#C5A059] text-[10px] font-bold tracking-widest uppercase mb-3 px-3 py-1 rounded-full border border-[#C5A059]/20">Got Questions?</div>
               <h2 className="font-serif text-2xl md:text-4xl text-gray-900 dark:text-white">คำถามที่พบบ่อย (FAQ)</h2>
             </div>
             <div className="space-y-3 md:space-y-4 reveal delay-1">
               {config.faqs?.map(faq => (
-                <div key={faq.id} className={`faq-item bg-[#FDFBF7] dark:bg-[#111827] border border-gray-100 dark:border-gray-800 rounded-2xl p-5 md:p-6 cursor-pointer hover:border-[#F97316] dark:hover:border-[#F97316] transition-colors ${activeFaq === faq.id ? 'active' : ''}`} onClick={() => setActiveFaq(activeFaq === faq.id ? null : faq.id)}>
+                <div key={faq.id} className={`faq-item bg-[#FDFBF7] dark:bg-[#111827] border border-gray-100 dark:border-gray-800 rounded-2xl p-5 md:p-6 cursor-pointer hover:border-[#C5A059] dark:hover:border-[#C5A059] transition-colors ${activeFaq === faq.id ? 'active' : ''}`} onClick={() => setActiveFaq(activeFaq === faq.id ? null : faq.id)}>
                   <div className="flex justify-between items-center font-bold text-gray-900 dark:text-white text-sm md:text-base">
                     <span className="font-medium">{faq.q}</span>
                     <svg className="w-5 h-5 text-gray-400 faq-icon transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
@@ -872,11 +985,11 @@ export default function App() {
         <footer className="bg-gray-900 dark:bg-[#0A0D14] pt-16 pb-12 text-white border-t border-gray-800 relative z-10">
           <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6">
              <div className="flex items-center gap-3">
-                <div className="w-1.5 h-6 bg-[#F97316] rounded-full shadow-[0_0_8px_#F97316]"></div>
+                <div className="w-1.5 h-6 bg-[#C5A059] rounded-full shadow-[0_0_8px_#C5A059]"></div>
                 <span className="font-serif font-bold text-xl tracking-wide">{config.title}</span>
             </div>
             <div className="text-xs text-gray-500 font-light">© 2026 {config.title}. All rights reserved.</div>
-            <button onClick={() => setCurrentView('admin')} className="text-[10px] font-bold text-gray-500 hover:text-[#F97316] transition-colors uppercase tracking-widest">
+            <button onClick={() => setCurrentView('admin')} className="text-[10px] font-bold text-gray-500 hover:text-[#C5A059] transition-colors uppercase tracking-widest">
               Admin Access
             </button>
           </div>
@@ -899,29 +1012,40 @@ export default function App() {
                 <h3 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white mb-3 md:mb-4 font-serif">{selectedSpeaker.name}</h3>
                 <div className="overflow-y-auto max-h-32 md:max-h-48 pr-2 text-xs md:text-sm text-gray-600 dark:text-gray-400 font-light leading-relaxed mb-4 md:mb-6">{selectedSpeaker.desc}</div>
                 <div className="mt-auto">
-                  <a href="#schedule" onClick={() => setSelectedSpeaker(null)} className="inline-flex items-center gap-2 text-[9px] md:text-[10px] font-bold text-[#F97316] uppercase tracking-widest hover:text-orange-600">ดูกำหนดการ <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg></a>
+                  <a href="#schedule" onClick={() => setSelectedSpeaker(null)} className="inline-flex items-center gap-2 text-[9px] md:text-[10px] font-bold text-[#C5A059] uppercase tracking-widest hover:text-[#a68444]">ดูกำหนดการ <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg></a>
                 </div>
               </div>
             </div>
           </div>
         )}
 
-        {/* Modal Ticket Success (No QR - Big Name) */}
+        {/* Modal Ticket Success (With QR Code) */}
         {ticketModal.isOpen && (
           <div className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/90 backdrop-blur-md p-4">
             <div className="flex flex-col items-center max-w-sm w-full">
               <div className="bg-[#FDFBF7] dark:bg-[#111827] w-full shadow-2xl relative p-8 md:p-10 text-center rounded-[2rem] overflow-hidden border border-gray-200 dark:border-gray-800">
-                <div className="absolute top-0 left-0 w-full h-2 bg-[#F97316]"></div>
+                <div className="absolute top-0 left-0 w-full h-2 bg-[#C5A059]"></div>
                 <h2 className="font-serif text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-1 md:mb-2 mt-2">{config.title.split(' ')[0]}</h2>
-                <div className="text-[#F97316] text-[9px] font-bold tracking-widest uppercase mb-6 md:mb-8 pb-3 md:pb-4 border-b border-gray-200 dark:border-gray-800">Official E-Ticket</div>
+                <div className="text-[#C5A059] text-[9px] font-bold tracking-widest uppercase mb-6 pb-3 border-b border-gray-200 dark:border-gray-800">Official E-Ticket</div>
                 
-                <div className="text-left bg-white dark:bg-gray-900 p-5 md:p-6 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm">
-                  <div className="text-gray-400 text-[9px] font-bold uppercase tracking-widest mb-1">Attendee</div>
-                  <div className="text-lg md:text-xl font-bold text-gray-900 dark:text-white mb-3 md:mb-4 font-serif border-b border-gray-100 dark:border-gray-800 pb-2 md:pb-3 break-words">{ticketModal.name}</div>
-                  <div className="text-gray-400 text-[9px] font-bold uppercase tracking-widest mb-1">Ticket Type</div>
-                  <div className="text-xs md:text-sm font-bold text-[#F97316] uppercase tracking-widest">{ticketModal.tier}</div>
+                <div className="bg-white dark:bg-gray-900 p-5 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm flex flex-col items-center">
+                  
+                  {/* QR Code Section */}
+                  {ticketModal.qrUrl && (
+                    <div className="w-32 h-32 md:w-40 md:h-40 bg-white p-2 rounded-xl shadow-sm border border-gray-100 mb-4 flex items-center justify-center">
+                      <img src={ticketModal.qrUrl} alt="QR Code" className="w-full h-full object-contain" />
+                    </div>
+                  )}
+
+                  <div className="w-full text-left">
+                    <div className="text-gray-400 text-[9px] font-bold uppercase tracking-widest mb-1">Attendee</div>
+                    <div className="text-lg md:text-xl font-bold text-gray-900 dark:text-white mb-3 font-serif border-b border-gray-100 dark:border-gray-800 pb-2 break-words">{ticketModal.name}</div>
+                    <div className="text-gray-400 text-[9px] font-bold uppercase tracking-widest mb-1">Ticket Type</div>
+                    <div className="text-xs md:text-sm font-bold text-[#C5A059] uppercase tracking-widest">{ticketModal.tier}</div>
+                  </div>
+
                 </div>
-                <p className="text-xs text-gray-500 mt-6 leading-relaxed">E-Ticket และรายละเอียดงาน<br/>ถูกจัดส่งไปยังอีเมลของท่านแล้ว</p>
+                <p className="text-xs text-gray-500 mt-6 leading-relaxed">โปรดแคปเจอร์หน้าจอนี้ หรือใช้ E-Ticket<br/>ที่จัดส่งไปยังอีเมลเพื่อสแกนเข้างาน</p>
               </div>
               <div className="mt-6 md:mt-8 w-full">
                 <button onClick={() => setTicketModal({isOpen:false})} className="w-full bg-gray-900 dark:bg-white hover:bg-gray-800 text-white dark:text-gray-900 text-[11px] font-bold py-3.5 uppercase tracking-widest transition rounded-full shadow-xl">ปิดหน้าต่าง / Close</button>
@@ -939,12 +1063,12 @@ export default function App() {
   // ==========================================
   return (
     <>
-      <div className="flex flex-col md:flex-row h-screen bg-[#0A0D14] text-gray-200 font-sans overflow-hidden selection:bg-[#F97316]/30">
+      <div className="flex flex-col md:flex-row h-screen bg-[#0A0D14] text-gray-200 font-sans overflow-hidden selection:bg-[#C5A059]/30">
         
         {/* Mobile Admin Header */}
         <div className="md:hidden flex items-center justify-between p-4 bg-[#111827] border-b border-gray-800 shadow-md z-50">
            <div className="flex items-center gap-3">
-             <div className="w-8 h-8 flex items-center justify-center text-white font-bold text-sm rounded-lg bg-[#F97316]">E</div>
+             <div className="w-8 h-8 flex items-center justify-center text-white font-bold text-sm rounded-lg bg-[#C5A059]">T</div>
              <span className="font-bold text-white uppercase tracking-wider text-xs">Event Admin</span>
            </div>
            <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-white p-2">
@@ -956,7 +1080,7 @@ export default function App() {
         <aside className={`fixed md:relative z-40 w-72 h-[calc(100vh-65px)] md:h-full bg-[#111827] border-r border-gray-800 flex flex-col shadow-2xl transition-transform transform ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
           
           <div className="hidden md:flex p-6 border-b border-gray-800 items-center gap-4 cursor-pointer hover:bg-gray-800/50 transition-colors" onClick={() => setCurrentView('customer')}>
-            <div className="w-10 h-10 flex items-center justify-center text-white font-bold text-xl rounded-xl bg-[#F97316] shadow-lg shadow-orange-500/20">E</div>
+            <div className="w-10 h-10 flex items-center justify-center text-white font-bold text-xl rounded-xl bg-[#C5A059] shadow-lg shadow-[#C5A059]/20">T</div>
             <div>
               <h1 className="font-bold text-white text-sm tracking-wide uppercase">Dashboard</h1>
               <span className="text-[9px] text-[#10B981] font-semibold flex items-center gap-1.5 mt-1 uppercase tracking-wider"><span className="w-1.5 h-1.5 rounded-full bg-[#10B981] animate-pulse"></span> Online</span>
@@ -965,27 +1089,27 @@ export default function App() {
 
           <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
             <div className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3 px-3">Management</div>
-            <button onClick={() => {setAdminTab('dashboard'); setIsMobileMenuOpen(false);}} className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold transition-all rounded-xl ${adminTab === 'dashboard' ? 'bg-gray-800 text-white shadow-sm border-l-2 border-[#F97316]' : 'text-gray-400 hover:bg-gray-800/50 hover:text-white border-l-2 border-transparent'}`}>
+            <button onClick={() => {setAdminTab('dashboard'); setIsMobileMenuOpen(false);}} className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold transition-all rounded-xl ${adminTab === 'dashboard' ? 'bg-gray-800 text-white shadow-sm border-l-2 border-[#C5A059]' : 'text-gray-400 hover:bg-gray-800/50 hover:text-white border-l-2 border-transparent'}`}>
               <span className="text-lg opacity-80">📊</span> Live Analytics
             </button>
-            <button onClick={() => {setAdminTab('users'); setIsMobileMenuOpen(false);}} className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold transition-all rounded-xl ${adminTab === 'users' ? 'bg-gray-800 text-white shadow-sm border-l-2 border-[#F97316]' : 'text-gray-400 hover:bg-gray-800/50 hover:text-white border-l-2 border-transparent'}`}>
+            <button onClick={() => {setAdminTab('users'); setIsMobileMenuOpen(false);}} className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold transition-all rounded-xl ${adminTab === 'users' ? 'bg-gray-800 text-white shadow-sm border-l-2 border-[#C5A059]' : 'text-gray-400 hover:bg-gray-800/50 hover:text-white border-l-2 border-transparent'}`}>
               <span className="text-lg opacity-80">📋</span> Attendee List
             </button>
-            <button onClick={() => {setAdminTab('scanner'); setIsMobileMenuOpen(false);}} className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold transition-all rounded-xl ${adminTab === 'scanner' ? 'bg-gray-800 text-white shadow-sm border-l-2 border-[#F97316]' : 'text-gray-400 hover:bg-gray-800/50 hover:text-white border-l-2 border-transparent'}`}>
+            <button onClick={() => {setAdminTab('scanner'); setIsMobileMenuOpen(false);}} className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold transition-all rounded-xl ${adminTab === 'scanner' ? 'bg-gray-800 text-white shadow-sm border-l-2 border-[#C5A059]' : 'text-gray-400 hover:bg-gray-800/50 hover:text-white border-l-2 border-transparent'}`}>
               <span className="text-lg opacity-80">📷</span> Event Check-In
             </button>
             
             <div className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-3 px-3 mt-8">Configuration</div>
-            <button onClick={() => {setAdminTab('settings'); setIsMobileMenuOpen(false);}} className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold transition-all rounded-xl ${adminTab === 'settings' ? 'bg-gray-800 text-white shadow-sm border-l-2 border-[#F97316]' : 'text-gray-400 hover:bg-gray-800/50 hover:text-white border-l-2 border-transparent'}`}>
+            <button onClick={() => {setAdminTab('settings'); setIsMobileMenuOpen(false);}} className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold transition-all rounded-xl ${adminTab === 'settings' ? 'bg-gray-800 text-white shadow-sm border-l-2 border-[#C5A059]' : 'text-gray-400 hover:bg-gray-800/50 hover:text-white border-l-2 border-transparent'}`}>
               <span className="text-lg opacity-80">⚙️</span> Event Config
             </button>
-            <button onClick={() => {setAdminTab('schedule'); setIsMobileMenuOpen(false);}} className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold transition-all rounded-xl ${adminTab === 'schedule' ? 'bg-gray-800 text-white shadow-sm border-l-2 border-[#F97316]' : 'text-gray-400 hover:bg-gray-800/50 hover:text-white border-l-2 border-transparent'}`}>
+            <button onClick={() => {setAdminTab('schedule'); setIsMobileMenuOpen(false);}} className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold transition-all rounded-xl ${adminTab === 'schedule' ? 'bg-gray-800 text-white shadow-sm border-l-2 border-[#C5A059]' : 'text-gray-400 hover:bg-gray-800/50 hover:text-white border-l-2 border-transparent'}`}>
               <span className="text-lg opacity-80">⏱️</span> Schedule
             </button>
-            <button onClick={() => {setAdminTab('speakers'); setIsMobileMenuOpen(false);}} className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold transition-all rounded-xl ${adminTab === 'speakers' ? 'bg-gray-800 text-white shadow-sm border-l-2 border-[#F97316]' : 'text-gray-400 hover:bg-gray-800/50 hover:text-white border-l-2 border-transparent'}`}>
+            <button onClick={() => {setAdminTab('speakers'); setIsMobileMenuOpen(false);}} className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold transition-all rounded-xl ${adminTab === 'speakers' ? 'bg-gray-800 text-white shadow-sm border-l-2 border-[#C5A059]' : 'text-gray-400 hover:bg-gray-800/50 hover:text-white border-l-2 border-transparent'}`}>
               <span className="text-lg opacity-80">🏵️</span> Speakers
             </button>
-            <button onClick={() => {setAdminTab('tickets'); setIsMobileMenuOpen(false);}} className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold transition-all rounded-xl ${adminTab === 'tickets' ? 'bg-gray-800 text-white shadow-sm border-l-2 border-[#F97316]' : 'text-gray-400 hover:bg-gray-800/50 hover:text-white border-l-2 border-transparent'}`}>
+            <button onClick={() => {setAdminTab('tickets'); setIsMobileMenuOpen(false);}} className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold transition-all rounded-xl ${adminTab === 'tickets' ? 'bg-gray-800 text-white shadow-sm border-l-2 border-[#C5A059]' : 'text-gray-400 hover:bg-gray-800/50 hover:text-white border-l-2 border-transparent'}`}>
               <span className="text-lg opacity-80">🎟️</span> Ticketing
             </button>
           </nav>
@@ -1001,16 +1125,16 @@ export default function App() {
         {isMobileMenuOpen && <div className="fixed inset-0 bg-black/60 z-30 md:hidden backdrop-blur-sm" onClick={() => setIsMobileMenuOpen(false)}></div>}
 
         {/* Main Content Area (Admin Backend Upgraded) */}
-        <main className="flex-1 p-4 md:p-8 lg:p-10 overflow-y-auto relative" style={{ backgroundColor: '#0A0D14', backgroundImage: 'radial-gradient(rgba(249,115,22,0.05) 1.5px, transparent 1.5px)', backgroundSize: '35px 35px' }}>
+        <main className="flex-1 p-4 md:p-8 lg:p-10 overflow-y-auto relative" style={{ backgroundColor: '#0A0D14', backgroundImage: 'radial-gradient(rgba(197,160,89,0.05) 1.5px, transparent 1.5px)', backgroundSize: '35px 35px' }}>
           
           {adminTab === 'dashboard' && (
             <div className="max-w-7xl mx-auto space-y-6 md:space-y-8 relative z-10 stagger-enter">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div>
                   <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight uppercase glow-text">Live Analytics</h2>
-                  <p className="text-[#F97316] text-[10px] md:text-xs mt-1 uppercase tracking-wider font-bold">Real-time Event Data Insight</p>
+                  <p className="text-[#C5A059] text-[10px] md:text-xs mt-1 uppercase tracking-wider font-bold">Real-time Event Data Insight <span className="text-gray-500 font-normal lowercase tracking-normal ml-2 bg-gray-800 px-2 py-0.5 rounded-full border border-gray-700">last sync: {lastSyncTime}</span></p>
                 </div>
-                <button onClick={() => syncWithGoogleSheet()} disabled={isSyncing} className="w-full sm:w-auto px-5 py-2.5 bg-gradient-to-r from-gray-800 to-gray-900 hover:from-gray-700 hover:to-gray-800 text-white text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 border border-gray-700 rounded-lg shadow-[0_0_15px_rgba(0,0,0,0.3)] hover:border-[#F97316]">
+                <button onClick={() => syncWithGoogleSheet()} disabled={isSyncing} className="w-full sm:w-auto px-5 py-2.5 bg-gradient-to-r from-gray-800 to-gray-900 hover:from-gray-700 hover:to-gray-800 text-white text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 border border-gray-700 rounded-lg shadow-[0_0_15px_rgba(0,0,0,0.3)] hover:border-[#C5A059]">
                   <span className={isSyncing ? "animate-spin" : ""}>🔄</span> {isSyncing ? "SYNCING DATA..." : "FORCE SYNC"}
                 </button>
               </div>
@@ -1029,9 +1153,9 @@ export default function App() {
                   <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Net Revenue</p>
                   <div className="text-2xl lg:text-3xl font-bold text-white font-mono break-words leading-tight">฿{totalRevenueNum.toLocaleString()}</div>
                 </div>
-                <div className="admin-glass p-6 rounded-2xl relative overflow-hidden group hover:border-[#F97316]/50">
-                  <div className="absolute top-0 right-0 w-24 h-24 bg-[#F97316]/10 rounded-bl-full -z-10 group-hover:scale-110 transition-transform"></div>
-                  <div className="w-10 h-10 bg-[#F97316]/20 text-[#F97316] flex items-center justify-center rounded-xl text-xl mb-4 border border-[#F97316]/30">🏆</div>
+                <div className="admin-glass p-6 rounded-2xl relative overflow-hidden group hover:border-[#C5A059]/50">
+                  <div className="absolute top-0 right-0 w-24 h-24 bg-[#C5A059]/10 rounded-bl-full -z-10 group-hover:scale-110 transition-transform"></div>
+                  <div className="w-10 h-10 bg-[#C5A059]/20 text-[#C5A059] flex items-center justify-center rounded-xl text-xl mb-4 border border-[#C5A059]/30">🏆</div>
                   <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Top Ticket</p>
                   <div className="text-lg lg:text-xl font-bold text-white mt-1 uppercase break-words leading-tight">{topTicket?.name || '-'}</div>
                 </div>
@@ -1064,7 +1188,7 @@ export default function App() {
                 <div className="lg:col-span-2 admin-glass p-6 md:p-8 flex flex-col rounded-2xl">
                   <div className="flex justify-between items-center mb-6">
                     <h3 className="text-sm md:text-base font-bold text-white uppercase tracking-wide">Recent Registrations</h3>
-                    <button onClick={() => setAdminTab('users')} className="text-[10px] font-bold text-gray-400 hover:text-[#F97316] uppercase tracking-wider bg-black/40 px-3 py-1.5 rounded-lg transition-colors border border-gray-800">View All →</button>
+                    <button onClick={() => setAdminTab('users')} className="text-[10px] font-bold text-gray-400 hover:text-[#C5A059] uppercase tracking-wider bg-black/40 px-3 py-1.5 rounded-lg transition-colors border border-gray-800">View All →</button>
                   </div>
                   {registrations.length === 0 ? (
                     <div className="flex-1 flex flex-col items-center justify-center text-gray-600 text-xs md:text-sm py-12 border border-dashed border-gray-700/50 rounded-xl">
@@ -1084,7 +1208,7 @@ export default function App() {
                           <div className="flex sm:justify-end items-center gap-3 md:gap-4 ml-14 sm:ml-0">
                             {r.status === 'Checked In' && <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#10B981] shadow-[0_0_8px_#10B981] flex-shrink-0"></span>}
                             <span className="inline-block px-2 py-1 text-[8px] font-bold bg-black/40 text-gray-300 uppercase tracking-wider border border-gray-700 rounded break-words text-center max-w-[100px] md:max-w-[120px] backdrop-blur-sm">{r.ticketName || 'UNKNOWN PASS'}</span>
-                            <div className="text-xs font-bold text-[#F97316] font-mono w-16 md:w-24 text-right flex-shrink-0">฿{Number(r.totalPaid).toLocaleString()}</div>
+                            <div className="text-xs font-bold text-[#C5A059] font-mono w-16 md:w-24 text-right flex-shrink-0">฿{Number(r.totalPaid).toLocaleString()}</div>
                           </div>
                         </div>
                       ))}
@@ -1100,20 +1224,20 @@ export default function App() {
                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 md:mb-6">
                  <div>
                    <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight uppercase glow-text">Event Check-In</h2>
-                   <p className="text-[#F97316] text-[10px] md:text-xs mt-1 uppercase tracking-widest font-bold">Scan QR or Barcode</p>
+                   <p className="text-[#C5A059] text-[10px] md:text-xs mt-1 uppercase tracking-widest font-bold">Scan QR or Barcode</p>
                  </div>
                </div>
 
                <div className="admin-glass p-4 md:p-8 shadow-sm flex flex-col items-center justify-center text-center relative overflow-hidden min-h-[400px] rounded-2xl">
                  
                  <div className="flex justify-center gap-4 mb-6 md:mb-8 relative z-10 w-full sm:w-auto">
-                    <button onClick={() => setIsScanning(!isScanning)} className={`w-full sm:w-auto px-5 py-3 text-white text-[10px] font-bold uppercase tracking-wider transition-all border shadow-lg rounded-lg ${isScanning ? 'bg-red-600/80 hover:bg-red-600 border-red-500' : 'bg-[#F97316]/80 hover:bg-[#F97316] border-[#F97316]'}`}>
+                    <button onClick={() => setIsScanning(!isScanning)} className={`w-full sm:w-auto px-5 py-3 text-white text-[10px] font-bold uppercase tracking-wider transition-all border shadow-lg rounded-lg ${isScanning ? 'bg-red-600/80 hover:bg-red-600 border-red-500' : 'bg-[#C5A059]/80 hover:bg-[#C5A059] border-[#C5A059]'}`}>
                       {isScanning ? '🛑 Close Camera' : '📷 Open Camera Scanner'}
                     </button>
                  </div>
 
                  {isScanning && (
-                   <div id="qr-reader" className="w-full max-w-sm mx-auto overflow-hidden border border-gray-600 mb-8 bg-black rounded-xl shadow-[0_0_30px_rgba(249,115,22,0.2)]"></div>
+                   <div id="qr-reader" className="w-full max-w-sm mx-auto overflow-hidden border border-gray-600 mb-8 bg-black rounded-xl shadow-[0_0_30px_rgba(197,160,89,0.2)]"></div>
                  )}
 
                  <div className="relative z-10 w-full max-w-md">
@@ -1132,9 +1256,11 @@ export default function App() {
                            <div className="text-[9px] text-gray-400 uppercase tracking-widest mb-1">Ticket Type</div>
                            <div className={`text-xs font-bold uppercase px-3 py-1 inline-block border rounded ${scanResult.type === 'success' ? 'bg-[#10B981]/20 text-[#10B981] border-[#10B981]/50' : 'bg-amber-500/20 text-amber-400 border-amber-500/50'}`}>{scanResult.user.ticketName || 'UNKNOWN PASS'}</div>
                            
-                           <button onClick={() => printBadge(scanResult.user)} className="mt-6 w-full py-3 bg-gray-800 hover:bg-gray-700 text-white text-[10px] font-bold uppercase tracking-widest transition-all rounded-lg border border-gray-600 shadow-sm">
-                             🖨️ PRINT BADGE
-                           </button>
+                           <div className="flex gap-2 mt-6">
+                             <button onClick={() => printBadge(scanResult.user)} className="flex-1 py-3 bg-gray-800 hover:bg-gray-700 text-white text-[10px] font-bold uppercase tracking-widest transition-all rounded-lg border border-gray-600 shadow-sm">
+                               🖨️ PRINT BADGE
+                             </button>
+                           </div>
                          </div>
                        )}
                      </div>
@@ -1148,7 +1274,7 @@ export default function App() {
                        value={scanQuery}
                        onChange={e => setScanQuery(e.target.value)}
                        placeholder="CLICK TO SCAN..." 
-                       className="w-full p-4 md:p-5 bg-black/50 border border-gray-700 focus:border-[#F97316] focus:shadow-[0_0_15px_rgba(249,115,22,0.3)] text-center text-xs md:text-sm text-white outline-none transition-all uppercase tracking-widest rounded-xl backdrop-blur-sm"
+                       className="w-full p-4 md:p-5 bg-black/50 border border-gray-700 focus:border-[#C5A059] focus:shadow-[0_0_15px_rgba(197,160,89,0.3)] text-center text-xs md:text-sm text-white outline-none transition-all uppercase tracking-widest rounded-xl backdrop-blur-sm"
                      />
                    </form>
                  </div>
@@ -1166,7 +1292,7 @@ export default function App() {
                    <div className="overflow-x-auto">
                      <table className="w-full text-left border-collapse min-w-[750px]">
                        <thead>
-                         <tr className="bg-black/40 border-b border-gray-700/50 text-[10px] font-bold text-[#F97316] uppercase tracking-widest backdrop-blur-sm">
+                         <tr className="bg-black/40 border-b border-gray-700/50 text-[10px] font-bold text-[#C5A059] uppercase tracking-widest backdrop-blur-sm">
                            <th className="py-4 px-4 md:py-5 md:px-6">Guest Profile</th>
                            <th className="py-4 px-4 md:py-5 md:px-6">Contact Info</th>
                            <th className="py-4 px-4 md:py-5 md:px-6">Pass Type</th>
@@ -1180,15 +1306,15 @@ export default function App() {
                              {editingUserId === r.id ? (
                                <>
                                  <td className="py-4 px-4 md:px-6 space-y-2">
-                                   <input className="w-full p-2 bg-black/60 border border-gray-700 text-xs text-white font-semibold uppercase focus:border-[#F97316] outline-none rounded" value={editUserForm.name || ''} onChange={e => setEditUserForm({...editUserForm, name: e.target.value})} placeholder="Name" />
-                                   <input className="w-full p-2 bg-black/60 border border-gray-700 text-[10px] text-white uppercase focus:border-[#F97316] outline-none rounded" value={editUserForm.company || ''} onChange={e => setEditUserForm({...editUserForm, company: e.target.value})} placeholder="Company" />
+                                   <input className="w-full p-2 bg-black/60 border border-gray-700 text-xs text-white font-semibold uppercase focus:border-[#C5A059] outline-none rounded" value={editUserForm.name || ''} onChange={e => setEditUserForm({...editUserForm, name: e.target.value})} placeholder="Name" />
+                                   <input className="w-full p-2 bg-black/60 border border-gray-700 text-[10px] text-white uppercase focus:border-[#C5A059] outline-none rounded" value={editUserForm.company || ''} onChange={e => setEditUserForm({...editUserForm, company: e.target.value})} placeholder="Company" />
                                  </td>
                                  <td className="py-4 px-4 md:px-6 space-y-2">
-                                   <input className="w-full p-2 bg-black/60 border border-gray-700 text-[10px] text-gray-300 focus:border-[#F97316] outline-none rounded" value={editUserForm.email || ''} onChange={e => setEditUserForm({...editUserForm, email: e.target.value})} placeholder="Email" />
-                                   <input className="w-full p-2 bg-black/60 border border-gray-700 text-[10px] text-gray-300 focus:border-[#F97316] outline-none rounded" value={editUserForm.phone || ''} onChange={e => setEditUserForm({...editUserForm, phone: e.target.value})} placeholder="Phone" />
+                                   <input className="w-full p-2 bg-black/60 border border-gray-700 text-[10px] text-gray-300 focus:border-[#C5A059] outline-none rounded" value={editUserForm.email || ''} onChange={e => setEditUserForm({...editUserForm, email: e.target.value})} placeholder="Email" />
+                                   <input className="w-full p-2 bg-black/60 border border-gray-700 text-[10px] text-gray-300 focus:border-[#C5A059] outline-none rounded" value={editUserForm.phone || ''} onChange={e => setEditUserForm({...editUserForm, phone: e.target.value})} placeholder="Phone" />
                                  </td>
                                  <td className="py-4 px-4 md:px-6">
-                                    <input className="w-full p-2 bg-black/60 border border-gray-700 text-[10px] text-white uppercase focus:border-[#F97316] outline-none rounded" value={editUserForm.ticketName || ''} onChange={e => setEditUserForm({...editUserForm, ticketName: e.target.value})} placeholder="Ticket Name" />
+                                    <input className="w-full p-2 bg-black/60 border border-gray-700 text-[10px] text-white uppercase focus:border-[#C5A059] outline-none rounded" value={editUserForm.ticketName || ''} onChange={e => setEditUserForm({...editUserForm, ticketName: e.target.value})} placeholder="Ticket Name" />
                                  </td>
                                  <td className="py-4 px-4 md:px-6 text-center">
                                     <select className="bg-black/60 border border-gray-700 text-[10px] text-white p-2 outline-none uppercase font-semibold rounded" value={editUserForm.status || 'Pending'} onChange={e => setEditUserForm({...editUserForm, status: e.target.value})}>
@@ -1221,10 +1347,11 @@ export default function App() {
                                        <span className="px-2 py-1 bg-transparent text-gray-500 border border-gray-800 text-[8px] font-bold uppercase tracking-wider rounded">Pending</span>
                                     )}
                                  </td>
-                                 <td className="py-4 md:py-5 px-4 md:px-6 text-center space-x-1 md:space-x-2 whitespace-nowrap">
-                                   <button onClick={() => printBadge(r)} className="px-2 md:px-3 py-1 text-blue-400 hover:text-blue-300 hover:bg-blue-900/20 bg-black/40 border border-gray-700 font-bold text-[8px] uppercase tracking-wider transition-colors rounded" title="Print Badge">Print</button>
-                                   <button onClick={() => startEditUser(r)} className="px-2 md:px-3 py-1 text-gray-300 hover:text-white hover:bg-gray-800 bg-black/40 border border-gray-700 font-bold text-[8px] uppercase tracking-wider transition-colors rounded" title="Edit">Edit</button>
-                                   <button onClick={() => deleteUser(r.id)} className="px-2 md:px-3 py-1 text-red-500 hover:text-red-400 hover:bg-red-900/20 bg-black/40 border border-gray-700 font-bold text-[8px] uppercase tracking-wider transition-colors rounded" title="Delete">Del</button>
+                                 <td className="py-4 md:py-5 px-4 md:px-6 text-center space-x-1 md:space-x-1.5 whitespace-nowrap">
+                                   <button onClick={() => printBadge(r)} className="px-2 md:px-2.5 py-1 text-blue-400 hover:text-blue-300 hover:bg-blue-900/20 bg-black/40 border border-gray-700 font-bold text-[8px] uppercase tracking-wider transition-colors rounded" title="Print Badge">Badge</button>
+                                   <button onClick={() => printCertificate(r)} className="px-2 md:px-2.5 py-1 text-[#C5A059] hover:text-[#e0b96b] hover:bg-[#C5A059]/20 bg-black/40 border border-gray-700 font-bold text-[8px] uppercase tracking-wider transition-colors rounded" title="Print Certificate">Cert</button>
+                                   <button onClick={() => startEditUser(r)} className="px-2 md:px-2.5 py-1 text-gray-300 hover:text-white hover:bg-gray-800 bg-black/40 border border-gray-700 font-bold text-[8px] uppercase tracking-wider transition-colors rounded" title="Edit">Edit</button>
+                                   <button onClick={() => deleteUser(r.id)} className="px-2 md:px-2.5 py-1 text-red-500 hover:text-red-400 hover:bg-red-900/20 bg-black/40 border border-gray-700 font-bold text-[8px] uppercase tracking-wider transition-colors rounded" title="Delete">Del</button>
                                  </td>
                                </>
                              )}
@@ -1242,35 +1369,35 @@ export default function App() {
             <div className="max-w-5xl mx-auto space-y-6 relative z-10 stagger-enter">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 md:mb-6">
                 <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight uppercase glow-text">Event Config</h2>
-                <button onClick={handleSaveConfig} className="w-full sm:w-auto px-6 md:px-8 py-3 bg-[#F97316] hover:bg-orange-600 text-white font-semibold uppercase text-[10px] md:text-xs tracking-widest shadow-[0_0_15px_rgba(249,115,22,0.4)] rounded-lg transition-all">
+                <button onClick={handleSaveConfig} className="w-full sm:w-auto px-6 md:px-8 py-3 bg-[#C5A059] hover:bg-[#a68444] text-white font-semibold uppercase text-[10px] md:text-xs tracking-widest shadow-[0_0_15px_rgba(197,160,89,0.4)] rounded-lg transition-all">
                   💾 SAVE CONFIG
                 </button>
               </div>
 
               <div className="admin-glass p-6 md:p-8 space-y-6 rounded-2xl">
                 <div className="border-b border-gray-700/50 pb-4">
-                  <h3 className="text-base md:text-lg font-bold text-[#F97316] uppercase">🖼️ Background Images</h3>
+                  <h3 className="text-base md:text-lg font-bold text-[#C5A059] uppercase">🖼️ Background Images</h3>
                   <p className="text-[10px] text-gray-400 uppercase tracking-widest mt-1">ใส่ลิงก์รูปภาพ (URL) สำหรับเปลี่ยนพื้นหลังเว็บ</p>
                 </div>
                 <div className="grid grid-cols-1 gap-4 md:gap-6">
                   <div className="space-y-1.5 md:space-y-2">
                     <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Hero Background</label>
-                    <input type="text" value={config.heroBg} onChange={(e) => setConfig({...config, heroBg: e.target.value})} placeholder="https://..." className="w-full p-3 bg-black/50 border border-gray-700 text-xs text-gray-200 focus:border-[#F97316] outline-none rounded-lg" />
+                    <input type="text" value={config.heroBg} onChange={(e) => setConfig({...config, heroBg: e.target.value})} placeholder="https://..." className="w-full p-3 bg-black/50 border border-gray-700 text-xs text-gray-200 focus:border-[#C5A059] outline-none rounded-lg" />
                   </div>
                   <div className="space-y-1.5 md:space-y-2">
                     <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Sponsors Background</label>
-                    <input type="text" value={config.sponsorBg} onChange={(e) => setConfig({...config, sponsorBg: e.target.value})} placeholder="https://..." className="w-full p-3 bg-black/50 border border-gray-700 text-xs text-gray-200 focus:border-[#F97316] outline-none rounded-lg" />
+                    <input type="text" value={config.sponsorBg} onChange={(e) => setConfig({...config, sponsorBg: e.target.value})} placeholder="https://..." className="w-full p-3 bg-black/50 border border-gray-700 text-xs text-gray-200 focus:border-[#C5A059] outline-none rounded-lg" />
                   </div>
                 </div>
               </div>
 
               <div className="admin-glass p-6 md:p-8 space-y-6 rounded-2xl">
                 <div className="flex justify-between items-center border-b border-gray-700/50 pb-4">
-                  <h3 className="text-base md:text-lg font-bold text-[#F97316] uppercase">🎬 VOD Highlight</h3>
+                  <h3 className="text-base md:text-lg font-bold text-[#C5A059] uppercase">🎬 VOD Highlight</h3>
                   <label className="flex items-center cursor-pointer">
                     <div className="relative">
                       <input type="checkbox" className="sr-only" checked={config.showVideo} onChange={(e) => setConfig({...config, showVideo: e.target.checked})} />
-                      <div className={`block w-10 h-5 transition-colors border border-gray-700 rounded-full ${config.showVideo ? 'bg-[#F97316]' : 'bg-black/50'}`}></div>
+                      <div className={`block w-10 h-5 transition-colors border border-gray-700 rounded-full ${config.showVideo ? 'bg-[#C5A059]' : 'bg-black/50'}`}></div>
                       <div className={`dot absolute left-1 top-1 w-3 h-3 rounded-full transition-transform ${config.showVideo ? 'bg-white transform translate-x-5 shadow-sm' : 'bg-gray-500'}`}></div>
                     </div>
                     <span className="ml-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">{config.showVideo ? 'LIVE' : 'OFFLINE'}</span>
@@ -1281,15 +1408,15 @@ export default function App() {
                   <div className="grid grid-cols-1 gap-4 md:gap-6">
                     <div className="space-y-1.5 md:space-y-2">
                       <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Video Title</label>
-                      <input type="text" value={config.videoTitle} onChange={(e) => setConfig({...config, videoTitle: e.target.value})} className="w-full p-3 bg-black/50 border border-gray-700 text-xs font-semibold text-white focus:border-[#F97316] outline-none uppercase rounded-lg" />
+                      <input type="text" value={config.videoTitle} onChange={(e) => setConfig({...config, videoTitle: e.target.value})} className="w-full p-3 bg-black/50 border border-gray-700 text-xs font-semibold text-white focus:border-[#C5A059] outline-none uppercase rounded-lg" />
                     </div>
                     <div className="space-y-1.5 md:space-y-2">
                       <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">YouTube Video Link</label>
-                      <input type="text" value={config.videoUrl} onChange={(e) => setConfig({...config, videoUrl: e.target.value})} className="w-full p-3 bg-black/50 border border-gray-700 text-xs text-[#3B82F6] font-mono focus:border-[#F97316] outline-none rounded-lg" />
+                      <input type="text" value={config.videoUrl} onChange={(e) => setConfig({...config, videoUrl: e.target.value})} className="w-full p-3 bg-black/50 border border-gray-700 text-xs text-[#3B82F6] font-mono focus:border-[#C5A059] outline-none rounded-lg" />
                     </div>
                     <div className="space-y-1.5 md:space-y-2">
                       <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Description</label>
-                      <textarea value={config.videoDesc} onChange={(e) => setConfig({...config, videoDesc: e.target.value})} className="w-full p-3 bg-black/50 border border-gray-700 text-xs text-gray-300 focus:border-[#F97316] outline-none rounded-lg" rows="3"></textarea>
+                      <textarea value={config.videoDesc} onChange={(e) => setConfig({...config, videoDesc: e.target.value})} className="w-full p-3 bg-black/50 border border-gray-700 text-xs text-gray-300 focus:border-[#C5A059] outline-none rounded-lg" rows="3"></textarea>
                     </div>
                   </div>
                 )}
@@ -1297,12 +1424,12 @@ export default function App() {
 
               <div className="admin-glass p-6 md:p-8 space-y-6 md:space-y-8 rounded-2xl">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
-                  <div className="space-y-1.5 md:space-y-2"><label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Event Title</label><input type="text" value={config.title} onChange={(e) => setConfig({...config, title: e.target.value})} className="w-full p-3 bg-black/50 border border-gray-700 text-xs font-semibold text-white focus:border-[#F97316] outline-none uppercase rounded-lg" /></div>
-                  <div className="space-y-1.5 md:space-y-2"><label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Subtitle / Tagline</label><input type="text" value={config.subtitle} onChange={(e) => setConfig({...config, subtitle: e.target.value})} className="w-full p-3 bg-black/50 border border-gray-700 text-xs text-white focus:border-[#F97316] outline-none font-semibold rounded-lg" /></div>
-                  <div className="space-y-1.5 md:space-y-2"><label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Event Date</label><input type="text" value={config.date} onChange={(e) => setConfig({...config, date: e.target.value})} className="w-full p-3 bg-black/50 border border-gray-700 text-xs font-semibold text-white focus:border-[#F97316] outline-none uppercase rounded-lg" /></div>
-                  <div className="space-y-1.5 md:space-y-2"><label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Countdown Target</label><input type="datetime-local" value={config.targetDate?.slice(0,16)} onChange={(e) => setConfig({...config, targetDate: e.target.value + ":00"})} className="w-full p-3 bg-black/50 border border-gray-700 text-xs font-mono text-gray-300 focus:border-[#F97316] outline-none rounded-lg [color-scheme:dark]" /></div>
-                  <div className="md:col-span-2 space-y-1.5 md:space-y-2"><label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Location</label><input type="text" value={config.location} onChange={(e) => setConfig({...config, location: e.target.value})} className="w-full p-3 bg-black/50 border border-gray-700 text-xs font-semibold text-white focus:border-[#F97316] outline-none uppercase rounded-lg" /></div>
-                  <div className="md:col-span-2 space-y-1.5 md:space-y-2"><label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Description</label><textarea value={config.aboutText} onChange={(e) => setConfig({...config, aboutText: e.target.value})} className="w-full p-3 bg-black/50 border border-gray-700 text-xs text-gray-300 focus:border-[#F97316] outline-none rounded-lg" rows="4"></textarea></div>
+                  <div className="space-y-1.5 md:space-y-2"><label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Event Title</label><input type="text" value={config.title} onChange={(e) => setConfig({...config, title: e.target.value})} className="w-full p-3 bg-black/50 border border-gray-700 text-xs font-semibold text-white focus:border-[#C5A059] outline-none uppercase rounded-lg" /></div>
+                  <div className="space-y-1.5 md:space-y-2"><label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Subtitle / Tagline</label><input type="text" value={config.subtitle} onChange={(e) => setConfig({...config, subtitle: e.target.value})} className="w-full p-3 bg-black/50 border border-gray-700 text-xs text-white focus:border-[#C5A059] outline-none font-semibold rounded-lg" /></div>
+                  <div className="space-y-1.5 md:space-y-2"><label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Event Date</label><input type="text" value={config.date} onChange={(e) => setConfig({...config, date: e.target.value})} className="w-full p-3 bg-black/50 border border-gray-700 text-xs font-semibold text-white focus:border-[#C5A059] outline-none uppercase rounded-lg" /></div>
+                  <div className="space-y-1.5 md:space-y-2"><label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Countdown Target</label><input type="datetime-local" value={config.targetDate?.slice(0,16)} onChange={(e) => setConfig({...config, targetDate: e.target.value + ":00"})} className="w-full p-3 bg-black/50 border border-gray-700 text-xs font-mono text-gray-300 focus:border-[#C5A059] outline-none rounded-lg [color-scheme:dark]" /></div>
+                  <div className="md:col-span-2 space-y-1.5 md:space-y-2"><label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Location</label><input type="text" value={config.location} onChange={(e) => setConfig({...config, location: e.target.value})} className="w-full p-3 bg-black/50 border border-gray-700 text-xs font-semibold text-white focus:border-[#C5A059] outline-none uppercase rounded-lg" /></div>
+                  <div className="md:col-span-2 space-y-1.5 md:space-y-2"><label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Description</label><textarea value={config.aboutText} onChange={(e) => setConfig({...config, aboutText: e.target.value})} className="w-full p-3 bg-black/50 border border-gray-700 text-xs text-gray-300 focus:border-[#C5A059] outline-none rounded-lg" rows="4"></textarea></div>
                 </div>
               </div>
             </div>
@@ -1312,44 +1439,48 @@ export default function App() {
             <div className="max-w-6xl mx-auto space-y-6 relative z-10 stagger-enter">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                 <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight uppercase glow-text">Speakers & VIPs</h2>
-                <button onClick={handleSaveConfig} className="w-full sm:w-auto px-6 py-3 bg-[#F97316] hover:bg-orange-600 text-white font-semibold uppercase text-[10px] tracking-widest shadow-[0_0_15px_rgba(249,115,22,0.4)] rounded-lg transition-all">
+                <button onClick={handleSaveConfig} className="w-full sm:w-auto px-6 py-3 bg-[#C5A059] hover:bg-[#a68444] text-white font-semibold uppercase text-[10px] tracking-widest shadow-[0_0_15px_rgba(197,160,89,0.4)] rounded-lg transition-all">
                   💾 SAVE CONFIG
                 </button>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-                {config.speakers?.map(speaker => (
-                  <div key={speaker.id} className="admin-glass p-6 relative rounded-2xl">
-                    <button onClick={() => removeArrayItem('speakers', speaker.id)} className="absolute top-4 right-4 px-3 py-1.5 bg-transparent border border-rose-500/50 text-rose-500 text-[9px] font-bold uppercase hover:bg-rose-500/10 transition-all rounded-md">Delete</button>
-                    <div className="flex flex-col sm:flex-row gap-4 items-start mb-6">
-                      <img src={speaker.img} className="w-20 h-20 object-cover border border-gray-700 rounded-lg shadow-md" alt="speaker" />
-                      
-                      <div className="flex-1 w-full space-y-2">
+                {config.speakers?.map((speaker, index) => (
+                  <div key={speaker.id} className="admin-glass p-6 relative rounded-2xl flex flex-col gap-4">
+                    <div className="flex justify-between items-center border-b border-gray-700/50 pb-3">
+                       <span className="text-[10px] font-bold text-[#C5A059] uppercase tracking-widest">Speaker #{index + 1}</span>
+                       <button onClick={() => removeArrayItem('speakers', speaker.id)} className="px-3 py-1.5 bg-rose-500/10 border border-rose-500/30 text-rose-500 text-[9px] font-bold uppercase hover:bg-rose-500 hover:text-white transition-all rounded-md">Delete</button>
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row gap-4 items-start">
+                      <img src={speaker.img} className="w-20 h-20 object-cover border border-gray-700 rounded-lg shadow-md bg-white" alt="speaker" />
+                      <div className="flex-1 w-full space-y-3">
                         <div className="space-y-1">
                           <label className="block text-[9px] font-bold text-gray-400 uppercase tracking-widest">Image URL</label>
-                          <input type="text" value={speaker.img} onChange={(e) => handleArrayChange('speakers', speaker.id, 'img', e.target.value)} className="w-full p-2 bg-black/50 border border-gray-700 text-[10px] font-mono text-[#3B82F6] focus:border-[#F97316] outline-none rounded-md" placeholder="https://..." />
+                          <input type="text" value={speaker.img} onChange={(e) => handleArrayChange('speakers', speaker.id, 'img', e.target.value)} className="w-full p-2.5 bg-black/50 border border-gray-700 text-[10px] font-mono text-[#3B82F6] focus:border-[#C5A059] outline-none rounded-md" placeholder="https://..." />
                         </div>
                         <div className="space-y-1">
                           <label className="block text-[9px] font-bold text-gray-400 uppercase tracking-widest">Or Upload File</label>
                           <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'speakers', speaker.id)} className="w-full text-[10px] text-gray-400 file:mr-2 file:py-1 file:px-3 file:border-0 file:text-[9px] file:font-semibold file:uppercase file:bg-gray-800 file:text-white hover:file:bg-gray-700 cursor-pointer rounded-md" />
                         </div>
                       </div>
-
                     </div>
-                    <div className="space-y-3">
+
+                    <div className="space-y-3 pt-2">
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <input type="text" value={speaker.name} onChange={(e) => handleArrayChange('speakers', speaker.id, 'name', e.target.value)} className="w-full p-2.5 bg-black/50 border border-gray-700 text-xs font-semibold uppercase text-white focus:border-[#F97316] outline-none rounded-md" placeholder="Name" />
-                        <input type="text" value={speaker.role} onChange={(e) => handleArrayChange('speakers', speaker.id, 'role', e.target.value)} className="w-full p-2.5 bg-black/50 border border-gray-700 text-[10px] font-medium uppercase text-gray-300 focus:border-[#F97316] outline-none rounded-md" placeholder="Role/Company" />
+                        <input type="text" value={speaker.name} onChange={(e) => handleArrayChange('speakers', speaker.id, 'name', e.target.value)} className="w-full p-2.5 bg-black/50 border border-gray-700 text-xs font-semibold uppercase text-white focus:border-[#C5A059] outline-none rounded-md" placeholder="Name" />
+                        <input type="text" value={speaker.role} onChange={(e) => handleArrayChange('speakers', speaker.id, 'role', e.target.value)} className="w-full p-2.5 bg-black/50 border border-gray-700 text-[10px] font-medium uppercase text-gray-300 focus:border-[#C5A059] outline-none rounded-md" placeholder="Role/Company" />
                       </div>
                       <div className="flex gap-3">
-                         <input type="text" value={speaker.tag} onChange={(e) => handleArrayChange('speakers', speaker.id, 'tag', e.target.value)} className="flex-1 p-2.5 bg-black/50 border border-gray-700 text-[10px] font-semibold text-white uppercase focus:border-[#F97316] outline-none rounded-md" placeholder="Category" />
+                         <input type="text" value={speaker.tag} onChange={(e) => handleArrayChange('speakers', speaker.id, 'tag', e.target.value)} className="flex-1 p-2.5 bg-black/50 border border-gray-700 text-[10px] font-semibold text-white uppercase focus:border-[#C5A059] outline-none rounded-md" placeholder="Category" />
                          <input type="color" value={speaker.color} onChange={(e) => handleArrayChange('speakers', speaker.id, 'color', e.target.value)} className="w-10 h-9 bg-black border border-gray-700 cursor-pointer p-0.5 rounded-md" />
                       </div>
-                      <textarea value={speaker.desc} onChange={(e) => handleArrayChange('speakers', speaker.id, 'desc', e.target.value)} className="w-full p-3 bg-black/50 border border-gray-700 text-[10px] text-gray-300 focus:border-[#F97316] outline-none rounded-md" rows="3" placeholder="Biography..."></textarea>
+                      <textarea value={speaker.desc} onChange={(e) => handleArrayChange('speakers', speaker.id, 'desc', e.target.value)} className="w-full p-3 bg-black/50 border border-gray-700 text-[10px] text-gray-300 focus:border-[#C5A059] outline-none rounded-md" rows="3" placeholder="Biography..."></textarea>
                     </div>
                   </div>
                 ))}
-                <button onClick={addSpeaker} className="min-h-[150px] border border-dashed border-gray-600 hover:border-[#F97316] text-gray-400 hover:text-[#F97316] font-semibold text-xs uppercase transition-all flex flex-col items-center justify-center gap-2 bg-black/20 rounded-2xl p-6 backdrop-blur-sm">
-                  <span className="text-3xl">+</span> Add Speaker
+                
+                <button onClick={addSpeaker} className="w-full min-h-[200px] py-8 border-2 border-dashed border-gray-700 hover:border-[#C5A059] text-gray-500 hover:text-[#C5A059] font-bold text-[11px] uppercase tracking-widest transition-all bg-black/20 hover:bg-[#C5A059]/5 rounded-2xl flex flex-col items-center justify-center gap-2 backdrop-blur-sm">
+                  <span className="text-3xl mb-1">+</span> Add Speaker
                 </button>
               </div>
             </div>
@@ -1359,29 +1490,35 @@ export default function App() {
             <div className="max-w-4xl mx-auto space-y-6 relative z-10 stagger-enter">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
                 <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight uppercase glow-text">Event Schedule</h2>
-                <button onClick={handleSaveConfig} className="w-full sm:w-auto px-6 py-3 bg-[#F97316] hover:bg-orange-600 text-white font-semibold uppercase text-[10px] tracking-widest shadow-[0_0_15px_rgba(249,115,22,0.4)] rounded-lg transition-all">
+                <button onClick={handleSaveConfig} className="w-full sm:w-auto px-6 py-3 bg-[#C5A059] hover:bg-[#a68444] text-white font-semibold uppercase text-[10px] tracking-widest shadow-[0_0_15px_rgba(197,160,89,0.4)] rounded-lg transition-all">
                   💾 SAVE CONFIG
                 </button>
               </div>
               <div className="space-y-4">
-                {config.schedule?.map(s => (
-                  <div key={s.id} className="admin-glass p-6 flex flex-col sm:flex-row gap-4 md:gap-6 relative group rounded-2xl">
-                    <button onClick={() => removeArrayItem('schedule', s.id)} className="absolute top-4 right-4 md:opacity-0 group-hover:opacity-100 px-3 py-1.5 bg-transparent border border-rose-500/50 text-rose-500 text-[9px] font-bold uppercase transition-all rounded-md">Delete</button>
-                    <div className="w-full sm:w-24 flex sm:flex-col gap-3">
-                      <input type="text" value={s.time} onChange={(e) => handleArrayChange('schedule', s.id, 'time', e.target.value)} className="w-full p-3 bg-black/50 border border-gray-700 text-center font-bold text-lg text-white focus:border-[#F97316] outline-none rounded-lg" />
-                      <input type="color" value={s.color} onChange={(e) => handleArrayChange('schedule', s.id, 'color', e.target.value)} className="w-12 sm:w-full h-12 sm:h-8 bg-black border border-gray-700 cursor-pointer p-0.5 flex-shrink-0 rounded-md" />
+                {config.schedule?.map((s, index) => (
+                  <div key={s.id} className="admin-glass p-6 flex flex-col gap-4 relative group rounded-2xl">
+                    <div className="flex justify-between items-center border-b border-gray-700/50 pb-3">
+                       <span className="text-[10px] font-bold text-[#C5A059] uppercase tracking-widest">Agenda Session #{index + 1}</span>
+                       <button onClick={() => removeArrayItem('schedule', s.id)} className="px-3 py-1.5 bg-rose-500/10 border border-rose-500/30 text-rose-500 text-[9px] font-bold uppercase hover:bg-rose-500 hover:text-white transition-all rounded-md opacity-0 group-hover:opacity-100">Delete</button>
                     </div>
-                    <div className="flex-1 space-y-3 sm:pr-8">
-                      <div className="flex flex-col sm:flex-row gap-3">
-                        <input type="text" value={s.tag} onChange={(e) => handleArrayChange('schedule', s.id, 'tag', e.target.value)} className="w-full sm:w-28 p-2.5 bg-black/50 border border-gray-700 text-[9px] font-bold text-gray-400 uppercase tracking-widest focus:border-[#F97316] outline-none rounded-lg" placeholder="TAG" />
-                        <input type="text" value={s.title} onChange={(e) => handleArrayChange('schedule', s.id, 'title', e.target.value)} className="flex-1 p-2.5 bg-black/50 border border-gray-700 text-sm font-semibold uppercase text-white focus:border-[#F97316] outline-none rounded-lg" placeholder="Session Title" />
+
+                    <div className="flex flex-col sm:flex-row gap-4 md:gap-6">
+                      <div className="w-full sm:w-24 flex sm:flex-col gap-3">
+                        <input type="text" value={s.time} onChange={(e) => handleArrayChange('schedule', s.id, 'time', e.target.value)} className="w-full p-3 bg-black/50 border border-gray-700 text-center font-bold text-lg text-white focus:border-[#C5A059] outline-none rounded-lg" />
+                        <input type="color" value={s.color} onChange={(e) => handleArrayChange('schedule', s.id, 'color', e.target.value)} className="w-12 sm:w-full h-12 sm:h-8 bg-black border border-gray-700 cursor-pointer p-0.5 flex-shrink-0 rounded-md" />
                       </div>
-                      <textarea value={s.desc} onChange={(e) => handleArrayChange('schedule', s.id, 'desc', e.target.value)} className="w-full p-3 bg-black/50 border border-gray-700 text-[10px] text-gray-300 focus:border-[#F97316] outline-none rounded-lg" rows="2" placeholder="Description"></textarea>
+                      <div className="flex-1 space-y-3 sm:pr-2">
+                        <div className="flex flex-col sm:flex-row gap-3">
+                          <input type="text" value={s.tag} onChange={(e) => handleArrayChange('schedule', s.id, 'tag', e.target.value)} className="w-full sm:w-28 p-2.5 bg-black/50 border border-gray-700 text-[9px] font-bold text-gray-400 uppercase tracking-widest focus:border-[#C5A059] outline-none rounded-lg" placeholder="TAG" />
+                          <input type="text" value={s.title} onChange={(e) => handleArrayChange('schedule', s.id, 'title', e.target.value)} className="flex-1 p-2.5 bg-black/50 border border-gray-700 text-sm font-semibold uppercase text-white focus:border-[#C5A059] outline-none rounded-lg" placeholder="Session Title" />
+                        </div>
+                        <textarea value={s.desc} onChange={(e) => handleArrayChange('schedule', s.id, 'desc', e.target.value)} className="w-full p-3 bg-black/50 border border-gray-700 text-[10px] text-gray-300 focus:border-[#C5A059] outline-none rounded-lg" rows="2" placeholder="Description"></textarea>
+                      </div>
                     </div>
                   </div>
                 ))}
-                <button onClick={addSchedule} className="w-full py-6 border border-dashed border-gray-600 hover:border-[#F97316] text-gray-400 hover:text-[#F97316] font-semibold text-xs uppercase transition-all bg-black/20 backdrop-blur-sm rounded-2xl">
-                  + Add Session
+                <button onClick={addSchedule} className="w-full py-8 border-2 border-dashed border-gray-700 hover:border-[#C5A059] text-gray-500 hover:text-[#C5A059] font-bold text-[11px] uppercase tracking-widest transition-all bg-black/20 hover:bg-[#C5A059]/5 rounded-2xl flex items-center justify-center gap-2 backdrop-blur-sm">
+                  <span className="text-2xl mb-1">+</span> Add Session
                 </button>
               </div>
             </div>
@@ -1393,27 +1530,30 @@ export default function App() {
                  <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight uppercase glow-text">Ticketing</h2>
                  <div className="flex w-full sm:w-auto gap-3">
                    <button onClick={addTicket} className="flex-1 sm:flex-none px-4 py-3 bg-black/50 hover:bg-gray-800 text-white text-[10px] font-semibold uppercase tracking-wider border border-gray-600 transition-all rounded-lg backdrop-blur-sm">+ Add Ticket</button>
-                   <button onClick={handleSaveConfig} className="flex-1 sm:flex-none px-6 py-3 bg-[#F97316] hover:bg-orange-600 text-white font-semibold uppercase text-[10px] tracking-widest shadow-[0_0_15px_rgba(249,115,22,0.4)] rounded-lg transition-all">
+                   <button onClick={handleSaveConfig} className="flex-1 sm:flex-none px-6 py-3 bg-[#C5A059] hover:bg-[#a68444] text-white font-semibold uppercase text-[10px] tracking-widest shadow-[0_0_15px_rgba(197,160,89,0.4)] rounded-lg transition-all">
                      💾 SAVE CONFIG
                    </button>
                  </div>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-                {config.tickets?.map(ticket => (
+                {config.tickets?.map((ticket, index) => (
                   <div key={ticket.id} className="admin-glass p-6 flex flex-col gap-4 relative rounded-2xl">
-                    <button onClick={() => removeArrayItem('tickets', ticket.id)} className="absolute top-4 right-4 px-3 py-1.5 bg-transparent border border-rose-500/50 text-rose-500 text-[9px] font-bold uppercase transition-all z-10 rounded-md hover:bg-rose-500/10">Delete</button>
+                    <div className="flex justify-between items-center border-b border-gray-700/50 pb-3">
+                       <span className="text-[10px] font-bold text-[#C5A059] uppercase tracking-widest">Ticket Tier #{index + 1}</span>
+                       <button onClick={() => removeArrayItem('tickets', ticket.id)} className="px-3 py-1.5 bg-rose-500/10 border border-rose-500/30 text-rose-500 text-[9px] font-bold uppercase hover:bg-rose-500 hover:text-white transition-all rounded-md">Delete</button>
+                    </div>
                     
                     <div className="space-y-1">
                       <label className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mt-2">Ticket Name</label>
-                      <input type="text" value={ticket.name} onChange={(e) => handleArrayChange('tickets', ticket.id, 'name', e.target.value)} className="w-full p-3 bg-black/50 border border-gray-700 text-sm font-semibold uppercase text-white focus:border-[#F97316] outline-none text-center rounded-lg" />
+                      <input type="text" value={ticket.name} onChange={(e) => handleArrayChange('tickets', ticket.id, 'name', e.target.value)} className="w-full p-3 bg-black/50 border border-gray-700 text-sm font-semibold uppercase text-white focus:border-[#C5A059] outline-none text-center rounded-lg" />
                     </div>
 
                     <div className="space-y-1">
                       <label className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mt-2">Price (THB)</label>
                       <div className="relative">
                          <span className="absolute left-4 top-3 text-gray-500 font-bold text-sm">฿</span>
-                         <input type="number" value={ticket.price} onChange={(e) => handleArrayChange('tickets', ticket.id, 'price', e.target.value)} className="w-full p-3 pl-8 bg-black/50 border border-gray-700 text-xl font-bold font-mono text-[#10B981] focus:border-[#F97316] outline-none text-center rounded-lg" />
+                         <input type="number" value={ticket.price} onChange={(e) => handleArrayChange('tickets', ticket.id, 'price', e.target.value)} className="w-full p-3 pl-8 bg-black/50 border border-gray-700 text-xl font-bold font-mono text-[#10B981] focus:border-[#C5A059] outline-none text-center rounded-lg" />
                       </div>
                     </div>
 
@@ -1424,7 +1564,7 @@ export default function App() {
 
                     <div className="space-y-1 flex-1 flex flex-col">
                       <label className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mt-2">Access & Perks</label>
-                      <textarea value={ticket.features} onChange={(e) => handleArrayChange('tickets', ticket.id, 'features', e.target.value)} className="w-full flex-1 p-3 bg-black/50 border border-gray-700 text-[10px] text-gray-300 focus:border-[#F97316] outline-none leading-relaxed rounded-lg" rows="5"></textarea>
+                      <textarea value={ticket.features} onChange={(e) => handleArrayChange('tickets', ticket.id, 'features', e.target.value)} className="w-full flex-1 p-3 bg-black/50 border border-gray-700 text-[10px] text-gray-300 focus:border-[#C5A059] outline-none leading-relaxed rounded-lg" rows="5"></textarea>
                     </div>
                   </div>
                 ))}
