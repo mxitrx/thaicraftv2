@@ -405,7 +405,7 @@ export default function App() {
                 <div class="corner corner-bl"></div>
                 <div class="corner corner-br"></div>
                 
-                <img src="pic/logo.png" class="logo-img" alt="Event Logo" onerror="this.style.display='none'" />
+                <img src="https://github.com/mxitrx/thaicraftv2/blob/main/frontend/pic/logo.png?raw=true" class="logo-img" alt="Event Logo" onerror="this.style.display='none'" />
                 
                 <h1 class="cert-title">เกียรติบัตรฉบับนี้ให้ไว้เพื่อแสดงว่า</h1>
                 
@@ -419,12 +419,12 @@ export default function App() {
                 
                 <div class="footer-cert">
                   <div class="signature">
-                    <img src="pic/sig1.png" class="sig-img" alt="Signature 1" onerror="this.style.display='none'" />
+                    <img src="https://github.com/mxitrx/thaicraftv2/blob/main/frontend/pic/sig1.png?raw=true" class="sig-img" alt="Signature 1" onerror="this.style.display='none'" />
                     <div class="line"></div>
                     <div class="title">ประธานกรรมการจัดงาน</div>
                   </div>
                   <div class="signature">
-                    <img src="pic/sig2.png" class="sig-img" alt="Signature 2" onerror="this.style.display='none'" />
+                    <img src="https://github.com/mxitrx/thaicraftv2/blob/main/frontend/pic/sig2.png?raw=true" class="sig-img" alt="Signature 2" onerror="this.style.display='none'" />
                     <div class="line"></div>
                     <div class="title">ผู้อำนวยการสถาบันสถาปัตยกรรม</div>
                   </div>
