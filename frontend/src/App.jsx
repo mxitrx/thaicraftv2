@@ -343,19 +343,20 @@ export default function App() {
     printWindow.document.close();
   };
 
-  // ✅ ใบประกาศอัปเกรดเป็นภาษาไทยล้วน + โลโก้ + ลายเซ็นแบบรูปภาพ
+  // ✅ เปลี่ยนฟอนต์กลับมาเป็น Sarabun ตัวมาตรฐานสวยๆ และจัดระยะห่างใหม่เพื่อไม่ให้ตัวอักษรซ้อนกัน
   const printCertificate = (user) => {
     const printWindow = window.open('', '_blank', 'width=1000,height=700');
     const html = `
       <html>
         <head>
           <title>Preview Certificate - ${user.name}</title>
-          <link href="https://fonts.googleapis.com/css2?family=Charm:wght@400;700&family=Playfair+Display:wght@700&family=Sarabun:wght@300;400;500;700&display=swap" rel="stylesheet">
+          <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
           <style>
             @page { size: A4 landscape; margin: 0; }
             body { font-family: 'Sarabun', sans-serif; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; background: #52525B; -webkit-print-color-adjust: exact; print-color-adjust: exact; min-height: 100vh; }
             
             .certificate { width: 297mm; height: 210mm; background: #FFFCF5; position: relative; padding: 15mm; box-sizing: border-box; text-align: center; color: #1f2937; box-shadow: 0 10px 40px rgba(0,0,0,0.3); margin: 20px;}
+            
             .border-outer { border: 8px solid ${config?.primaryColor || '#C5A059'}; height: 100%; box-sizing: border-box; padding: 6px; position: relative; background-image: radial-gradient(${config?.primaryColor || '#C5A059'} 1px, transparent 1px); background-size: 25px 25px; }
             .border-inner { border: 2px solid ${config?.primaryColor || '#C5A059'}; background: rgba(255,252,245,0.96); height: 100%; box-sizing: border-box; padding: 40px; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
             
@@ -365,21 +366,21 @@ export default function App() {
             .corner-bl { bottom: -10px; left: -10px; border-right: none; border-top: none; }
             .corner-br { bottom: -10px; right: -10px; border-left: none; border-top: none; }
 
-            /* กำหนดขนาดรูปโลโก้และลายเซ็น */
             .logo-img { height: 90px; object-fit: contain; margin-bottom: 20px; }
             .sig-img { height: 40px; object-fit: contain; margin-bottom: 5px; }
             
-            .cert-title { font-family: 'Sarabun', sans-serif; font-size: 32px; color: #1E293B; margin: 0 0 30px; letter-spacing: 1px; font-weight: 500;}
+            /* เปลี่ยนฟอนต์กลับมาเป็น Sarabun มาตรฐานเพื่อแก้ปัญหาตัวอักษรซ้อนกัน */
+            .cert-title { font-family: 'Sarabun', sans-serif; font-size: 36px; font-weight: 700; color: #1E293B; margin: 0 0 30px; letter-spacing: 1.5px;}
             
-            .name { font-family: 'Charm', cursive; font-size: 64px; font-weight: 700; color: #1E293B; margin: 10px 0 25px; line-height: 1.2; border-bottom: 2px solid ${config?.primaryColor || '#C5A059'}; padding-bottom: 10px; min-width: 60%; display: inline-block; word-break: break-word;}
+            .name { font-family: 'Sarabun', sans-serif; font-size: 56px; font-weight: 700; color: ${config?.primaryColor || '#C5A059'}; margin: 10px 0 40px; line-height: 1.4; border-bottom: 2px solid ${config?.primaryColor || '#C5A059'}; padding-bottom: 10px; min-width: 60%; display: inline-block; word-break: break-word;}
             
-            .reason { font-size: 18px; font-weight: 400; color: #4b5563; line-height: 1.8; max-width: 80%; margin: 0 auto 40px; }
-            .reason strong { font-weight: 700; color: #1E293B; font-size: 22px; font-family: 'Sarabun', sans-serif;}
+            .reason { font-family: 'Sarabun', sans-serif; font-size: 20px; font-weight: 400; color: #4b5563; line-height: 1.8; max-width: 80%; margin: 0 auto 40px; }
+            .reason strong { font-weight: 700; color: #1E293B; font-size: 26px; font-family: 'Sarabun', sans-serif;}
             
             .footer-cert { display: flex; justify-content: space-between; width: 75%; margin-top: auto; }
             .signature { display: flex; flex-direction: column; align-items: center; }
             .line { width: 220px; height: 1px; background: #1E293B; margin-bottom: 10px; }
-            .title { font-size: 16px; color: #4b5563; font-weight: 500;}
+            .title { font-family: 'Sarabun', sans-serif; font-size: 16px; color: #4b5563; font-weight: 500;}
             
             .no-print { position: fixed; top: 20px; right: 20px; z-index: 1000; }
             .print-btn { background: ${config?.primaryColor || '#C5A059'}; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-family: 'Sarabun', sans-serif; font-weight: bold; font-size: 16px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.15); transition: background 0.2s; }
@@ -404,8 +405,7 @@ export default function App() {
                 <div class="corner corner-bl"></div>
                 <div class="corner corner-br"></div>
                 
-                <!-- ดึงรูปโลโก้ -->
-                <img src="pic/logo.png" class="logo-img" alt="Event Logo" />
+                <img src="pic/logo.png" class="logo-img" alt="Event Logo" onerror="this.style.display='none'" />
                 
                 <h1 class="cert-title">เกียรติบัตรฉบับนี้ให้ไว้เพื่อแสดงว่า</h1>
                 
@@ -419,14 +419,12 @@ export default function App() {
                 
                 <div class="footer-cert">
                   <div class="signature">
-                    <!-- ดึงรูปลายเซ็นคนที่ 1 -->
-                    <img src="pic/sig1.png" class="sig-img" alt="Signature 1" />
+                    <img src="pic/sig1.png" class="sig-img" alt="Signature 1" onerror="this.style.display='none'" />
                     <div class="line"></div>
                     <div class="title">ประธานกรรมการจัดงาน</div>
                   </div>
                   <div class="signature">
-                    <!-- ดึงรูปลายเซ็นคนที่ 2 -->
-                    <img src="pic/sig2.png" class="sig-img" alt="Signature 2" />
+                    <img src="pic/sig2.png" class="sig-img" alt="Signature 2" onerror="this.style.display='none'" />
                     <div class="line"></div>
                     <div class="title">ผู้อำนวยการสถาบันสถาปัตยกรรม</div>
                   </div>
@@ -460,25 +458,41 @@ export default function App() {
   const addTicket = () => setConfig(prev => ({ ...prev, tickets: [...(prev.tickets || []), { id: Date.now(), name: "ชื่อบัตร", price: 1000, type: "regular", badge: "NEW", features: "Benefit 1" }] }));
   const removeArrayItem = (arr, id) => setConfig(prev => ({ ...prev, [arr]: (prev[arr]||[]).filter(i => i.id !== id) }));
   
-  // ✅ ระบบอัปโหลดรูปแบบง่าย (แปลงเป็น Base64 ฝังในเว็บโดยตรง ไม่ต้องผ่าน Google Drive)
   const handleImageUpload = (e, arr, id) => { 
     const file = e.target.files[0]; 
     if (!file) return; 
 
+    if (file.size > 5 * 1024 * 1024) { 
+      alert("⚠️ ขนาดรูปภาพใหญ่เกิน 5MB กรุณาเลือกรูปที่เล็กกว่านี้"); 
+      return; 
+    }
+    
+    setIsSubmitting(true);
     const reader = new FileReader(); 
     reader.onloadend = () => {
-      // ป้องกันการอัปโหลดไฟล์ Base64 ที่ใหญ่เกินไปจนทำให้ Google Sheet บันทึกไม่ได้
-      if (reader.result.length > 50000) { 
-        alert("⚠️ ขนาดรูปภาพใหญ่เกินไป (เกิน 50KB) กรุณาย่อขนาดรูปก่อน หรือใช้วิธีวาง Image URL แทนเพื่อป้องกันระบบค้างครับ"); 
-        return; 
-      }
-      
-      setConfig(prev => {
-        const newConfig = { ...prev, [arr]: (prev[arr]||[]).map(i => i.id === id ? { ...i, img: reader.result } : i) };
-        localStorage.setItem('eventPlatformConfigV6', JSON.stringify(newConfig));
-        return newConfig;
-      });
-      alert("✅ อัปโหลดและเปลี่ยนรูปวิทยากรสำเร็จ! (อย่าลืมกดปุ่ม SAVE CONFIG สีส้มด้านบนเพื่อบันทึกถาวร)");
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const MAX_WIDTH = 400; 
+        const scaleSize = MAX_WIDTH / img.width;
+        canvas.width = MAX_WIDTH;
+        canvas.height = img.height * scaleSize;
+        
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        
+        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+
+        setConfig(prev => {
+          const newConfig = { ...prev, [arr]: (prev[arr]||[]).map(i => i.id === id ? { ...i, img: compressedBase64 } : i) };
+          localStorage.setItem('eventPlatformConfigV6', JSON.stringify(newConfig));
+          return newConfig;
+        });
+        
+        setIsSubmitting(false);
+        alert("✅ อัปโหลดและเปลี่ยนรูปวิทยากรสำเร็จ! (ระบบได้ย่อขนาดอัตโนมัติ)");
+      };
+      img.src = reader.result;
     }; 
     reader.readAsDataURL(file); 
   };
@@ -1459,7 +1473,7 @@ export default function App() {
                           <input type="text" value={speaker.img} onChange={(e) => handleArrayChange('speakers', speaker.id, 'img', e.target.value)} className="w-full p-2.5 bg-black/50 border border-gray-700 text-[10px] font-mono text-[#3B82F6] focus:border-[#C5A059] outline-none rounded-md" placeholder="https://..." />
                         </div>
                         <div className="space-y-1">
-                          <label className="block text-[9px] font-bold text-gray-400 uppercase tracking-widest">Or Upload File</label>
+                          <label className="block text-[9px] font-bold text-gray-400 uppercase tracking-widest">Or Upload File (Max 5MB)</label>
                           <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'speakers', speaker.id)} className="w-full text-[10px] text-gray-400 file:mr-2 file:py-1 file:px-3 file:border-0 file:text-[9px] file:font-semibold file:uppercase file:bg-gray-800 file:text-white hover:file:bg-gray-700 cursor-pointer rounded-md" />
                         </div>
                       </div>
