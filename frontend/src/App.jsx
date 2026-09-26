@@ -35,8 +35,8 @@ const defaultConfig = {
   ],
   
   sponsors: [
-    { id: 1, name: "สมาคมสถาปนิกสยาม" }, { id: 2, name: "SCG BUILDING MATERIALS" },
-    { id: 3, name: "TCDC" }, { id: 4, name: "SILPAKORN UNIVERSITY" }, { id: 5, name: "BACC" }
+    { id: 1, name: "DEV TO THEMOON" }, { id: 2, name: "EVENT FOR U" },
+    { id: 3, name: "TCDC" }, { id: 4, name: "King Mongkut's Institute of Technology Ladkrabang" }, { id: 5, name: "BACC" }
   ],
 
   tickets: [
