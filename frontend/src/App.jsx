@@ -909,7 +909,7 @@ export default function App() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="bg-gray-50 dark:bg-[#0A0D14] p-2 rounded-xl border border-transparent focus-within:border-[#C5A059] transition-all">
                         <label className="block text-[10px] font-bold text-gray-500 uppercase px-3 pt-1">ชื่อ-นามสกุล *</label>
-                        <input type="text" name="name" value={formData.name} onChange={handleInputChange} required className="w-full bg-transparent px-3 py-2 text-sm focus:outline-none dark:text-white" placeholder="John Doe"/>
+                        <input type="text" name="name" value={formData.name} onChange={handleInputChange} required className="w-full bg-transparent px-3 py-2 text-sm focus:outline-none dark:text-white" placeholder="สมชาย ใจดี"/>
                       </div>
                       <div className="bg-gray-50 dark:bg-[#0A0D14] p-2 rounded-xl border border-transparent focus-within:border-[#C5A059] transition-all">
                         <label className="block text-[10px] font-bold text-gray-500 uppercase px-3 pt-1">อีเมล *</label>
@@ -917,7 +917,7 @@ export default function App() {
                       </div>
                       <div className="bg-gray-50 dark:bg-[#0A0D14] p-2 rounded-xl border border-transparent focus-within:border-[#C5A059] transition-all md:col-span-2">
                         <label className="block text-[10px] font-bold text-gray-500 uppercase px-3 pt-1">เบอร์โทรศัพท์ *</label>
-                        <input type="tel" name="phone" value={formData.phone} onChange={handleInputChange} required className="w-full bg-transparent px-3 py-2 text-sm focus:outline-none dark:text-white" placeholder="089-XXX-XXXX"/>
+                        <input type="tel" name="phone" value={formData.phone} onChange={handleInputChange} required className="w-full bg-transparent px-3 py-2 text-sm focus:outline-none dark:text-white" placeholder="XXX-XXX-XXXX"/>
                       </div>
                     </div>
                   </div>
