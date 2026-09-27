@@ -40,7 +40,7 @@ const defaultConfig = {
   
   sponsors: [
     { id: 1, name: "DEV TO THEMOON" }, { id: 2, name: "EVENT FOR U" },
-    { id: 3, name: "TCDC" }, { id: 4, name: "King Mongkut's Institute of Technology Ladkrabang" }, { id: 5, name: "BACC" }
+    { id: 3, name: "TCDC" }, { id: 4, name: "King Mongkuts Institute of Technology Ladkrabang (KMITL)" }, { id: 5, name: "BACC" }
   ],
 
   tickets: [
@@ -1127,6 +1127,9 @@ export default function App() {
             <button onClick={() => {setAdminTab('speakers'); setIsMobileMenuOpen(false);}} className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold transition-all rounded-xl ${adminTab === 'speakers' ? 'bg-gray-800 text-white shadow-sm border-l-2 border-[#C5A059]' : 'text-gray-400 hover:bg-gray-800/50 hover:text-white border-l-2 border-transparent'}`}>
               <span className="text-lg opacity-80">🏵️</span> Speakers
             </button>
+            <button onClick={() => {setAdminTab('sponsors'); setIsMobileMenuOpen(false);}} className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold transition-all rounded-xl ${adminTab === 'sponsors' ? 'bg-gray-800 text-white shadow-sm border-l-2 border-[#C5A059]' : 'text-gray-400 hover:bg-gray-800/50 hover:text-white border-l-2 border-transparent'}`}>
+              <span className="text-lg opacity-80">🤝</span> Sponsors
+            </button>
             <button onClick={() => {setAdminTab('tickets'); setIsMobileMenuOpen(false);}} className={`w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold transition-all rounded-xl ${adminTab === 'tickets' ? 'bg-gray-800 text-white shadow-sm border-l-2 border-[#C5A059]' : 'text-gray-400 hover:bg-gray-800/50 hover:text-white border-l-2 border-transparent'}`}>
               <span className="text-lg opacity-80">🎟️</span> Ticketing
             </button>
@@ -1538,6 +1541,53 @@ export default function App() {
                 <button onClick={addSchedule} className="w-full py-8 border-2 border-dashed border-gray-700 hover:border-[#C5A059] text-gray-500 hover:text-[#C5A059] font-bold text-[11px] uppercase tracking-widest transition-all bg-black/20 hover:bg-[#C5A059]/5 rounded-2xl flex items-center justify-center gap-2 backdrop-blur-sm">
                   <span className="text-2xl mb-1">+</span> Add Session
                 </button>
+              </div>
+            </div>
+          )}
+
+          {adminTab === 'sponsors' && (
+            <div className="max-w-4xl mx-auto space-y-6 relative z-10 stagger-enter">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight uppercase glow-text">Sponsors & Partners</h2>
+                <button onClick={handleSaveConfig} className="w-full sm:w-auto px-6 py-3 bg-[#C5A059] hover:bg-[#a68444] text-white font-semibold uppercase text-[10px] tracking-widest shadow-[0_0_15px_rgba(197,160,89,0.4)] rounded-lg transition-all">
+                  💾 SAVE CONFIG
+                </button>
+              </div>
+              
+              <div className="admin-glass p-6 md:p-8 rounded-2xl">
+                <div className="border-b border-gray-700/50 pb-4 mb-6">
+                  <h3 className="text-base md:text-lg font-bold text-[#C5A059] uppercase">🤝 Official Sponsors</h3>
+                  <p className="text-[10px] text-gray-400 uppercase tracking-widest mt-1">จัดการรายชื่อผู้สนับสนุนหลักที่แสดงในแถบเลื่อน (Marquee)</p>
+                </div>
+                
+                <div className="space-y-4">
+                  {config.sponsors?.map((sponsor, index) => (
+                    <div key={sponsor.id} className="flex items-center gap-3 md:gap-4 bg-black/30 p-3 md:p-4 rounded-xl border border-gray-800/80 transition-all hover:border-gray-700">
+                      <span className="text-[10px] font-bold text-[#C5A059] w-6 text-center">{index + 1}.</span>
+                      <input 
+                        type="text" 
+                        value={sponsor.name} 
+                        /* เพิ่ม .toUpperCase() เพื่อบังคับให้ข้อมูลที่ถูกพิมพ์แปลงเป็นตัวใหญ่ทั้งหมดทันที */
+                        onChange={(e) => handleArrayChange('sponsors', sponsor.id, 'name', e.target.value.toUpperCase())} 
+                        className="flex-1 p-3 bg-black/50 border border-gray-700 text-sm font-semibold text-white uppercase focus:border-[#C5A059] outline-none rounded-lg" 
+                        placeholder="SPONSOR NAME (เช่น BACC, TCDC)" 
+                      />
+                      <button 
+                        onClick={() => removeArrayItem('sponsors', sponsor.id)} 
+                        className="px-4 py-3 bg-rose-500/10 border border-rose-500/30 text-rose-500 text-[10px] font-bold uppercase hover:bg-rose-500 hover:text-white transition-all rounded-lg"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  ))}
+                  
+                  <button 
+                    onClick={addSponsor} 
+                    className="w-full py-6 border-2 border-dashed border-gray-700 hover:border-[#C5A059] text-gray-500 hover:text-[#C5A059] font-bold text-[11px] uppercase tracking-widest transition-all bg-black/20 hover:bg-[#C5A059]/5 rounded-xl flex items-center justify-center gap-2 backdrop-blur-sm mt-4"
+                  >
+                    <span className="text-2xl mb-1">+</span> Add Sponsor
+                  </button>
+                </div>
               </div>
             </div>
           )}
