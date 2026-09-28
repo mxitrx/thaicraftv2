@@ -630,13 +630,7 @@ export default function App() {
                 </div>
                 
                 <div className="flex items-center gap-3 md:gap-4 relative z-10">
-                  <button onClick={toggleTheme} className="p-2.5 rounded-full bg-gray-100/50 dark:bg-gray-800/50 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-300 backdrop-blur-sm border border-transparent dark:border-gray-700">
-                    {darkMode ? (
-                      <svg className="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-                    ) : (
-                      <svg className="w-4 h-4 text-slate-700" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-                    )}
-                  </button>
+                
                   <a href="#register" onClick={(e)=>{e.preventDefault(); scrollTo('register');}} className="bg-[#C5A059] text-white px-5 md:px-6 py-2.5 text-[10px] font-bold tracking-widest uppercase transition-all duration-300 rounded-full shadow-[0_8px_20px_-4px_rgba(197,160,89,0.4)] hidden sm:flex items-center gap-2 hover:scale-105">
                     ลงทะเบียน <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                   </a>
@@ -1155,9 +1149,53 @@ export default function App() {
                   <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight uppercase glow-text">Live Analytics</h2>
                   <p className="text-[#C5A059] text-[10px] md:text-xs mt-1 uppercase tracking-wider font-bold">Real-time Event Data Insight <span className="text-gray-500 font-normal lowercase tracking-normal ml-2 bg-gray-800 px-2 py-0.5 rounded-full border border-gray-700">last sync: {lastSyncTime}</span></p>
                 </div>
-                <button onClick={() => syncWithGoogleSheet()} disabled={isSyncing} className="w-full sm:w-auto px-5 py-2.5 bg-gradient-to-r from-gray-800 to-gray-900 hover:from-gray-700 hover:to-gray-800 text-white text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 border border-gray-700 rounded-lg shadow-[0_0_15px_rgba(0,0,0,0.3)] hover:border-[#C5A059]">
-                  <span className={isSyncing ? "animate-spin" : ""}>🔄</span> {isSyncing ? "SYNCING DATA..." : "FORCE SYNC"}
-                </button>
+                <button 
+  onClick={() => syncWithGoogleSheet()} 
+  disabled={isSyncing} 
+  className={`w-full sm:w-auto px-6 py-2.5 text-xs font-bold uppercase tracking-widest transition-all duration-500 flex items-center justify-center gap-3 border rounded-lg relative overflow-hidden group
+    ${isSyncing 
+      ? 'bg-[#C5A059]/10 border-[#C5A059]/40 text-[#C5A059] cursor-wait shadow-[0_0_25px_rgba(197,160,89,0.15)]' 
+      : 'bg-gradient-to-r from-gray-800 to-gray-900 hover:from-gray-700 hover:to-gray-800 text-white border-gray-700 hover:border-[#C5A059] shadow-[0_0_15px_rgba(0,0,0,0.3)] hover:shadow-[0_0_20px_rgba(197,160,89,0.2)]'
+    }`}
+>
+  {/* เอฟเฟกต์แสงกระพริบเบาๆ เป็นพื้นหลังตอนโหลด */}
+  {isSyncing && <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#C5A059]/10 to-transparent animate-pulse"></div>}
+  
+  {isSyncing ? (
+    /* อนิเมชันวงแหวนโหลดแบบลื่นไหล (Smooth Premium Spinner) */
+    <div className="relative w-4 h-4 flex items-center justify-center">
+      {/* วงแหวนจางด้านหลัง หมุนแบบช้าๆ */}
+      <svg className="absolute inset-0 w-full h-full animate-[spin_2s_linear_infinite] opacity-30" viewBox="0 0 50 50">
+        <circle cx="25" cy="25" r="20" fill="none" strokeWidth="5" stroke="currentColor"></circle>
+      </svg>
+      {/* เส้นประด้านหน้า หมุนแบบมีจังหวะ (ease-in-out) */}
+      <svg className="absolute inset-0 w-full h-full animate-[spin_1.2s_ease-in-out_infinite]" viewBox="0 0 50 50">
+        <circle 
+          cx="25" cy="25" r="20" 
+          fill="none" 
+          strokeWidth="5" 
+          stroke="currentColor" 
+          strokeDasharray="80 150" 
+          strokeDashoffset="0" 
+          strokeLinecap="round" 
+          className="drop-shadow-[0_0_8px_rgba(197,160,89,0.8)]"
+        ></circle>
+      </svg>
+    </div>
+  ) : (
+    /* ไอคอนรีเฟรชตอนปกติ (หมุนสมูทๆ ตอนเอาเมาส์ชี้) */
+    <svg 
+      className="w-4 h-4 text-gray-400 group-hover:text-[#C5A059] transition-transform duration-700 ease-in-out group-hover:rotate-180" 
+      fill="none" 
+      stroke="currentColor" 
+      viewBox="0 0 24 24"
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+    </svg>
+  )}
+  
+  <span className="relative z-10 mt-0.5">{isSyncing ? "SYNCING..." : "FORCE SYNC"}</span>
+</button>
               </div>
 
               {/* Bento Grid Stats */}
