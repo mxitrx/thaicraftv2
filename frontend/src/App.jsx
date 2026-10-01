@@ -203,6 +203,7 @@ export default function App() {
   const [darkMode, setDarkMode] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const [config, setConfig] = useState(() => {
     try {
@@ -926,6 +927,17 @@ export default function App() {
     return { ...t, count, percent };
   });
   const topTicket = [...ticketStats].sort((a, b) => b.count - a.count)[0];
+
+  const filteredRegistrations = safeRegistrations.filter((r) => {
+    const searchLower = searchTerm.toLowerCase();
+    return (
+      String(r.name || "").toLowerCase().includes(searchLower) ||
+      String(r.email || "").toLowerCase().includes(searchLower) ||
+      String(r.phone || "").includes(searchTerm) ||
+      String(r.company || "").toLowerCase().includes(searchLower) ||
+      String(r.ticketName || "").toLowerCase().includes(searchLower)
+    );
+  });
 
   // ==========================================
   // VIEW RENDER: CUSTOMER
@@ -2799,7 +2811,9 @@ export default function App() {
                     onClick={() => setIsScanning(!isScanning)}
                     className={`w-full sm:w-auto px-5 py-3 text-white text-[10px] font-bold uppercase tracking-wider transition-all border shadow-lg rounded-lg font-sans ${isScanning ? "bg-red-600/80 hover:bg-red-600 border-red-500" : "bg-[#C5A059]/80 hover:bg-[#C5A059] border-[#C5A059]"}`}
                   >
-                    {isScanning ? "🛑 Close Camera" : "📷 Open Camera Scanner"}
+                    {isScanning
+                      ? "🛑 Close Camera"
+                      : "📷 Open Camera Scanner"}
                   </button>
                 </div>
 
@@ -2821,7 +2835,7 @@ export default function App() {
                         {scanResult.type === "success"
                           ? "✅"
                           : scanResult.type === "duplicate"
-                            ? "⚠️"
+                            ? "⚠️️"
                             : "❌"}
                       </div>
                       <h3 className="text-lg md:text-xl font-bold text-white uppercase mb-2 leading-tight font-sans">
@@ -2886,13 +2900,62 @@ export default function App() {
 
           {adminTab === "users" && (
             <div className="max-w-7xl mx-auto space-y-4 md:space-y-6 relative z-10 stagger-enter font-sans">
-              <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight mb-4 md:mb-6 uppercase glow-text font-sans">
-                Attendee Database
-              </h2>
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4 md:mb-6">
+                <h2 className="text-2xl md:text-3xl font-bold text-white tracking-tight uppercase glow-text font-sans">
+                  Attendee Database
+                </h2>
+
+                {/* ช่องค้นหา */}
+                <div className="w-full sm:w-72 relative">
+                  <input
+                    type="text"
+                    placeholder="ค้นหาชื่อ, อีเมล, เบอร์โทร..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full p-2.5 pl-10 bg-black/50 border border-gray-700 text-sm text-white focus:border-[#C5A059] outline-none rounded-xl font-sans transition-all shadow-[0_0_10px_rgba(0,0,0,0.5)] focus:shadow-[0_0_15px_rgba(197,160,89,0.2)]"
+                  />
+                  <svg
+                    className="w-4 h-4 absolute left-3.5 top-3 text-gray-400"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                    ></path>
+                  </svg>
+                  {searchTerm && (
+                    <button
+                      onClick={() => setSearchTerm("")}
+                      className="absolute right-3 top-3 text-gray-400 hover:text-white"
+                    >
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M6 18L18 6M6 6l12 12"
+                        ></path>
+                      </svg>
+                    </button>
+                  )}
+                </div>
+              </div>
+
               <div className="admin-glass rounded-2xl overflow-hidden shadow-2xl">
-                {registrations.length === 0 ? (
+                {filteredRegistrations.length === 0 ? (
                   <div className="text-center py-20 text-gray-500 text-xs md:text-sm uppercase tracking-widest font-sans">
-                    Awaiting Entries...
+                    {registrations.length === 0
+                      ? "Awaiting Entries..."
+                      : "No Data Found (ไม่พบข้อมูลที่ค้นหา)"}
                   </div>
                 ) : (
                   <div className="overflow-x-auto">
@@ -2917,7 +2980,7 @@ export default function App() {
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-gray-800/30 text-sm font-sans">
-                        {registrations.map((r) => (
+                        {filteredRegistrations.map((r) => (
                           <tr
                             key={r.id}
                             className="admin-table-row cursor-default"
