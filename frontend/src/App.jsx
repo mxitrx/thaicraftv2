@@ -299,9 +299,9 @@ export default function App() {
       <html>
         <head>
           <title>Preview Badge - ${user.name}</title>
-          <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Kanit:wght@400;600;800&display=swap" rel="stylesheet">
+          <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
           <style>
-            body { font-family: 'Kanit', sans-serif; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; background: #e5e5e5; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            body { font-family: 'Sarabun', sans-serif; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; background: #e5e5e5; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .badge { width: 100mm; height: 140mm; background: #ffffff; overflow: hidden; position: relative; display: flex; flex-direction: column; color: #171717; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: 1px solid #d4d4d8; border-radius: 20px; }
             .header { background: #1E293B; color: #fff; padding: 25px 15px; text-align: center; text-transform: uppercase; display: flex; flex-direction: column; align-items: center; justify-content: center; border-bottom: 5px solid ${config?.primaryColor || '#C5A059'}; }
             .header h2 { margin: 0; font-size: 22px; font-weight: 700; font-family: 'Playfair Display', serif; }
@@ -313,7 +313,7 @@ export default function App() {
             .ticket { font-size: 18px; font-weight: 800; color: ${config?.primaryColor || '#C5A059'}; text-transform: uppercase; letter-spacing: 2px; display: inline-block; padding: 10px 30px; border-radius: 50px; border: 2px solid ${config?.primaryColor || '#C5A059'}; background: rgba(197,160,89,0.05); }
             
             .no-print { position: fixed; top: 20px; right: 20px; z-index: 1000; }
-            .print-btn { background: ${config?.primaryColor || '#C5A059'}; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-family: 'Kanit', sans-serif; font-weight: bold; font-size: 16px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.15); transition: background 0.2s; }
+            .print-btn { background: ${config?.primaryColor || '#C5A059'}; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-family: 'Sarabun', sans-serif; font-weight: bold; font-size: 16px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.15); transition: background 0.2s; }
             .print-btn:hover { background: #b08a47; }
             
             @media print {
@@ -325,7 +325,7 @@ export default function App() {
         </head>
         <body>
           <div class="no-print">
-            <button class="print-btn" onclick="window.print()">🖨️ พิมพ์ / Print Badge</button>
+            <button class="print-btn" onclick="window.print()">🖨 พิมพ์ / Print Badge</button>
           </div>
           <div class="badge">
             <div class="header">
@@ -347,7 +347,6 @@ export default function App() {
     printWindow.document.close();
   };
 
-  // ✅ เปลี่ยนฟอนต์กลับมาเป็น Sarabun ตัวมาตรฐานสวยๆ และจัดระยะห่างใหม่เพื่อไม่ให้ตัวอักษรซ้อนกัน
   const printCertificate = (user) => {
     const printWindow = window.open('', '_blank', 'width=1000,height=700');
     const html = `
@@ -373,7 +372,6 @@ export default function App() {
             .logo-img { height: 90px; object-fit: contain; margin-bottom: 20px; }
             .sig-img { height: 40px; object-fit: contain; margin-bottom: 5px; }
             
-            /* เปลี่ยนฟอนต์กลับมาเป็น Sarabun มาตรฐานเพื่อแก้ปัญหาตัวอักษรซ้อนกัน */
             .cert-title { font-family: 'Sarabun', sans-serif; font-size: 36px; font-weight: 700; color: #1E293B; margin: 0 0 30px; letter-spacing: 1.5px;}
             
             .name { font-family: 'Sarabun', sans-serif; font-size: 56px; font-weight: 700; color: ${config?.primaryColor || '#C5A059'}; margin: 10px 0 40px; line-height: 1.4; border-bottom: 2px solid ${config?.primaryColor || '#C5A059'}; padding-bottom: 10px; min-width: 60%; display: inline-block; word-break: break-word;}
@@ -534,9 +532,19 @@ export default function App() {
         <div className={`transition-colors duration-500 min-h-screen antialiased ${darkMode ? 'dark bg-[#0A0D14] text-gray-200' : 'bg-[#FDFBF7] text-gray-800'}`}>
           
           <style dangerouslySetInnerHTML={{__html: `
-            html { scroll-behavior: smooth; }
-            .font-serif { font-family: 'Playfair Display', serif; }
-            .font-sans { font-family: 'Kanit', sans-serif; }
+            @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Sarabun:wght@300;400;500;600;700&display=swap');
+            
+            html, body { 
+              scroll-behavior: smooth; 
+              font-family: 'Sarabun', sans-serif;
+              -webkit-font-smoothing: antialiased;
+              -moz-osx-font-smoothing: grayscale;
+            }
+            
+            p { letter-spacing: 0.2px; }
+
+            .font-serif { font-family: 'Playfair Display', serif !important; }
+            .font-sans { font-family: 'Sarabun', sans-serif !important; }
             
             /* Parallax Background */
             @keyframes panBackground { 0% { background-position: 0% 0%; } 100% { background-position: 100% 100%; } }
@@ -591,6 +599,20 @@ export default function App() {
             .stagger-enter { animation: fadeInUp 0.5s ease-out forwards; opacity: 0; }
             @keyframes fadeInUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
             .glow-text { text-shadow: 0 0 10px rgba(197,160,89,0.5); }
+
+            /* Dropdown & Option Beautiful Styling */
+            select { font-family: 'Sarabun', sans-serif !important; }
+            select option {
+              font-family: 'Sarabun', sans-serif;
+              background-color: #FDFBF7;
+              color: #1f2937;
+              font-size: 15px;
+              padding: 10px;
+            }
+            .dark select option {
+              background-color: #111827;
+              color: #f9fafb;
+            }
           `}} />
 
           {isSubmitting && (
@@ -667,11 +689,11 @@ export default function App() {
                 </div>
                 
                 <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 dark:text-white leading-[1.15] md:leading-[1.1] mb-6">
-                  {config?.title?.split(' ')?.[0] || 'THAI'} <br className="hidden md:block"/>{config?.title?.split(' ')?.[1] || 'CRAFT'}<br/>
+                  {config?.title?.split(' ')?.[0] || 'THAI'} <br className="hidden md:block"/><span className="font-sans tracking-tight">{config?.title?.split(' ')?.[1] || 'CRAFT'}</span><br/>
                   <span className="font-sans text-2xl sm:text-3xl md:text-5xl text-[#C5A059] font-semibold inline-block mt-2">{config.subtitle}</span><br/>
                 </h1>
                 
-                <p className="text-gray-500 dark:text-gray-400 mb-8 md:mb-10 max-w-xl leading-relaxed text-sm md:text-base font-light">{config.aboutText}</p>
+                <p className="text-gray-500 dark:text-gray-400 mb-8 md:mb-10 max-w-xl leading-relaxed text-sm md:text-base">{config.aboutText}</p>
 
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
                   <a href="#register" onClick={(e)=>{e.preventDefault(); scrollTo('register');}} className="w-full sm:w-auto bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-8 py-4 text-xs font-bold tracking-widest uppercase transition-all duration-300 rounded-full hover:scale-105 shadow-xl flex items-center justify-center gap-3 group">
@@ -730,7 +752,7 @@ export default function App() {
                 <div className="text-[#C5A059] text-[10px] font-bold tracking-widest uppercase mb-4">Core Pillars</div>
                 <h2 className="font-serif text-3xl md:text-5xl text-gray-900 dark:text-white mb-6">Thai Architectural Design</h2>
                 <div className="w-16 h-1 bg-[#C5A059] mx-auto mb-6 rounded-full"></div>
-                <p className="text-gray-500 dark:text-gray-400 text-sm md:text-base max-w-2xl mx-auto leading-relaxed font-light px-2">
+                <p className="text-gray-500 dark:text-gray-400 text-sm md:text-base max-w-2xl mx-auto leading-relaxed px-2">
                     ร่วมเจาะลึก 4 แกนหลักที่จะพลิกโฉมวงการสถาปัตยกรรมและการออกแบบของไทย สู่การสร้างสรรค์ผลงานที่เป็นที่ยอมรับในระดับสากล
                 </p>
               </div>
@@ -738,22 +760,22 @@ export default function App() {
                 <div className="bg-[#FDFBF7] dark:bg-[#111827] p-6 md:p-8 rounded-3xl premium-card text-center border border-transparent dark:border-gray-800">
                   <div className="w-14 h-14 md:w-16 md:h-16 bg-white dark:bg-gray-800 text-[#C5A059] rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6 text-xl md:text-2xl shadow-sm border border-gray-100 dark:border-gray-700">🏯</div>
                   <h3 className="font-bold text-gray-900 dark:text-white text-base md:text-lg mb-2 md:mb-3">สถาปัตยกรรมไทยประยุกต์</h3>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed font-light">เรียนรู้การผสานภูมิปัญญาช่างไทยโบราณเข้ากับโครงสร้างและฟังก์ชันการใช้งานของอาคารสมัยใหม่</p>
+                  <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 leading-relaxed">เรียนรู้การผสานภูมิปัญญาช่างไทยโบราณเข้ากับโครงสร้างและฟังก์ชันการใช้งานของอาคารสมัยใหม่</p>
                 </div>
                 <div className="bg-[#FDFBF7] dark:bg-[#111827] p-6 md:p-8 rounded-3xl premium-card text-center border border-transparent dark:border-gray-800">
                   <div className="w-14 h-14 md:w-16 md:h-16 bg-white dark:bg-gray-800 text-[#3B82F6] rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6 text-xl md:text-2xl shadow-sm border border-gray-100 dark:border-gray-700">🧱</div>
                   <h3 className="font-bold text-gray-900 dark:text-white text-base md:text-lg mb-2 md:mb-3">นวัตกรรมวัสดุท้องถิ่น</h3>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed font-light">เจาะลึกการนำวัสดุพื้นบ้านอย่าง ไม้ ไผ่ หวาย และดินเผา มายกระดับด้วยเทคโนโลยีเพื่อสร้างมูลค่าเพิ่ม</p>
+                  <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 leading-relaxed">เจาะลึกการนำวัสดุพื้นบ้านอย่าง ไม้ ไผ่ หวาย และดินเผา มายกระดับด้วยเทคโนโลยีเพื่อสร้างมูลค่าเพิ่ม</p>
                 </div>
                 <div className="bg-[#FDFBF7] dark:bg-[#111827] p-6 md:p-8 rounded-3xl premium-card text-center border border-transparent dark:border-gray-800">
                   <div className="w-14 h-14 md:w-16 md:h-16 bg-white dark:bg-gray-800 text-[#10B981] rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6 text-xl md:text-2xl shadow-sm border border-gray-100 dark:border-gray-700">🌱</div>
                   <h3 className="font-bold text-gray-900 dark:text-white text-base md:text-lg mb-2 md:mb-3">นิเวศสถาปัตย์วิถีไทย</h3>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed font-light">ทำความเข้าใจการออกแบบที่สอดคล้องกับสภาพภูมิอากาศเขตร้อนชื้น และบริบททางวัฒนธรรมอย่างยั่งยืน</p>
+                  <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 leading-relaxed">ทำความเข้าใจการออกแบบที่สอดคล้องกับสภาพภูมิอากาศเขตร้อนชื้น และบริบททางวัฒนธรรมอย่างยั่งยืน</p>
                 </div>
                 <div className="bg-[#FDFBF7] dark:bg-[#111827] p-6 md:p-8 rounded-3xl premium-card text-center border border-transparent dark:border-gray-800">
                   <div className="w-14 h-14 md:w-16 md:h-16 bg-white dark:bg-gray-800 text-[#EC4899] rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6 text-xl md:text-2xl shadow-sm border border-gray-100 dark:border-gray-700">🤝</div>
                   <h3 className="font-bold text-gray-900 dark:text-white text-base md:text-lg mb-2 md:mb-3">เครือข่ายนักสร้างสรรค์</h3>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed font-light">พบปะสถาปนิก นักออกแบบ และช่างฝีมือระดับแนวหน้าของประเทศเพื่อแลกเปลี่ยนแนวคิดและต่อยอดความร่วมมือ</p>
+                  <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 leading-relaxed">พบปะสถาปนิก นักออกแบบ และช่างฝีมือระดับแนวหน้าของประเทศเพื่อแลกเปลี่ยนแนวคิดและต่อยอดความร่วมมือ</p>
                 </div>
               </div>
             </div>
@@ -767,7 +789,7 @@ export default function App() {
                   <div className="text-[#C5A059] text-[10px] font-bold tracking-widest uppercase mb-3">The Visionaries</div>
                   <h2 className="font-serif text-3xl md:text-5xl text-gray-900 dark:text-white">Keynote Speakers</h2>
                 </div>
-                <p className="text-sm text-gray-500 dark:text-gray-400 font-light mb-2 hidden md:block">* คลิกที่รูปเพื่อดูรายละเอียดเพิ่มเติม</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-2 hidden md:block">* คลิกที่รูปเพื่อดูรายละเอียดเพิ่มเติม</p>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 reveal delay-1">
@@ -779,12 +801,12 @@ export default function App() {
                     </div>
                     <div className="px-2 pb-2 mt-2">
                       <h3 className="text-lg md:text-xl font-bold text-gray-900 dark:text-white mb-1 font-serif group-hover:text-[#C5A059] dark:group-hover:text-[#C5A059] transition-colors">{speaker.name}</h3>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 font-light truncate">{speaker.role}</p>
+                      <p className="text-xs md:text-sm text-gray-500 dark:text-gray-400 truncate">{speaker.role}</p>
                     </div>
                   </div>
                 ))}
               </div>
-              <div className="text-center mt-10 block md:hidden text-xs text-gray-400 font-light">* แตะที่รูปเพื่อดูรายละเอียดเพิ่มเติม</div>
+              <div className="text-center mt-10 block md:hidden text-xs text-gray-400">* แตะที่รูปเพื่อดูรายละเอียดเพิ่มเติม</div>
             </div>
           </section>
 
@@ -810,7 +832,7 @@ export default function App() {
                       <div className="flex-grow">
                         <div className="inline-block text-[9px] font-bold uppercase tracking-widest mb-3 px-3 py-1 rounded-full border" style={{color: s.color, backgroundColor: `${s.color}15`, borderColor: `${s.color}30`}}>{s.tag}</div>
                         <h4 className="text-gray-900 dark:text-white font-bold text-xl md:text-2xl mb-2 md:mb-3 font-serif group-hover:opacity-80 transition-opacity">{s.title}</h4>
-                        <p className="text-sm md:text-[15px] text-gray-500 dark:text-gray-400 leading-relaxed font-light mb-4">{s.desc}</p>
+                        <p className="text-sm md:text-[15px] text-gray-500 dark:text-gray-400 leading-relaxed mb-4">{s.desc}</p>
                       </div>
                     </div>
                   </div>
@@ -875,7 +897,7 @@ export default function App() {
                           {Number(ticket.price).toLocaleString()} <span className="text-sm font-medium text-gray-400">บาท</span>
                         </div>
                         
-                        <ul className={`text-xs md:text-sm space-y-3 mb-8 flex-grow font-light transition-colors relative z-10 ${isVIP ? 'text-amber-100' : 'text-gray-600 dark:text-gray-400'}`}>
+                        <ul className={`text-xs md:text-sm space-y-3 mb-8 flex-grow transition-colors relative z-10 ${isVIP ? 'text-amber-100' : 'text-gray-600 dark:text-gray-400'}`}>
                           {(ticket.features || '').split('\n').map((f, i) => (
                             <li key={i} className={`flex gap-3 items-start ${isVIP && i > 0 ? 'text-amber-200' : ''}`}>
                               <svg className={`w-4 h-4 shrink-0 mt-0.5 ${isVIP && i > 0 ? 'text-[#C5A059]' : (isVIP ? 'text-[#C5A059]' : 'text-gray-400 dark:text-gray-500')}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7"></path></svg>
@@ -923,7 +945,7 @@ export default function App() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="bg-gray-50 dark:bg-[#0A0D14] p-2 rounded-xl border border-transparent focus-within:border-[#1E293B] dark:focus-within:border-gray-600 transition-all relative">
                         <label className="block text-[10px] font-bold text-gray-500 uppercase px-3 pt-1">ตำแหน่ง / อาชีพ *</label>
-                        <select name="role" value={formData.role} onChange={handleInputChange} required className="w-full bg-transparent px-3 py-2 text-sm focus:outline-none dark:text-white appearance-none cursor-pointer">
+                        <select name="role" value={formData.role} onChange={handleInputChange} required className="w-full bg-transparent px-3 py-2 text-sm md:text-base font-sans text-gray-900 focus:outline-none dark:text-white appearance-none cursor-pointer">
                           <option value="" disabled>-- เลือก --</option>
                           <option value="สถาปนิก">สถาปนิก (Architect)</option>
                           <option value="มัณฑนากร">มัณฑนากร (Interior Designer)</option>
@@ -938,7 +960,7 @@ export default function App() {
 
                       <div className="bg-gray-50 dark:bg-[#0A0D14] p-2 rounded-xl border border-transparent focus-within:border-[#1E293B] dark:focus-within:border-gray-600 transition-all relative">
                         <label className="block text-[10px] font-bold text-gray-500 uppercase px-3 pt-1">องค์กร / สตูดิโอ *</label>
-                        <select name="company" value={formData.company} onChange={handleInputChange} required className="w-full bg-transparent px-3 py-2 text-sm focus:outline-none dark:text-white appearance-none cursor-pointer">
+                        <select name="company" value={formData.company} onChange={handleInputChange} required className="w-full bg-transparent px-3 py-2 text-sm md:text-base font-sans text-gray-900 focus:outline-none dark:text-white appearance-none cursor-pointer">
                           <option value="" disabled>-- เลือก --</option>
                           <option value="สตูดิโอออกแบบ">สตูดิโอออกแบบ / บริษัทสถาปนิก</option>
                           <option value="องค์กรธุรกิจ">องค์กรธุรกิจ / บริษัทพัฒนาอสังหาฯ</option>
@@ -961,7 +983,7 @@ export default function App() {
                     <div className="flex flex-col sm:flex-row items-center gap-6 w-full md:w-auto">
                       <div className="text-center md:text-right">
                         <div className="text-[10px] text-gray-500 uppercase font-bold">NET TOTAL</div>
-                        <div className="text-3xl font-bold font-serif text-gray-900 dark:text-white">{total.toLocaleString()} <span className="text-sm font-sans text-gray-400">฿</span></div>
+                        <div className="text-3xl font-bold font-sans tracking-tight text-gray-900 dark:text-white">{total.toLocaleString()} <span className="text-sm font-sans text-gray-400">฿</span></div>
                       </div>
                       <button type="submit" disabled={isSubmitting} className="w-full sm:w-auto bg-gray-900 dark:bg-white hover:bg-gray-800 text-white dark:text-gray-900 px-8 py-4 text-[11px] font-bold rounded-full uppercase tracking-widest transition-transform hover:scale-105 shadow-xl disabled:opacity-50">
                         PAY SECURELY
@@ -998,7 +1020,7 @@ export default function App() {
           <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6">
              <div className="flex items-center gap-3">
                 <div className="w-1.5 h-6 bg-[#C5A059] rounded-full shadow-[0_0_8px_#C5A059]"></div>
-                <span className="font-serif font-bold text-xl tracking-wide">{config.title}</span>
+                <span className="font-serif font-bold text-xl tracking-wide">{config?.title?.split(' ')[0]} <span className="font-sans">{config?.title?.split(' ').slice(1).join(' ')}</span></span>
             </div>
             <div className="text-xs text-gray-500 font-light">© 2026 {config.title}. All rights reserved.</div>
             <button onClick={() => setCurrentView('admin')} className="text-[10px] font-bold text-gray-500 hover:text-[#C5A059] transition-colors uppercase tracking-widest">
@@ -1605,7 +1627,6 @@ export default function App() {
                       <input 
                         type="text" 
                         value={sponsor.name} 
-                        /* เพิ่ม .toUpperCase() เพื่อบังคับให้ข้อมูลที่ถูกพิมพ์แปลงเป็นตัวใหญ่ทั้งหมดทันที */
                         onChange={(e) => handleArrayChange('sponsors', sponsor.id, 'name', e.target.value.toUpperCase())} 
                         className="flex-1 p-3 bg-black/50 border border-gray-700 text-sm font-semibold text-white uppercase focus:border-[#C5A059] outline-none rounded-lg" 
                         placeholder="SPONSOR NAME (เช่น BACC, TCDC)" 
