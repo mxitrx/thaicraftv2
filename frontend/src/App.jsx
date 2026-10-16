@@ -3214,7 +3214,7 @@ export default function App() {
               <div className="admin-glass p-6 md:p-8 space-y-6 rounded-2xl">
                 <div className="flex justify-between items-center border-b border-gray-700/50 pb-4">
                   <h3 className="text-base md:text-lg font-bold text-[#C5A059] uppercase font-sans">
-                    🎬 VOD Highlight
+                    🎬 VDO Highlight
                   </h3>
                   <label className="flex items-center cursor-pointer">
                     <div className="relative">
